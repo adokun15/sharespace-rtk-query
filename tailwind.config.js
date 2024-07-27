@@ -21,7 +21,7 @@ module.exports = {
       colors: {
         primary_color: "#3A83A1",
         descriptive_color: "#B5B5B5",
-        text_heading_color: "#1D3B4A",
+        main_color: "#1D3B4A",
         text_color_light: "#6F6F87",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

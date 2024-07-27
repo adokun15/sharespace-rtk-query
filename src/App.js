@@ -1,34 +1,28 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import RootPage from "./pages/RootPage";
-import ErrorPage from "./pages/ErrorPage";
-import HomePage from "./pages/HomePage";
-import CartPage from "./pages/CartPage";
-import ProductsPage from "./pages/ProductsPage";
-import SingleProductPage from "./pages/SingleProductPage";
-import CheckOutPage from "./pages/CheckOutPage";
+import RootPage from "./Pages/RootPage";
+import ErrorElement from "./Pages/Error";
+import BlogPage from "./Pages/Blog/BlogPage";
+import LandingPage from "./Pages/landingPage";
+import GuidePage from "./Pages/Guide/GuidePage";
+import NewsLetterPage from "./Pages/NewsLetter/NewsLetterPage";
+import AuthenticationPage, { AuthAction } from "./Pages/Auth/Auth";
+import DashboardPage from "./Pages/Dashboard/Dashboard";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <RootPage />,
-      errorElement: <ErrorPage />,
+      errorElement: <ErrorElement />,
       children: [
-        { index: true, element: <HomePage /> },
-        { path: "/cart", element: <CartPage /> },
-        { path: "/checkout", element: <CheckOutPage /> },
+        { index: true, element: <LandingPage /> },
+        { path: "/blogs", element: <BlogPage /> },
+        { path: "/guides", element: <GuidePage /> },
+        { path: "/newsletter", element: <NewsLetterPage /> },
+        { path: "/auth", element: <AuthenticationPage />, action: AuthAction },
         {
-          path: "/products",
-          children: [
-            {
-              index: true,
-              element: <ProductsPage />,
-            },
-            {
-              path: ":productId",
-              element: <SingleProductPage />,
-            },
-          ],
+          path: "/dashboard",
+          children: [{ index: true, element: <DashboardPage /> }],
         },
       ],
     },
