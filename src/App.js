@@ -6,7 +6,11 @@ import LandingPage from "./Pages/landingPage";
 import GuidePage from "./Pages/Guide/GuidePage";
 import NewsLetterPage from "./Pages/NewsLetter/NewsLetterPage";
 import AuthenticationPage, { AuthAction } from "./Pages/Auth/Auth";
-import DashboardPage from "./Pages/Dashboard/Dashboard";
+import ProfilePage from "./Pages/Dashboard/Profile";
+import PreferencePage from "./Pages/Dashboard/Preferences";
+import FindRoommatePage from "./Pages/Dashboard/FindRoomie";
+import ChatsPage from "./Pages/Dashboard/Chats";
+import ChatDetail from "./components/ChatDetail";
 
 function App() {
   const router = createBrowserRouter([
@@ -22,8 +26,20 @@ function App() {
         { path: "/auth", element: <AuthenticationPage />, action: AuthAction },
         {
           path: "/dashboard",
-          children: [{ index: true, element: <DashboardPage /> }],
+          children: [
+            { index: true, element: <FindRoommatePage /> },
+            {
+              path: "roommates",
+              children: [
+                { index: true, element: <ChatsPage /> },
+                { path: ":chatId", element: <ChatDetail /> },
+              ],
+            },
+            { path: "profile", element: <ProfilePage /> },
+            { path: "prefs", element: <PreferencePage /> },
+          ],
         },
+        { path: "/logout" },
       ],
     },
   ]);

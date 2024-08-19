@@ -71,7 +71,16 @@
 }
 
 @layer base {
-  * {
+::-webkit-scrollbar-thumb{
+  @apply rounded-none bg-purple-400/80
+}
+::-webkit-scrollbar{
+  @apply w-1 bg-transparent hover:cursor-pointer
+}
+::-webkit-scrollbar-track{
+  @apply bg-slate-300 shadow
+}
+* {
     @apply border-border;
   }
   body {

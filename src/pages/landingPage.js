@@ -1,6 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import someImage from "../image/imgwhitemajeed.jpg";
+import someImage1 from "../image/undraw/undraw_Meditation_re_gll0.png";
+import someImage2 from "../image/undraw/undraw_People_re_8spw.png";
+import someImage3 from "../image/undraw/undraw_Secure_server_re_8wsq.png";
+import someImage4 from "../image/undraw/undraw_Active_support_re_b7sj.png";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import Footer from "../components/Footer";
 export default function LandingPage() {
   return (
     <main className="box-content ">
@@ -36,8 +40,8 @@ export default function LandingPage() {
             <div className="overflow-hidden my-10 w-1/2 m-auto max-h-[50vh] ">
               <img
                 className="aspect-square object-scale-down h-full w-full rounded-2xl"
-                src={someImage}
-                alt={someImage}
+                src={someImage1}
+                alt={someImage1}
               />
             </div>
             <div className="md:w-1/2 m-10 ">
@@ -55,8 +59,8 @@ export default function LandingPage() {
             <div className="overflow-hidden my-10 w-1/2 m-auto max-h-[50vh] ">
               <img
                 className="aspect-square object-scale-down h-full w-full rounded-2xl"
-                src={someImage}
-                alt={someImage}
+                src={someImage2}
+                alt={someImage2}
               />
             </div>
             <div className="md:w-1/2 m-10 ">
@@ -73,8 +77,8 @@ export default function LandingPage() {
             <div className="overflow-hidden my-10 w-1/2 m-auto max-h-[50vh] ">
               <img
                 className="aspect-square object-scale-down h-full w-full rounded-2xl"
-                src={someImage}
-                alt={someImage}
+                src={someImage3}
+                alt={someImage3}
               />
             </div>
 
@@ -94,8 +98,8 @@ export default function LandingPage() {
             <div className="overflow-hidden my-10 w-1/2 m-auto max-h-[50vh] ">
               <img
                 className="aspect-square object-scale-down h-full w-full rounded-2xl"
-                src={someImage}
-                alt={someImage}
+                src={someImage4}
+                alt={someImage4}
               />
             </div>
             <div className="md:w-1/2 m-10 ">
@@ -268,9 +272,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      <footer className="text-descriptive_color text-center py-10 bg-main_color">
-        &copy;ShareSpace<span>2024</span>
-      </footer>
+      <Footer />
     </main>
   );
 }
