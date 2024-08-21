@@ -16,7 +16,7 @@ export default function PreferenceData() {
     <Card>
       <h1 className="text-3xl text-center my-4">Your Personal Preference</h1>
       <div className="flex font-roboto font-bold items-center">
-        <span className="grow">Add to Search List for Other User</span>
+        <span className="grow">Allow other users find you</span>
         <ToggleButton state={btnIsOn} toggleFunc={alterToggleButton} />
       </div>
       <div className="divide-y *:py-3 divide-purple-400 ">
@@ -28,10 +28,14 @@ export default function PreferenceData() {
         </p>
         */}
         <p className="text-2xl">
-          MaxRent: <span>(#100,000)</span> /{" "}
+          Roommate History:
           <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
-            Between two Individual{" "}
+            1 more | No roommate(s) yet
           </span>
+        </p>
+        <p className="text-2xl">
+          MaxRent:{" "}
+          <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">100k</span>
         </p>
         <p className="text-2xl">
           Religion: <span>(Christainity)</span>

@@ -1,7 +1,7 @@
 export default function Container({ children, elClass }) {
   return (
     <div
-      className={`w-3/5 m-auto my-10
+      className={`md:w-3/5 w-[90%] m-auto my-5
          ${elClass}`}
     >
       {children}

@@ -1,23 +1,25 @@
 import { createPortal } from "react-dom";
 import React from "react";
 
-const BackDrop = () => {
+const BackDrop = ({ backdropCls }) => {
   return (
     <>
-      <div className="fixed h-[100vh] z-30 w-full top-0    bg-[rgba(0,0,0,0.8)]"></div>
+      <div
+        className={`fixed h-[100vh] z-[100] backdrop-blur-sm w-full top-0 bg-[rgba(0,0,0,0.8)] ${backdropCls}`}
+      ></div>
     </>
   );
 };
-export default function Modal({ children, cls }) {
+export default function Modal({ children, cls, backdropCls }) {
   return createPortal(
     <React.Fragment>
-      <BackDrop />
+      <BackDrop backdropCls={backdropCls} />
       <div
-        className={` bg-white z-40 text-main_color text-2xl rounded-xl  p-5 px-8 absolute top-[10vh] ${cls}`}
+        className={` bg-white z-60 text-main_color  text-2xl rounded-xl  p-5 px-8 fixed ${cls}`}
       >
         {children}
       </div>
     </React.Fragment>,
-    document.getElementById("modal")
+    document.getElementById("modal-with-backdrop")
   );
 }

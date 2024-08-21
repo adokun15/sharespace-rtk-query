@@ -1,6 +1,5 @@
 import Image from "../UI/Image";
 import ProfilePicDemo from "../image/202330014270ff.jpg";
-import Card from "../UI/Card";
 import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
 
@@ -9,26 +8,22 @@ export default function ChatList({
 }) {
   const router = useNavigate();
   return (
-    <ul className=" overflow-y-scroll h-[70vh]">
+    <ul className=" divide-y-2 overflow-y-scroll h-[70vh]">
       {chats &&
         chats.length >= 1 &&
-        chats?.map((chat) => (
-          <Card elClass="max-h-[2.5rem] flex" key={chat.chatId}>
-            <div className="mx-3">
+        chats?.map((chat, i) => (
+          <div className=" flex gap-3" key={chat.chatId}>
+            <div className="mx-3 relative ">
               <Image imgSrc={ProfilePicDemo} />
+              {i % 2 !== 0 && <Image imgSrc={ProfilePicDemo} />}
             </div>
 
             <div className="py-4 space-y-6">
-              <p className="text-4xl">
-                Danny Soma{" "}
-                <span className="text-[15px] bg-purple-600 text-white rounded-full px-3 py-2">
-                  90%
-                </span>
-              </p>
-              <p>Last Time Spoken: 1hr ago</p>
+              <p className="text-4xl">Danny Soma & soma </p>
+              <p>Last Time Opened: 1hr ago</p>
               <article className="flex gap-3 box-border py-4">
                 <Button elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full">
-                  Delete
+                  Delete Session
                 </Button>
                 <Button
                   onClick={() =>
@@ -36,11 +31,11 @@ export default function ChatList({
                   }
                   elClass="w-full rounded-full focus:scale-75 transition-all"
                 >
-                  Chat up
+                  View
                 </Button>
               </article>
             </div>
-          </Card>
+          </div>
         ))}
     </ul>
   );

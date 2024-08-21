@@ -21,10 +21,10 @@ export default function MainNavigation({ updateModal, toAuth }) {
       )}
       {isLoggedIn && (
         <ul className="md:flex hidden gap-6 text-xl">
-          <NavLink to="/dashboard"> Find a Roommate</NavLink>
+          <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/dashboard/prefs">Edit Preference</NavLink>
           <NavLink to="/dashboard/profile">View Profile</NavLink>
-          <NavLink to="/dashboard/roommates">Chats</NavLink>
+          <NavLink to="/dashboard/roommates">Discuss Space</NavLink>
         </ul>
       )}
       <div className="font-roboto inline-flex items-center gap-5">

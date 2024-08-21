@@ -7,7 +7,7 @@ export default function NavigationModal({ isOpened, updateModal, toAuth }) {
   return (
     <>
       {isOpened && (
-        <Modal cls="w-4/5 left-[10%]">
+        <Modal cls="w-4/5 z-[120] top-10 left-[10%]">
           <nav>
             <button
               className="flex w-full justify-end mb-3 text-2xl "

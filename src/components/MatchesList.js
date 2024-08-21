@@ -31,7 +31,7 @@ export default function MatchesList({ list }) {
     <div className="bg-slate-50 shadow-inner">
       <header className="flex justify-between items-center px-4 py-5">
         <h1 className="font-oswald w-full text-3xl font-[600]">
-          Potential Matches in "Kwasu"
+          {currentMatchSelected ? "@Dany" : "Potential Matches in 'Kwasu'"}
         </h1>
         <div className="inline-flex w-[27%] text-[16px] space-x-2 *:rounded-full">
           <div
@@ -52,6 +52,18 @@ export default function MatchesList({ list }) {
             {/*List */}
             {isSortOpened && (
               <ul className="absolute left-0 z-10 origin-top-left inset-x-0 bg-white shadow">
+                <li
+                  className="cursor-pointer hover:bg-purple-300 px-1 py-2 "
+                  onClick={() => selectSortOption("Name")}
+                >
+                  (One) Roommate
+                </li>
+                <li
+                  className="cursor-pointer hover:bg-purple-300 px-1 py-2 "
+                  onClick={() => selectSortOption("Name")}
+                >
+                  (Two) Roommates
+                </li>
                 <li
                   className="cursor-pointer hover:bg-purple-300 px-1 py-2 "
                   onClick={() => selectSortOption("Name")}
@@ -96,6 +108,7 @@ export default function MatchesList({ list }) {
                     danny
                   </p>
                   <p className="text-[13px]">Match Score : 70%</p>
+                  <p className="text-[13px]">Rent : 50% (100k)</p>
                   <Button
                     onClick={() => {
                       setCurrentMatchSelected({

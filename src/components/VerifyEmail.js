@@ -3,7 +3,7 @@ import Card from "../UI/Card";
 
 export default function VerifyEmail() {
   return (
-    <Card elClass="min-h-5 flex justify-between flex-wrap">
+    <Card elClass="min-h-[5rem] flex justify-between flex-wrap">
       <p className="text-2xl font-[600]">
         Email Verification
         <span className="block text-[16px] italic font-[200]">
