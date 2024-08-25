@@ -7,13 +7,15 @@ import Image from "../../UI/Image";
 import ProfileUpdate from "../../components/User/Profile";
 import { ModalAction } from "../../store/Slices/modal";
 import VerifyEmail from "../../components/VerifyEmail";
+import Modal from "../../UI/Modal";
 
+import { AnimatePresence, motion } from "framer-motion";
 export default function ProfilePage() {
   //  const user = useSelector((state) => state.user);
   const { EditProfilePopOver } = useSelector((state) => state.modal.modal);
   const dispatch = useDispatch();
   return (
-    <>
+    <motion.div>
       <Container elClass="text-main_color">
         <h1 className="text-4xl text-center my-8"> Your Profile</h1>
         <Card elClass="hover:-translate-y-1 transition-all duration-700 ease-in-out">
@@ -60,9 +62,19 @@ export default function ProfilePage() {
         </Card>
         <VerifyEmail />
       </Container>
-      {EditProfilePopOver.isOpened && (
-        <ProfileUpdate mode={EditProfilePopOver.mode} />
-      )}
-    </>
+      <AnimatePresence
+        initial={{ scale: 0 }}
+        animate={{ scale: 100 }}
+        exit={{ scale: 0 }}
+      >
+        {EditProfilePopOver.isOpened && (
+          <>
+            <Modal cls="top-[5%] z-[1200] left-[20%] w-[60%]">
+              <ProfileUpdate mode={EditProfilePopOver.mode?.toLowerCase()} />
+            </Modal>
+          </>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

@@ -4,6 +4,7 @@ import Button from "../../UI/Button";
 import Container from "../../UI/Container";
 import UserPreferenceData from "../../components/User/Preference";
 import { ModalAction } from "../../store/Slices/modal";
+import Modal from "../../UI/Modal";
 
 export default function PreferencePage() {
   const { EditPreferencePopOver } = useSelector((state) => state.modal.modal);
@@ -29,7 +30,13 @@ export default function PreferencePage() {
         </Button>
       </Container>
       {EditPreferencePopOver.isOpened && (
-        <UserPreferenceData mode={EditPreferencePopOver.mode} />
+        <>
+          <Modal cls="top-[5%]  z-[1200] left-[20%] w-[60%]">
+            <UserPreferenceData
+              mode={EditPreferencePopOver.mode?.toLowerCase()}
+            />
+          </Modal>
+        </>
       )}
     </>
   );

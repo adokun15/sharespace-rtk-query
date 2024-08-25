@@ -1,17 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit";
+/*
+import { api } from "../api";
 
-export const ChatSlice = createSlice({
-  initialState: {
-    chat: {},
-    issLoading: null,
-    isError: null,
-  },
-  name: "chat",
-  reducers: {
-    getSingleChat(state, action) {},
-    updateSingleChat(state, action) {},
-    deleteSingleChat(state, action) {},
-  },
+const SpaceSessionSlice = api.injectEndpoints({
+  endpoints: (builder) => ({
+    createSpaceSession: builder.mutation({
+      async queryFn() {
+        // Create a Chat Session
+      },
+    }),
+    getSpaceSession: builder.query({
+      async queryFn() {
+        // get Single Chat
+      },
+    }),
+    getSpaces: builder.query({
+      async queryFn() {
+        // update Preference
+      },
+    }),
+    updateSpaceSession: builder.mutation({
+      async queryFn() {
+        // Get Users
+      },
+    }),
+    uploadMediaPhoto: builder.mutation({
+      async queryFn() {
+        // Get Users
+      },
+    }),
+    optOutOfSpaceSession: builder.mutation({
+      async queryFn() {
+        // Get Users
+      },
+    }),
+    deleteSpaceSession: builder.mutation({
+      async queryFn() {
+        // Get Users
+      },
+    }),
+
+  }),
 });
-
-export const ChatAction = ChatSlice.actions;
+*/

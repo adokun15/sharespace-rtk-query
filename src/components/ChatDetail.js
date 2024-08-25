@@ -22,7 +22,8 @@ export default function ChatDetail() {
     },
     {
       from: 1, //User Object,
-      message: "hELLO jAMES, how you doing?", // Encrypted Text
+      message:
+        "hELLO jAMES, how you doing? fsfd sfsdfs dfsfsdfsdfsdfs fsfsdfsdfdfsdfsdfsdfs fdfsf", // Encrypted Text
       timeSent: "08:23pm", //Time Object
     },
     {
@@ -35,14 +36,10 @@ export default function ChatDetail() {
   return (
     <Container>
       <ChatNavigator />
-      <p className="my-3 italic text-center">
-        Conclusion must take place before 10 days reaches!
-      </p>
-      <div
-        className="shadow py-3 rounded  overflow-y-scroll 
-
-      max-h-[50vh] bg-white "
-      >
+      <div className="shadow py-3 rounded  overflow-y-scroll h-[50vh] bg-white ">
+        <p className="my-3 italic text-center">
+          Conclusion must take place before 10 days reaches!
+        </p>
         {chatExample.map((chat) => (
           <ChatBoxMessage
             key={chat.message}

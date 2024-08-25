@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import Button from "../UI/Button";
 export default function MainNavigation({ updateModal, toAuth }) {
   const [isLoggedIn] = useState(true);
 
@@ -24,7 +25,7 @@ export default function MainNavigation({ updateModal, toAuth }) {
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/dashboard/prefs">Edit Preference</NavLink>
           <NavLink to="/dashboard/profile">View Profile</NavLink>
-          <NavLink to="/dashboard/roommates">Discuss Space</NavLink>
+          <NavLink to="/dashboard/roommates">Discuss Space .</NavLink>
         </ul>
       )}
       <div className="font-roboto inline-flex items-center gap-5">
@@ -34,12 +35,13 @@ export default function MainNavigation({ updateModal, toAuth }) {
         >
           <FontAwesomeIcon icon={faBars} />
         </button>
-        <button
+        <Button
+          outline
           onClick={toAuth}
           className="md:block hidden bg-main_color py-2 px-5 text-white rounded"
         >
           {!isLoggedIn ? "Get Started" : "Logout"}
-        </button>
+        </Button>
       </div>
     </nav>
   );
