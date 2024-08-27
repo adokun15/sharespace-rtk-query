@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Image from "../../UI/Image";
 import ProfileUpdate from "../../components/User/Profile";
 import { ModalAction } from "../../store/Slices/modal";
-import VerifyEmail from "../../components/VerifyEmail";
 import Modal from "../../UI/Modal";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -60,7 +59,6 @@ export default function ProfilePage() {
             <Button outline>Delete Profile</Button>
           </article>
         </Card>
-        <VerifyEmail />
       </Container>
       <AnimatePresence
         initial={{ scale: 0 }}
@@ -69,7 +67,7 @@ export default function ProfilePage() {
       >
         {EditProfilePopOver.isOpened && (
           <>
-            <Modal cls="top-[5%] z-[1200] left-[20%] w-[60%]">
+            <Modal cls="top-[5%] absolute  z-[1200] left-[20%] w-[60%]">
               <ProfileUpdate mode={EditProfilePopOver.mode?.toLowerCase()} />
             </Modal>
           </>

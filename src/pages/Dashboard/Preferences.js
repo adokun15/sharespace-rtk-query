@@ -31,7 +31,7 @@ export default function PreferencePage() {
       </Container>
       {EditPreferencePopOver.isOpened && (
         <>
-          <Modal cls="top-[5%]  z-[1200] left-[20%] w-[60%]">
+          <Modal cls="top-[5%] absolute z-[1200] left-[20%] w-[60%]">
             <UserPreferenceData
               mode={EditPreferencePopOver.mode?.toLowerCase()}
             />

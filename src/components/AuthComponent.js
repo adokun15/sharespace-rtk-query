@@ -1,7 +1,11 @@
 import { CreateUser, LoginUser } from "../api/User/User";
 import { useEffect, useState } from "react";
 import { Form, redirect, useActionData, useNavigate } from "react-router-dom";
-import { useLoginMutation, useSignupMutation } from "../store/Slices/user";
+import {
+  useAuthorizeMutation,
+  useLoginMutation,
+  useSignupMutation,
+} from "../store/Slices/user";
 
 export default function AuthenticationComponent() {
   //Signup / Login
@@ -137,32 +141,19 @@ export default function AuthenticationComponent() {
     }
   };
 
-  const [
-    signup,
-    { isError: isSignUpError, isLoading: signupLoading, error: signupError },
-  ] = useSignupMutation();
-  const [
-    login,
-    { isError: isLoginError, isLoading: loginLoading, error: loginError },
-  ] = useLoginMutation();
+  const [authorize, { isError, data, isLoading, error }] = useAuthorizeMutation(
+    {
+      fixedCacheKey: "new-user",
+    }
+  );
 
   const navigate = useNavigate();
   const triggerSubmit = async () => {
-    if (mode === "login") {
-      await login({
-        email: enteredValue.email,
-        password: enteredValue.password,
-      });
-    }
-
-    if (mode === "signup") {
-      await signup({
-        email: enteredValue.email,
-        password: enteredValue.password,
-      });
-
-      navigate("/auth/new-profile");
-    }
+    await authorize({
+      mode,
+      email: enteredValue.email,
+      password: enteredValue.password,
+    }).then(() => navigate("/auth/new-profile"));
   };
 
   return (
@@ -217,7 +208,7 @@ export default function AuthenticationComponent() {
         ${(emailInputError || passwordInputError) && "disabled:bg-purple-400"}`}
           disabled={emailInputError || passwordInputError}
         >
-          Submit
+          {isLoading ? "loading" : "Submit"}
         </button>
         <article>
           {mode === "login" ? (

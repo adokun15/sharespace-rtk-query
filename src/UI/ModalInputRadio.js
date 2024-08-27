@@ -9,7 +9,7 @@ const BackDropSelect = ({ backdropCls }) => {
     <>
       <div
         onClick={() => dispatch(ModalAction.toggleSelectItemPopOver())}
-        className={`fixed h-[100vh] z-[100]  w-full top-0 bg-[rgba(0,0,0,0.2)] ${backdropCls}`}
+        className={`fixed h-[100vh] z-[10000]  w-full top-0 bg-[rgba(0,0,0,0.2)] ${backdropCls}`}
       ></div>
     </>
   );
@@ -41,7 +41,7 @@ export default function ModalSelect({ cls, backdropCls, inputName }) {
     <React.Fragment>
       <BackDropSelect backdropCls={backdropCls} />
       <div
-        className={`bg-slate-800 space-y-3 md:left-[20%] md:w-[60%] left-[10%] w-[80%] md:top-[20%] top-10 z-[120] text-white divide-y  text-2xl rounded-xl  p-5 px-8 fixed ${cls}`}
+        className={`bg-slate-800 space-y-3 md:left-[20%] md:w-[60%] left-[10%] w-[80%] md:top-[20%] top-10 z-[12000] text-white divide-y  text-2xl rounded-xl  p-5 px-8 fixed ${cls}`}
       >
         {!currentlySelected.value && (
           <label className="text-xl block">

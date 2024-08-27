@@ -15,6 +15,9 @@ export default function PreferenceForm() {
   const SearchRoommate = () => {
     //get Credential
     const getFormData = new FormData(ref.current);
+    for (const [key, value] of getFormData) {
+      console.log(key, value);
+    }
     console.log(getFormData.get("age"));
 
     //Clear Out State
@@ -56,6 +59,7 @@ export default function PreferenceForm() {
                 { value: "200", name: "200" },
                 { value: "300", name: "300" },
                 { value: "400", name: "400" },
+                { value: "500", name: "500" },
               ]}
             />
           </label>
@@ -102,7 +106,10 @@ export default function PreferenceForm() {
           </label>
           <label>
             Habit/Hobbies (Seperate by ","):
-            <Input placeholder={`Cooking, Partying, Reading Always etc`} />
+            <Input
+              name="habit"
+              placeholder={`Cooking, Partying, Reading Always etc`}
+            />
           </label>
           <label>
             Location :

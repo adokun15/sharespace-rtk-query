@@ -1,81 +1,77 @@
-import { Form } from "react-router-dom";
+import { Form, useSearchParams } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useDispatch } from "react-redux";
 import { ModalAction } from "../../store/Slices/modal";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Input from "../../UI/Input";
 
-function EditProfilePic({ mode, upload, cancel }) {
+import EditProfilePic from "./PhotoUpload.js";
+import Select from "../../UI/Select.js";
+import UpdateEmail from "./UpdateEmail.js";
+import EditUserName from "./Username.js";
+import { useCreateProfileMutation } from "../../store/Slices/ProfileSlice.js";
+function CreateProfileDetail({ mode, save, cancel }) {
+  const ref = useRef();
+  const [params] = useSearchParams();
+
+  const [createProfile, { isLoading, isError }] = useCreateProfileMutation();
+
+  const triggerSubmit = async () => {
+    let userProfile = {};
+    userProfile.user_id = params.get("id");
+    //Collect credential
+
+    const formdata = new FormData(ref.current);
+
+    for (const [key, value] of formdata.entries()) {
+      userProfile[key] = value;
+    }
+    if (!userProfile?.user_id) return;
+    await createProfile(userProfile);
+  };
   return (
-    <Form className="*:block my-3 *:font-oswald space-y-10">
-      <label>
-        <p>Profile Picture </p>
-        <input type="file" className="bg-slate-300 py-2 px-1" />
-      </label>
-
-      <div className="flex space-x-4">
-        {mode === "edit" && (
-          <Button type="button" outline onClick={cancel}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" value={mode}>
-          Save
-        </Button>
-      </div>
-    </Form>
-  );
-}
-function EditProfileDetail({ mode, save, cancel }) {
-  return (
-    <Form method="post" className="*:block my-3 *:font-oswald space-y-10">
-      {mode.trim().toLowerCase() === "create" && (
-        <label>
-          <p>A Profile Picture </p>
-          <Input type="file" placeholder="Enter a unique username" />
-        </label>
-      )}
-      <label>
-        <p>Username </p>
-        <Input placeholder="Enter a unique username" />
-      </label>
-      <div id="gender">
-        <p>Gender</p>
-
-        <label htmlFor="gender">
-          male
-          <input type="radio" />
-        </label>
-
-        <label htmlFor="gender">
-          female
-          <input type="radio" />
-        </label>
-      </div>
+    <form
+      ref={ref}
+      method="post"
+      className="*:block my-3 *:font-oswald space-y-10"
+    >
       <label>
         <p>Full Name</p>
-        <Input placeholder="Enter FullName" />
+        <Input name="fullname" placeholder="Enter FullName" />
+      </label>
+      <label>
+        Gender
+        <Select
+          name="gender"
+          items={[
+            { value: "male", name: "Male" },
+            { value: "female", name: "Female" },
+            { value: "other", name: "Others" },
+          ]}
+        />
       </label>
       <label>
         <p>Date of birth</p>
-        <Input type="date" placeholder="Enter FullName" />
+        <Input name="dob" type="date" placeholder="Enter FullName" />
       </label>
       <label>
-        <p>School</p>
-        <Input type="text" placeholder="Enter your University Name" />
+        School
+        <Select
+          name="school"
+          items={[
+            { value: "kwasu", name: "Kwara State University" },
+            { value: "ui", name: "University of Ibadan" },
+            { value: "unilorin", name: "University of Ilorin" },
+          ]}
+        />
       </label>
       <div className="flex space-x-4">
-        {mode === "edit" && (
-          <Button type="button" outline onClick={cancel}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" value={mode}>
+        <Button type="button" onClick={triggerSubmit} value={mode}>
           Save
         </Button>
       </div>
-    </Form>
+    </form>
   );
 }
 
@@ -83,7 +79,7 @@ export default function ProfileUpdate({ mode }) {
   //Create new Profile IN db
 
   const dispatch = useDispatch();
-  const [editDetail, setEditDetail] = useState(true);
+  const [editDetail, setEditDetail] = useState("username");
 
   const closeModal = () => {
     dispatch(
@@ -96,23 +92,49 @@ export default function ProfileUpdate({ mode }) {
   return (
     <main>
       <h1 className="text-4xl my-3 first:capitalize ">
-        {mode || "User"} Profile{" "}
+        {mode || "User"} Profile
       </h1>
+
       {mode === "edit" && (
         <article className="flex *:rounded text-[16px] *:p-1 my-3 space-x-2">
-          <Button outline={!editDetail} onClick={() => setEditDetail(true)}>
+          <Button
+            outline={editDetail !== "username"}
+            onClick={() => setEditDetail("username")}
+          >
             Profile Detail
           </Button>
-          <Button outline={editDetail} onClick={() => setEditDetail(false)}>
+          <Button
+            outline={editDetail !== "photo"}
+            onClick={() => setEditDetail("photo")}
+          >
             Profile Picture
+          </Button>
+          <Button
+            outline={editDetail !== "email"}
+            onClick={() => setEditDetail("email")}
+          >
+            Email Address
           </Button>
         </article>
       )}
       <>
-        {editDetail && <EditProfileDetail mode={mode} cancel={closeModal} />}
-        {!editDetail && mode === "edit" && (
+        {/* Component for Creation Of profile only */}
+        {(!editDetail || mode.toLowerCase() === "create") && (
+          <CreateProfileDetail cancel={closeModal} />
+        )}
+        {/* Component for Creation Of profile only */}
+
+        {/* Components for Edits/Update Of profile only */}
+        {editDetail === "photo" && mode === "edit" && (
           <EditProfilePic cancel={closeModal} mode={mode} />
         )}
+        {editDetail === "email" && mode === "edit" && (
+          <UpdateEmail cancel={closeModal} mode={mode} />
+        )}
+        {editDetail === "username" && mode === "edit" && (
+          <EditUserName cancel={closeModal} mode={mode} />
+        )}
+        {/* Components for Edits/Update Of profile only */}
       </>
     </main>
   );

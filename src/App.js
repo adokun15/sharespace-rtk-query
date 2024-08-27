@@ -14,6 +14,8 @@ import ChatDetail from "./components/ChatDetail";
 import AuthenticationComponent from "./components/AuthComponent";
 import ProfileUpdate from "./components/User/Profile";
 import UserPreferenceData from "./components/User/Preference";
+import EditUserName from "./components/User/Username";
+import ProfilePic from "./components/User/PhotoUpload";
 
 function App() {
   const router = createBrowserRouter([
@@ -41,6 +43,14 @@ function App() {
             {
               path: "new-preferences",
               element: <UserPreferenceData mode="Create" />,
+            },
+            {
+              path: "new-photo",
+              element: <ProfilePic mode="Create" />,
+            },
+            {
+              path: "username",
+              element: <EditUserName mode="Create" />,
             },
           ],
         },

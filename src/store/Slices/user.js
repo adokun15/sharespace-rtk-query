@@ -3,25 +3,29 @@ import { api } from "../api";
 
 const UserSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    signup: builder.mutation({
-      async queryFn({ email, password }) {
+    //Signin / sign up
+    authorize: builder.mutation({
+      async queryFn({ mode, email, password }) {
         try {
-          const credential = await CreateUser({ email, password });
-          return { data: credential };
+          let credential;
+          switch (mode) {
+            case "login":
+              credential = await LoginUser({ email, password });
+              return { data: credential };
+
+            case "signup":
+              credential = await CreateUser({ email, password });
+              return { data: credential };
+
+            default:
+              return { data: null };
+          }
         } catch (e) {
           return { error: e };
         }
       },
-    }),
-    login: builder.mutation({
-      async queryFn({ email, password }) {
-        try {
-          const credential = await LoginUser({ email, password });
-          return { data: credential };
-        } catch (e) {
-          return { error: e };
-        }
-      },
+      transformErrorResponse: (err) =>
+        err?.code || err?.message || "Could not Authenticate User",
     }),
     logout: builder.query({
       async queryFn() {},
@@ -38,7 +42,7 @@ const UserSlice = api.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useSignupMutation } = UserSlice;
+export const { useAuthorizeMutation } = UserSlice;
 
 /*
 const userSlice = createSlice({
