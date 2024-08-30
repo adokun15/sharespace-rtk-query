@@ -1,17 +1,11 @@
-import { CreateUser, LoginUser } from "../api/User/User";
 import { useEffect, useState } from "react";
-import { Form, redirect, useActionData, useNavigate } from "react-router-dom";
-import {
-  useAuthorizeMutation,
-  useLoginMutation,
-  useSignupMutation,
-} from "../store/Slices/user";
+import { useNavigate } from "react-router-dom";
+import { useAuthorizeMutation } from "../store/Slices/user";
 
 export default function AuthenticationComponent() {
   //Signup / Login
 
   const [mode, setAuthState] = useState("login");
-  const errors = useActionData();
 
   const [enteredValue, setEnteredValue] = useState({ email: "", password: "" });
   const [isInputLoseFocus, setInputFocus] = useState({
@@ -24,12 +18,7 @@ export default function AuthenticationComponent() {
     passwordInputError: null,
   });
 
-  const [formError, setFormError] = useState("");
-
   useEffect(() => {
-    //REwrite form error
-    setFormError("");
-
     //Password Validation after inout loses focus
     if (isInputLoseFocus.password && enteredValue.password.length < 6) {
       setInputError((prev) => {
@@ -141,11 +130,9 @@ export default function AuthenticationComponent() {
     }
   };
 
-  const [authorize, { isError, data, isLoading, error }] = useAuthorizeMutation(
-    {
-      fixedCacheKey: "new-user",
-    }
-  );
+  const [authorize, { isError, isLoading, error }] = useAuthorizeMutation({
+    fixedCacheKey: "new-user",
+  });
 
   const navigate = useNavigate();
   const triggerSubmit = async () => {
@@ -153,9 +140,15 @@ export default function AuthenticationComponent() {
       mode,
       email: enteredValue.email,
       password: enteredValue.password,
-    }).then(() => navigate("/auth/new-profile"));
+    })
+      .unwrap()
+      .then((data) => {
+        //Control Navigate
+        if (!data) return;
+        navigate(`/auth/new-profile?user_id=${data}`);
+      })
+      .catch((e) => console.log(e?.message));
   };
-
   return (
     <>
       <h1 className="text-5xl">
@@ -164,7 +157,9 @@ export default function AuthenticationComponent() {
           : "Sign Up For a New Account"}
       </h1>
       <form method="post" className="*:block leading-9 *:my-4 my-5">
-        <p>{errors}</p>
+        <p className="capitalize text-xl font-oswald text-red-600 ">
+          {isError && error.message?.split("/")[1].split("-").join(" ")}
+        </p>
         <label className="text-2xl">Email</label>
         <input
           required

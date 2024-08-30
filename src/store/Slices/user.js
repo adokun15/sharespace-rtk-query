@@ -1,9 +1,14 @@
-import { CreateUser, LoginUser } from "../../api/User/User";
+import {
+  CreateUser,
+  LoginUser,
+  LogoutUser,
+} from "../../firebase/Authentication";
+import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
+import { DbError, UnAuthorizedError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
 
 const UserSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    //Signin / sign up
     authorize: builder.mutation({
       async queryFn({ mode, email, password }) {
         try {
@@ -12,92 +17,55 @@ const UserSlice = api.injectEndpoints({
             case "login":
               credential = await LoginUser({ email, password });
               return { data: credential };
-
             case "signup":
               credential = await CreateUser({ email, password });
               return { data: credential };
-
             default:
-              return { data: null };
+              return null;
           }
         } catch (e) {
-          return { error: e };
+          throw new DbError(e?.message);
         }
       },
-      transformErrorResponse: (err) =>
-        err?.code || err?.message || "Could not Authenticate User",
     }),
-    logout: builder.query({
-      async queryFn() {},
+    logout: builder.mutation({
+      async queryFn() {
+        await LogoutUser();
+      },
+      invalidatesTags: ["user"],
     }),
     deleteAccount: builder.mutation({
       async queryFn() {},
     }),
 
-    isLoggedIn: builder.mutation({
+    isLoggedIn: builder.query({
       async queryFn() {
+        const data = localStorage.getItem("user");
         //gets profile, preference and user
+        if (!data) {
+          throw new UnAuthorizedError("Not authenticated yet");
+        }
+        return `${JSON.parse(data)}`;
       },
+    }),
+
+    photoUpload: builder.mutation({}),
+
+    username: builder.mutation({
+      async queryFn({ id, name }) {
+        try {
+          const obj = await UpdateADocumentObject(id, "users", {
+            key: "username",
+            newValue: name,
+          });
+          return { data: obj };
+        } catch (e) {
+          throw new DbError(e?.message);
+        }
+      },
+      invalidatesTags: (result, error, arg) => [{ type: "user", id: arg.id }],
     }),
   }),
 });
 
-export const { useAuthorizeMutation } = UserSlice;
-
-/*
-const userSlice = createSlice({
-  name: "user",
-  initialState: {
-    user: {
-      userId: null,
-      email: null,
-      profilePicUrl: null,
-      username: null
-     },
-     profile: {},
-     preference: {},
-     spaces: {},
-   
-    isLoading: null,
-    isError: null,
-  },
-
-  reducers: {
-    errorHandler() {},
-
-    loaderHandler(state, action) {
-      state.isLoading = action.payload;
-    },
-
-    UserProfileUpload() {},
-
-    //Fetching Data
-    GetUserData(state, action) {},
-    GetUserProflie(state, action) {},
-    GetUserPreference(state, action) {},
-
-    //edit / update
-    EditUserProfile(state, action) {},
-    EditUserData(state, action) {},
-    EditUserPreference(state, action) {},
-
-    //Create
-    SetUserData(state, action) {
-      // console.log(action?.payload);
-      state.user.firstName = action.payload.name?.split(" ")[0];
-      state.user.lastName = action.payload.name?.split(" ")[1];
-    }, //Login or signup
-    SetUserProfile(state, action) {},
-    SetUserPreference(state, action) {},
-
-    GetAllChats(state, action) {},
-    UpdateChats(state, action) {},
-  },
-});
-
-export const userAction = userSlice.actions;
-
-export default userSlice;
-
-//api - thunk
-*/
+export const { useAuthorizeMutation, useUsernameMutation } = UserSlice;

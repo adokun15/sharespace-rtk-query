@@ -1,12 +1,49 @@
-import { Form } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useDispatch } from "react-redux";
 import { ModalAction } from "../../store/Slices/modal";
 import Input from "../../UI/Input";
 import Select from "../../UI/Select";
+import { useRef } from "react";
+import { useEditPreferenceMutation } from "../../store/Slices/Preference";
 export default function UserPreferenceData({ mode }) {
   //Add Preferenced Data!
+  const ref = useRef();
   const dispatch = useDispatch();
+
+  const [params] = useSearchParams();
+
+  const [createPreference, { isLoading, error, isError }] =
+    useEditPreferenceMutation();
+
+  const navigate = useNavigate();
+
+  const triggerSubmit = async () => {
+    let userPreference = {};
+    userPreference.user_id = params.get("user_id");
+    //Collect credential
+
+    const formdata = new FormData(ref.current);
+
+    for (const [key, value] of formdata.entries()) {
+      userPreference[key] = value;
+    }
+
+    console.log(userPreference);
+
+    //Verify with local Storage
+    if (!userPreference?.user_id) return;
+    await createPreference({
+      updateItemValue: userPreference,
+      id: userPreference?.user_id,
+    })
+      .unwrap()
+      .then((data) => {
+        if (!data) return;
+        navigate(`/auth/username?user_id=${userPreference?.user_id}`);
+      })
+      .catch((e) => console.log(e?.message));
+  };
 
   return (
     <main>
@@ -18,7 +55,12 @@ export default function UserPreferenceData({ mode }) {
           You can leave out a space that doesn't need an Update!
         </p>
       )}
-      <Form autoComplete="off" className="*:block *:font-oswald space-y-10">
+      <form
+        ref={ref}
+        autoComplete="off"
+        className="*:block *:font-oswald space-y-10"
+      >
+        <p>{isError && error?.message}</p>
         <label>
           <p>Roommate (Number of roommate you want)</p>
           <Select
@@ -102,22 +144,35 @@ export default function UserPreferenceData({ mode }) {
           />{" "}
         </label>
         <div className="flex space-x-4">
+          {mode === "edit" && (
+            <Button
+              outline
+              onClick={() =>
+                dispatch(
+                  ModalAction.toggleEditPreferencePopOver({
+                    isOpened: false,
+                    mode: null,
+                  })
+                )
+              }
+            >
+              Cancel
+            </Button>
+          )}
           <Button
-            outline
-            onClick={() =>
-              dispatch(
-                ModalAction.toggleEditPreferencePopOver({
-                  isOpened: false,
-                  mode: null,
-                })
-              )
-            }
+            type="button"
+            onClick={() => {
+              if (mode === "edit") {
+                console.log("hi");
+              } else {
+                triggerSubmit();
+              }
+            }}
           >
-            Cancel
+            {isLoading ? "..." : "Save"}
           </Button>
-          <Button>Save</Button>
         </div>
-      </Form>
+      </form>
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { Form, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useDispatch } from "react-redux";
 import { ModalAction } from "../../store/Slices/modal";
@@ -10,16 +10,18 @@ import EditProfilePic from "./PhotoUpload.js";
 import Select from "../../UI/Select.js";
 import UpdateEmail from "./UpdateEmail.js";
 import EditUserName from "./Username.js";
-import { useCreateProfileMutation } from "../../store/Slices/ProfileSlice.js";
+import { useEditProfileMutation } from "../../store/Slices/ProfileSlice.js";
 function CreateProfileDetail({ mode, save, cancel }) {
   const ref = useRef();
   const [params] = useSearchParams();
 
-  const [createProfile, { isLoading, isError }] = useCreateProfileMutation();
+  const [createProfile, { isLoading, error, isError }] =
+    useEditProfileMutation();
+  const navigate = useNavigate();
 
   const triggerSubmit = async () => {
     let userProfile = {};
-    userProfile.user_id = params.get("id");
+    userProfile.user_id = params.get("user_id");
     //Collect credential
 
     const formdata = new FormData(ref.current);
@@ -27,15 +29,30 @@ function CreateProfileDetail({ mode, save, cancel }) {
     for (const [key, value] of formdata.entries()) {
       userProfile[key] = value;
     }
+    console.log(userProfile);
     if (!userProfile?.user_id) return;
-    await createProfile(userProfile);
+
+    await createProfile({
+      updateItemValue: userProfile,
+      id: userProfile?.user_id,
+    })
+      .unwrap()
+      .then((data) => {
+        if (!data) return;
+        navigate(`/auth/new-preferences?user_id=${userProfile?.user_id}`);
+      })
+      .catch((e) => console.log(e?.message));
   };
+
   return (
     <form
       ref={ref}
       method="post"
       className="*:block my-3 *:font-oswald space-y-10"
     >
+      <p className="capitalize text-xl font-oswald text-red-600 ">
+        {isError && error?.message}
+      </p>
       <label>
         <p>Full Name</p>
         <Input name="fullname" placeholder="Enter FullName" />
@@ -68,7 +85,7 @@ function CreateProfileDetail({ mode, save, cancel }) {
       </label>
       <div className="flex space-x-4">
         <Button type="button" onClick={triggerSubmit} value={mode}>
-          Save
+          {isLoading ? "..." : "submit"}
         </Button>
       </div>
     </form>

@@ -3,13 +3,24 @@ import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
 import { DbError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
 
-const ProfileSlice = api.injectEndpoints({
+const PreferenceSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    editProfile: builder.mutation({
+    getPreference: builder.query({
+      //get user preference
+      async queryFn(id) {
+        //Get Preference
+        await getDocument(id);
+      },
+      transformResponse: (res) => res?.preference,
+
+      providesTags: (result, error, id) => [{ type: "preference", id }],
+    }),
+    //user preference: {}
+    EditPreference: builder.mutation({
       async queryFn({ updateItemValue, id }) {
         try {
           const obj = await UpdateADocumentObject(id, "users", {
-            key: "profile",
+            key: "preference",
             newValue: updateItemValue,
           });
           return { data: obj };
@@ -18,20 +29,11 @@ const ProfileSlice = api.injectEndpoints({
         }
       },
       invalidatesTags: (result, error, arg) => [
-        { type: "profile", id: arg.doc_id },
+        { type: "preference", id: arg.doc_id },
       ],
-    }),
-
-    getProfile: builder.query({
-      //get user preference
-      async queryFn(id) {
-        //Get Preference
-        await getDocument(id);
-      },
-      transformResponse: (res) => res?.preference,
-      providesTags: (result, error, id) => [{ type: "profile", id }],
     }),
   }),
 });
 
-export const { useGetProfileQuery, useEditProfileMutation } = ProfileSlice;
+export const { useEditPreferenceMutation, useGetPreferenceQuery } =
+  PreferenceSlice;

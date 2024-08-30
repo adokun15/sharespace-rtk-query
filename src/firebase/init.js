@@ -17,12 +17,6 @@ async function setup_Auth_Emulator(auth) {
   connectAuthEmulator(auth, url);
 }
 
-async function setup_db_Emulator(db) {
-  const url = "http://127.0.0.1:8080";
-  await fetch(url);
-  connectFirestoreEmulator(db, url);
-}
-
 //Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 
@@ -32,6 +26,6 @@ setup_Auth_Emulator(auth);
 
 //Database
 export const db = getFirestore(app);
-setup_db_Emulator(db);
+connectFirestoreEmulator(db, "localhost", 8080);
 
 //db
