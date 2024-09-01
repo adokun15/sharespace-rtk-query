@@ -26,8 +26,8 @@ export default function Select({ items, cls, name }) {
     <>
       <input
         type="hidden"
-        name={currentSelectInfo?.inputName || null}
-        value={currentSelectInfo?.result?.value || null}
+        name={currentSelectInfo?.inputName || ""}
+        value={currentSelectInfo?.result?.value || ""}
       />
       <div
         onClick={triggerModal}

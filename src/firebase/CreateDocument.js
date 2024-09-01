@@ -4,12 +4,12 @@ import { DbError } from "../utils/ErrorHandlers";
 
 export const CreateDocumentWithAutoId = async (path, data) => {
   const ref = collection(db, path);
-
-  await addDoc(ref, data)
-    .then(() => "Creation Successful")
-    .catch((e) => {
-      throw new DbError(e?.code || e?.message || "Something went wrong");
-    });
+  try {
+    const newDoc = await addDoc(ref, data);
+    return newDoc?.id;
+  } catch (e) {
+    throw new DbError(e?.code || e?.message || "Something went wrong");
+  }
 };
 
 export const CreateDocumentWithUID = async (path, data, uid) => {

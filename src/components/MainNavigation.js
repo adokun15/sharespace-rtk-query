@@ -1,33 +1,38 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, NavLink } from "react-router-dom";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
 import Button from "../UI/Button";
+import { useIsLoggedInQuery } from "../store/Slices/user";
+import { motion } from "framer-motion";
+import RedirectLink from "../UI/RedirectLink";
 export default function MainNavigation({ updateModal, toAuth }) {
-  const [isLoggedIn] = useState(true);
-
+  const { data: isLoggedIn, isLoading } = useIsLoggedInQuery();
   return (
-    <nav className="flex px-6 py-5 font-sans_serif justify-between ">
+    <motion.nav className="flex px-6 py-5 sticky font-sans_serif justify-between ">
       <p className="text-3xl ">
         <Link to="/">ShareSpace</Link>
       </p>
-      {!isLoggedIn && (
+      {!isLoggedIn?.user && (
         <ul className="md:flex hidden gap-6 text-xl">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/guides">Guide</NavLink>
-          <NavLink to="/blogs">Blog</NavLink>
-          <NavLink to="/newsletter">Contact</NavLink>
-          <NavLink to="/">Supports</NavLink>
+          <RedirectLink path="/" linkName="Home" />
+          <RedirectLink path="/guides" linkName="Guide" />
+          <RedirectLink path="/blogs" linkName="Blog" />
+          <RedirectLink path="/contact" linkName="Contact" />
         </ul>
       )}
-      {isLoggedIn && (
-        <ul className="md:flex hidden gap-6 text-xl">
-          <NavLink to="/dashboard">Dashboard</NavLink>
-          <NavLink to="/dashboard/prefs">Edit Preference</NavLink>
-          <NavLink to="/dashboard/profile">View Profile</NavLink>
-          <NavLink to="/dashboard/roommates">Discuss Space .</NavLink>
-        </ul>
+      {isLoggedIn?.user && (
+        <>
+          <ul className="md:flex hidden gap-6 text-xl">
+            <NavLink to="/dashboard" className="py-1 px-2">
+              Dashboard
+            </NavLink>
+            <RedirectLink path="/dashboard/prefs" linkName="Your Preference" />
+            <RedirectLink path="/dashboard/profile" linkName="Profile" />
+            <RedirectLink path="/dashboard/roommates" linkName="Spaces" />
+          </ul>
+        </>
       )}
+
       <div className="font-roboto inline-flex items-center gap-5">
         <button
           onClick={updateModal}
@@ -36,13 +41,14 @@ export default function MainNavigation({ updateModal, toAuth }) {
           <FontAwesomeIcon icon={faBars} />
         </button>
         <Button
-          outline
-          onClick={toAuth}
-          className="md:block hidden bg-main_color py-2 px-5 text-white rounded"
+          loading={isLoading}
+          trigger={toAuth}
+          outline={true}
+          elclass="md:block hidden py-2 px-5 rounded"
         >
-          {!isLoggedIn ? "Get Started" : "Logout"}
+          {isLoggedIn?.user ? "Logout" : "Login"}
         </Button>
       </div>
-    </nav>
+    </motion.nav>
   );
 }

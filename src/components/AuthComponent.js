@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthorizeMutation } from "../store/Slices/user";
+import Button from "../UI/Button";
 
 export default function AuthenticationComponent() {
   //Signup / Login
 
-  const [mode, setAuthState] = useState("login");
+  const [mode, setAuthState] = useState("signup");
 
   const [enteredValue, setEnteredValue] = useState({ email: "", password: "" });
   const [isInputLoseFocus, setInputFocus] = useState({
@@ -130,9 +131,7 @@ export default function AuthenticationComponent() {
     }
   };
 
-  const [authorize, { isError, isLoading, error }] = useAuthorizeMutation({
-    fixedCacheKey: "new-user",
-  });
+  const [authorize, { isError, isLoading, error }] = useAuthorizeMutation();
 
   const navigate = useNavigate();
   const triggerSubmit = async () => {
@@ -145,19 +144,23 @@ export default function AuthenticationComponent() {
       .then((data) => {
         //Control Navigate
         if (!data) return;
-        navigate(`/auth/new-profile?user_id=${data}`);
+        if (data === "dashboard") {
+          navigate("/dashboard");
+        } else {
+          navigate(`/auth/new-profile?user_id=${data}`);
+        }
       })
-      .catch((e) => console.log(e?.message));
+      .catch((e) => console.error(e?.message));
   };
   return (
     <>
-      <h1 className="text-5xl">
+      <h1 className="md:text-5xl text-3xl">
         {mode === "login"
           ? "Login to your Account"
           : "Sign Up For a New Account"}
       </h1>
       <form method="post" className="*:block leading-9 *:my-4 my-5">
-        <p className="capitalize text-xl font-oswald text-red-600 ">
+        <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-red-600 ">
           {isError && error.message?.split("/")[1].split("-").join(" ")}
         </p>
         <label className="text-2xl">Email</label>
@@ -194,17 +197,17 @@ export default function AuthenticationComponent() {
         <p className="mb-3 italic font-[100] text-red-400">
           {passwordInputError}
         </p>
-        <button
+        <Button
           name="mode"
           type="button"
-          onClick={triggerSubmit}
-          className={`bg-purple-800 py-1 px-3 text-white rounded-xl hover:bg-purple-400 hover:text-black
-  transition-colors duration-500 ease-in-out focus:translate-y-1
+          elclass={` w-full py-1 px-3 text-white rounded-xl bg-purple-700
         ${(emailInputError || passwordInputError) && "disabled:bg-purple-400"}`}
           disabled={emailInputError || passwordInputError}
+          loading={isLoading}
+          trigger={triggerSubmit}
         >
-          {isLoading ? "loading" : "Submit"}
-        </button>
+          Submit
+        </Button>
         <article>
           {mode === "login" ? (
             <button
@@ -212,7 +215,7 @@ export default function AuthenticationComponent() {
               onClick={() => setAuthState("signup")}
               className="block m-auto hover:text-purple-500"
             >
-              Sign up for a new Account"
+              Dont have an account...Sign up!"
             </button>
           ) : (
             <button
@@ -220,7 +223,7 @@ export default function AuthenticationComponent() {
               onClick={() => setAuthState("login")}
               className="block m-auto hover:text-purple-500"
             >
-              Login into your Account
+              Already have an account...Login!
             </button>
           )}
         </article>

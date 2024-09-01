@@ -2,7 +2,7 @@ import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { DbError, UnAuthorizedError } from "../utils/ErrorHandlers";
 import { db } from "./init";
 
-export const RemoteADocumentArray = async (doc_id, path, updateDetail) => {
+export const RemoveADocumentArray = async (doc_id, path, updateDetail) => {
   // parentPath ---> field ---> []
   if (!doc_id) {
     throw new UnAuthorizedError("UnAuthorized Access!");
@@ -10,7 +10,7 @@ export const RemoteADocumentArray = async (doc_id, path, updateDetail) => {
 
   let newItem = {};
   //Updated value
-  newItem[updateDetail.key] = arrayRemove(updateDetail.newValue);
+  newItem[updateDetail.key] = arrayRemove(updateDetail.oldValue);
 
   const docRef = doc(db, path, doc_id);
   try {

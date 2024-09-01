@@ -31,7 +31,9 @@ export default function MatchesList({ list }) {
     <div className="bg-slate-50 shadow-inner">
       <header className="flex justify-between items-center px-4 py-5">
         <h1 className="font-oswald w-full text-3xl font-[600]">
-          {currentMatchSelected ? "@Dany" : "Potential Matches in 'Kwasu'"}
+          {currentMatchSelected
+            ? currentMatchSelected?.username
+            : "Potential Matches in 'Kwasu'"}
         </h1>
         <div className="inline-flex w-[27%] text-[16px] space-x-2 *:rounded-full">
           <div
@@ -97,7 +99,7 @@ export default function MatchesList({ list }) {
                   boxShadow:
                     "0 1px 3px 0 rgba(0,0,0,0.6), 0 1px 2px -1px rgba(0,0,0,0.4)",
                 }}
-                key={match.matchId}
+                key={match.uid}
                 className="flex gap-3 shadow-inner items-center"
               >
                 <div>
@@ -105,15 +107,16 @@ export default function MatchesList({ list }) {
                 </div>
                 <article className=" py-4 space-y-4">
                   <p className="capitalize text-2xl font-roboto font-bold">
-                    danny
+                    {match?.username}
                   </p>
-                  <p className="text-[13px]">Match Score : 70%</p>
-                  <p className="text-[13px]">Rent : 50% (100k)</p>
+                  <p className="text-[13px]">Match Score : {match?.score}%</p>
+                  <p className="text-[13px]">
+                    Rent : {match?.preference?.rent}k
+                  </p>
                   <Button
                     onClick={() => {
-                      setCurrentMatchSelected({
-                        id: match.matchId,
-                      });
+                      //console.log(match);
+                      setCurrentMatchSelected(match);
                     }}
                     elClass="text-[15px] w-fit rounded-full px-4"
                   >

@@ -1,52 +1,30 @@
-/*
+import { getMultipleMatches } from "../../firebase/GetMultipleDocuments";
+import { DbError } from "../../utils/ErrorHandlers";
+import { ScoresReport } from "../../utils/ScoresHandler";
 import { api } from "../api";
 const MatchLogicSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    createPreference: builder.mutation({
-      async queryFn() {
-        // Create Preference
-      },
-    }),
-    getPreference: builder.query({
-      async queryFn(uid) {
-        // get Preference
-      },
-    }),
-    updatePreference: builder.mutation({
-      async queryFn() {
-        // update Preference
-      },
-    }),
     findRoomateMatch: builder.query({
-      async queryFn(uid) {
-        // Get Users
+      async queryFn({ uid, formDetails }) {
+        try {
+          // Get Users
+          const matches = await getMultipleMatches(uid);
+          //Rate Users and sort User
+          const redefinedUsers = ScoresReport(formDetails, matches);
+          return { data: redefinedUsers };
+        } catch (e) {
+          throw new DbError(e?.message);
+        }
       },
-    }),
-    GetPotentialRoommate: builder.query({
-      async queryFn(id) {
-        // Get Users
-      },
+      providesTags: (results, error, arg) =>
+        results
+          ? [
+              ...results.map(({ data }) => [{ type: "match", id: data?.uid }]),
+              { type: "match", id: "MATCHLIST" },
+            ]
+          : [{ type: "match", id: "MATCHLIST" }],
     }),
   }),
 });
-*/
 
-/*import { createSlice } from "@reduxjs/toolkit";
-
-export const MatchUpSlice = createSlice({
-  initialState: {
-    matches: [],
-    selectedUser: {},
-    isLoading: null,
-    isError: null,
-  },
-  name: "matchup",
-
-  reducers: {
-    GetMatches() {},
-    GetSingleMatch() {},
-  },
-});
-
-export const MatchUpAction = MatchUpSlice.actions;
-*/
+export const { useFindRoomateMatchQuery } = MatchLogicSlice;

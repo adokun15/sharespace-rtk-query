@@ -1,11 +1,18 @@
+import { onAuthStateChanged } from "firebase/auth";
 import {
   CreateUser,
   LoginUser,
   LogoutUser,
 } from "../../firebase/Authentication";
+import {
+  DeleteADocument,
+  DeleteStoragePath,
+  DeleteUser,
+} from "../../firebase/DeleteDoc";
 import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
-import { DbError, UnAuthorizedError } from "../../utils/ErrorHandlers";
+import { DbError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
+import { auth } from "../../firebase/init";
 
 const UserSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,21 +42,54 @@ const UserSlice = api.injectEndpoints({
       invalidatesTags: ["user"],
     }),
     deleteAccount: builder.mutation({
-      async queryFn() {},
-    }),
-
-    isLoggedIn: builder.query({
-      async queryFn() {
-        const data = localStorage.getItem("user");
-        //gets profile, preference and user
-        if (!data) {
-          throw new UnAuthorizedError("Not authenticated yet");
+      async queryFn(user) {
+        try {
+          //delete user
+          await DeleteUser(user);
+          // delete storage: profile
+          await DeleteStoragePath(`users/${user.uid}`);
+          //delete db
+          await DeleteADocument(`users/${user?.uid}`);
+        } catch (e) {
+          throw new DbError(e?.message);
         }
-        return `${JSON.parse(data)}`;
+        //do this in the function handler: deleteManually....
+        //opt out of spaces: include
+        //delete space
       },
     }),
 
-    photoUpload: builder.mutation({}),
+    isLoggedIn: builder.query({
+      queryFn() {
+        return { data: { user: {} } };
+      },
+
+      async onCacheEntryAdded(
+        args,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
+        await cacheDataLoaded;
+
+        //monitor local changes in firestore
+        const unsub = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            updateCachedData((draft) => {
+              draft.user = {
+                uid: user?.uid,
+                email: user?.email,
+              };
+            });
+          } else {
+            updateCachedData((draft) => {
+              draft.user = {};
+            });
+          }
+        });
+
+        await cacheEntryRemoved;
+        unsub();
+      },
+    }),
 
     username: builder.mutation({
       async queryFn({ id, name }) {
@@ -68,4 +108,5 @@ const UserSlice = api.injectEndpoints({
   }),
 });
 
-export const { useAuthorizeMutation, useUsernameMutation } = UserSlice;
+export const { useAuthorizeMutation, useUsernameMutation, useIsLoggedInQuery } =
+  UserSlice;

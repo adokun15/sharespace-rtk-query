@@ -26,7 +26,19 @@ const ProfileSlice = api.injectEndpoints({
       //get user preference
       async queryFn(id) {
         //Get Preference
-        await getDocument(id);
+        try {
+          const data = await getDocument(id);
+          return {
+            data: {
+              ...data?.profile,
+              username: data?.username,
+              photourl: data?.photourl,
+              email: data?.email,
+            },
+          };
+        } catch (e) {
+          throw new DbError(e?.message);
+        }
       },
       transformResponse: (res) => res?.preference,
       providesTags: (result, error, id) => [{ type: "profile", id }],

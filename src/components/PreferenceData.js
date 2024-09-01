@@ -1,17 +1,40 @@
 import { useState } from "react";
 import Card from "../UI/Card";
 import { ToggleButton } from "../UI/ToggleButton";
+import { useGetPreferenceQuery } from "../store/Slices/Preference";
+import Button from "../UI/Button";
+import { cookie_id } from "../utils/authHandler";
 
 export default function PreferenceData() {
   const [btnIsOn, setBtnToggle] = useState(false);
-
-  //useEffect(()=>{
-
-  //})
+  const {
+    data: prefs,
+    isLoading,
+    refetch,
+    error,
+    isError,
+  } = useGetPreferenceQuery(cookie_id);
 
   const alterToggleButton = () => {
     setBtnToggle((prevState) => !prevState);
   };
+
+  if (isLoading) {
+    return <p>Loading....</p>;
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <p>{error?.message}</p>
+        <Button onClick={refetch} outline={true}>
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+  console.log(prefs);
+
   return (
     <Card>
       <h1 className="text-3xl text-center my-4">Your Personal Preference</h1>
@@ -20,37 +43,33 @@ export default function PreferenceData() {
         <ToggleButton state={btnIsOn} toggleFunc={alterToggleButton} />
       </div>
       <div className="divide-y *:py-3 divide-purple-400 ">
-        {/* <p className="text-2xl">
-          School: <span>(KWARA STATE UNIVERSITY)</span>
-  </p >
-        <p className="text-2xl">
-          Age : <span>(18 years Old)</span>
-        </p>
-        */}
         <p className="text-2xl">
           Roommate History:
           <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
-            1 more | No roommate(s) yet
+            {/* 1 more | No roommate(s) yet*/}
+            {prefs?.roommate}
           </span>
         </p>
         <p className="text-2xl">
-          MaxRent:{" "}
-          <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">100k</span>
+          Rent :{" "}
+          <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
+            {prefs?.rent}
+          </span>
         </p>
         <p className="text-2xl">
-          Religion: <span>(Christainity)</span>
+          Religion: <span>{prefs?.religion}</span>
         </p>
         <p className="text-2xl">
-          Level: <span>(200 LEVEL)</span>
+          Level: <span>{prefs?.level}</span>
         </p>
         <p className="text-2xl">
-          Your Location: <span>(SAFARI)</span>
+          Your Location: <span>{prefs?.location}</span>
         </p>
         <p className="text-2xl">
-          Your Habit / Hobbies: <span>(COOKING, BASKETBALL, CODING)</span>
+          Your Habit / Hobbies: <span>{prefs?.habit}</span>
         </p>
         <p className="text-2xl">
-          Department: <span>(Computer Science)</span>
+          Department: <span>{prefs?.department}</span>
         </p>
       </div>
     </Card>

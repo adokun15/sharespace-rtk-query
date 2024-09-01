@@ -9,10 +9,36 @@ import { ModalAction } from "../../store/Slices/modal";
 import Modal from "../../UI/Modal";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useGetProfileQuery } from "../../store/Slices/ProfileSlice";
+import { cookie_id } from "../../utils/authHandler";
 export default function ProfilePage() {
   //  const user = useSelector((state) => state.user);
   const { EditProfilePopOver } = useSelector((state) => state.modal.modal);
   const dispatch = useDispatch();
+  const {
+    data: profile,
+    isLoading,
+    refetch,
+    error,
+    isError,
+  } = useGetProfileQuery(cookie_id);
+
+  if (isLoading) {
+    return <p>Loading....</p>;
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <p>{error?.message}</p>
+        <Button onClick={refetch} outline={true}>
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+  console.log(profile);
+
   return (
     <motion.div>
       <Container elClass="text-main_color">
@@ -20,28 +46,30 @@ export default function ProfilePage() {
         <Card elClass="hover:-translate-y-1 transition-all duration-700 ease-in-out">
           <article className="px-[10%] md:flex *:block my-4 items-center">
             <div className=" max-w-[40%] flex justify-center">
-              <Image imgSrc={ProfilePicDemo} />
+              <Image
+                imgSrc={profile?.photourl ? profile?.photourl : ProfilePicDemo}
+              />
             </div>
             <div className="space-y-1 w-full py-2 ">
               <p className="text-4xl ml-3  col-span-3">Daniel Amos</p>
               <p className="text-xl italic my-4 ml-3 text-slate-400 col-span-3">
-                @Daniel_Amos
+                @{profile?.username}
               </p>
               <div className="flex flex-wrap items-center">
                 <p className="cursor-pointer  w-fit p-2 rounded ml-3 bg-slate-200  text-[15px] hover:bg-purple-500/90 hover:text-white transition-all">
-                  MALE
+                  {profile?.gender}
                 </p>
 
                 <p className="w-fit p-1 rounded ml-3 bg-slate-200  text-[15px] hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                  18.
+                  {profile?.dob}
                 </p>
               </div>
 
               <p className=" w-fit p-1 my-1 rounded ml-3  bg-slate-200  text-[15px]  hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                amos@gmail.com
+                {profile?.email}
               </p>
               <p className=" w-fit text-nowrap  p-1 rounded ml-3 bg-slate-200  text-[15px]  hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                Kwara State University{" "}
+                {profile?.school}
               </p>
             </div>
           </article>

@@ -18,9 +18,16 @@ export async function LogoutUser() {
 
 export async function CreateUser({ email, password }) {
   try {
+    //Create a user Entity
     const res = await createUserWithEmailAndPassword(auth, email, password);
-
-    localStorage.setItem("user", res.user.uid);
+    //Create a user Database
+    await CreateDocumentWithUID(
+      "users",
+      {
+        email: res?.user?.email,
+      },
+      res.user?.uid
+    );
     return res.user.uid;
   } catch (e) {
     throw new Error(
@@ -31,9 +38,8 @@ export async function CreateUser({ email, password }) {
 
 export async function LoginUser({ email, password }) {
   try {
-    const res = await signInWithEmailAndPassword(auth, email, password);
-    localStorage.setItem("user", res.user.uid);
-    return res.user.uid;
+    await signInWithEmailAndPassword(auth, email, password);
+    return "dashboard";
   } catch (e) {
     throw new Error(
       e?.code || e?.message || "Unable to login. An error occured!"

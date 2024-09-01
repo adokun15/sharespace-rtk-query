@@ -48,23 +48,29 @@ export default function ModalSelect({ cls, backdropCls, inputName }) {
             <input
               name={"--"}
               type="radio"
-              value={null}
+              value={"--"}
               className="mr-3"
-              checked
+              defaultChecked={true}
             />
             --
           </label>
         )}
         {items.items.map((item) => (
-          <label className="text-xl block" id={item.value} htmlFor={item.value}>
+          <label
+            key={item.value}
+            className="text-xl block"
+            id={item.value}
+            htmlFor={item.value}
+          >
             <input
               name={item.name}
               type="radio"
-              value={item.value}
+              value={item.value || ""}
               className="mr-3"
               onClick={() =>
                 handleChange(item.value, item.name, items.inputName)
               }
+              onChange={() => {}}
               checked={item.value === currentlySelected.value}
             />
             {item.name}

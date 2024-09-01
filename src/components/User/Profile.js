@@ -8,10 +8,9 @@ import Input from "../../UI/Input";
 
 import EditProfilePic from "./PhotoUpload.js";
 import Select from "../../UI/Select.js";
-import UpdateEmail from "./UpdateEmail.js";
 import EditUserName from "./Username.js";
 import { useEditProfileMutation } from "../../store/Slices/ProfileSlice.js";
-function CreateProfileDetail({ mode, save, cancel }) {
+function CreateProfileDetail({ mode, cancel }) {
   const ref = useRef();
   const [params] = useSearchParams();
 
@@ -39,6 +38,7 @@ function CreateProfileDetail({ mode, save, cancel }) {
       .unwrap()
       .then((data) => {
         if (!data) return;
+
         navigate(`/auth/new-preferences?user_id=${userProfile?.user_id}`);
       })
       .catch((e) => console.log(e?.message));
@@ -126,12 +126,6 @@ export default function ProfileUpdate({ mode }) {
           >
             Profile Picture
           </Button>
-          <Button
-            outline={editDetail !== "email"}
-            onClick={() => setEditDetail("email")}
-          >
-            Email Address
-          </Button>
         </article>
       )}
       <>
@@ -144,9 +138,6 @@ export default function ProfileUpdate({ mode }) {
         {/* Components for Edits/Update Of profile only */}
         {editDetail === "photo" && mode === "edit" && (
           <EditProfilePic cancel={closeModal} mode={mode} />
-        )}
-        {editDetail === "email" && mode === "edit" && (
-          <UpdateEmail cancel={closeModal} mode={mode} />
         )}
         {editDetail === "username" && mode === "edit" && (
           <EditUserName cancel={closeModal} mode={mode} />
