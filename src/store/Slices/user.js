@@ -4,11 +4,6 @@ import {
   LoginUser,
   LogoutUser,
 } from "../../firebase/Authentication";
-import {
-  DeleteADocument,
-  DeleteStoragePath,
-  DeleteUser,
-} from "../../firebase/DeleteDoc";
 import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
 import { DbError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
@@ -34,6 +29,7 @@ const UserSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
+      invalidatesTags: () => ["user"],
     }),
     logout: builder.mutation({
       async queryFn() {
@@ -41,29 +37,13 @@ const UserSlice = api.injectEndpoints({
       },
       invalidatesTags: ["user"],
     }),
-    deleteAccount: builder.mutation({
-      async queryFn(user) {
-        try {
-          //delete user
-          await DeleteUser(user);
-          // delete storage: profile
-          await DeleteStoragePath(`users/${user.uid}`);
-          //delete db
-          await DeleteADocument(`users/${user?.uid}`);
-        } catch (e) {
-          throw new DbError(e?.message);
-        }
-        //do this in the function handler: deleteManually....
-        //opt out of spaces: include
-        //delete space
-      },
-    }),
 
     isLoggedIn: builder.query({
       queryFn() {
         return { data: { user: {} } };
       },
 
+      providesTags: () => ["user"],
       async onCacheEntryAdded(
         args,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
@@ -103,7 +83,9 @@ const UserSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: (result, error, arg) => [{ type: "user", id: arg.id }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "profile", id: arg.id },
+      ],
     }),
   }),
 });

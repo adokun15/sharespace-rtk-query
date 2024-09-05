@@ -1,35 +1,100 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGetNoticesQuery } from "../store/Slices/Space";
-import { cookie_id } from "../utils/authHandler";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import Button from "../UI/Button";
+import { Link } from "react-router-dom";
 
-export const NoticeList = () => {
-  const { data, isError, error, isLoading } = useGetNoticesQuery(cookie_id);
+export const NoticeList = ({ id }) => {
+  const { data, isFetching, isError, error, refetch, isLoading } =
+    useGetNoticesQuery(id);
 
-  if (isLoading) {
-    return <p>loading...</p>;
+  if (isLoading || isFetching) {
+    return (
+      <p className="mt-[10vh] text-center text-2xl">
+        <FontAwesomeIcon
+          className="  animate-spin text-purple-500"
+          icon={faSpinner}
+        />
+      </p>
+    );
   }
 
   if (isError) {
-    return <p>{error?.message}</p>;
+    return (
+      <>
+        <p className="text-center text-3xl text-red-600">{error?.message}</p>
+        <Button elclass="block m-auto my-3" trigger={refetch} outline={true}>
+          Try Again
+        </Button>
+      </>
+    );
   }
 
   if (!data || data.length === 0) {
-    return <p>No Notifications yet</p>;
+    return <p className="my-5 text-center">No Notifications yet</p>;
   }
 
   return (
-    <div>
+    <div className="h-[20vh] mt-1 overflow-y-scroll rounded transition-all mb-4 py-3 space-y-2 ">
       {data.map((notification) => (
-        <div>
+        <div className=" bg-slate-100 list-none py-4 px-1 rounded pl-3">
           {notification?.type === "invites" && (
-            <li>
-              you have an invite from {notification.from} to become their
-              roommate.
+            <li className="capitalize">
+              <p className="text-pretty">
+                you have an invite from {notification.from.username} to become
+                their roommate.{" "}
+                <Link
+                  to="roommates"
+                  className="text-purple-500 underline-offset-1"
+                >
+                  View space
+                </Link>
+              </p>
+              <p className="text-end mr-[2vw] text-[12px]">
+                {notification.timeSent}
+              </p>
             </li>
           )}
           {notification?.type === "reply" && (
-            <li>
-              {notification.from} {notification.response} to become their
-              roommate.
+            <li className="capitalize">
+              <p className="text-pretty">
+                {notification?.from} has {notification.response} to become their
+                roommate.
+              </p>
+              <p className="text-end mr-[2vw] text-[12px]">
+                {notification.timeSent}
+              </p>
+            </li>
+          )}
+          {notification?.type === "left_space" && (
+            <li className="capitalize">
+              <p className="text-pretty">
+                {notification.from} has Leave the space.
+              </p>
+              <p className="text-end mr-[2vw] text-[12px]">
+                {notification.timeSent}
+              </p>
+            </li>
+          )}
+          {notification?.type === "sent_off" && (
+            <li className="capitalize">
+              <p className="text-pretty">
+                {notification.from} has delete Chat Space!.
+              </p>
+              <p className="text-end mr-[2vw] text-[12px]">
+                {notification.timeSent}
+              </p>
+            </li>
+          )}
+          {notification?.type === "request" && (
+            <li className="capitalize">
+              <p className="text-pretty">
+                Request has been sent to {notification.to.username}. Awaiting
+                their response.
+              </p>
+              <p className="text-end mr-[2vw] text-[12px]">
+                {notification.timeSent}
+              </p>
             </li>
           )}
         </div>

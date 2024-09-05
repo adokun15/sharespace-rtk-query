@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useDispatch } from "react-redux";
 import { ModalAction } from "../../store/Slices/modal";
@@ -10,9 +10,15 @@ import EditProfilePic from "./PhotoUpload.js";
 import Select from "../../UI/Select.js";
 import EditUserName from "./Username.js";
 import { useEditProfileMutation } from "../../store/Slices/ProfileSlice.js";
+import { isProfileInputInvalid } from "../../utils/Validator.js";
+import { handleDashedString } from "../../utils/TimeHandler.js";
+import { useIsLoggedInQuery } from "../../store/Slices/user.js";
 function CreateProfileDetail({ mode, cancel }) {
   const ref = useRef();
-  const [params] = useSearchParams();
+
+  const { data } = useIsLoggedInQuery();
+  const [formError, setFormError] = useState("");
+  const dispatch = useDispatch();
 
   const [createProfile, { isLoading, error, isError }] =
     useEditProfileMutation();
@@ -20,7 +26,7 @@ function CreateProfileDetail({ mode, cancel }) {
 
   const triggerSubmit = async () => {
     let userProfile = {};
-    userProfile.user_id = params.get("user_id");
+    userProfile.user_id = data.user?.uid;
     //Collect credential
 
     const formdata = new FormData(ref.current);
@@ -28,9 +34,51 @@ function CreateProfileDetail({ mode, cancel }) {
     for (const [key, value] of formdata.entries()) {
       userProfile[key] = value;
     }
-    console.log(userProfile);
-    if (!userProfile?.user_id) return;
 
+    if (userProfile.fullname === "") {
+      setFormError("Full Name space is empty!");
+      return;
+    }
+
+    if (userProfile.fullname?.length <= 3) {
+      setFormError("Length of Name is small");
+      return;
+    }
+
+    const inputInValid = isProfileInputInvalid(userProfile);
+
+    if (inputInValid) {
+      setFormError(inputInValid);
+      return;
+    }
+
+    if (!userProfile.dob) {
+      setFormError("Date of Birth space is empty!");
+      return;
+    }
+
+    userProfile.dob = handleDashedString(userProfile?.dob);
+
+    let ageLimit = new Date();
+    let user_dob = new Date(userProfile?.dob);
+    const user_limit_year = ageLimit.getFullYear() - 16;
+    const user_limit_month = ageLimit.getMonth() + 1;
+    const user_limit_date = ageLimit.getDate();
+
+    const ageLimitInMilli = new Date(
+      user_limit_year,
+      user_limit_month,
+      user_limit_date
+    ); //millisecond
+
+    if (user_dob.getTime() > ageLimitInMilli.getTime()) {
+      setFormError("You must be atleast 16 years!");
+      return;
+    } else {
+      setFormError("");
+    }
+
+    if (!userProfile?.user_id) return;
     await createProfile({
       updateItemValue: userProfile,
       id: userProfile?.user_id,
@@ -38,10 +86,11 @@ function CreateProfileDetail({ mode, cancel }) {
       .unwrap()
       .then((data) => {
         if (!data) return;
-
-        navigate(`/auth/new-preferences?user_id=${userProfile?.user_id}`);
+        dispatch(ModalAction.clearSelect());
+        navigate(`/auth/new-preferences`);
       })
       .catch((e) => console.log(e?.message));
+    //console.log(userProfile);
   };
 
   return (
@@ -53,6 +102,9 @@ function CreateProfileDetail({ mode, cancel }) {
       <p className="capitalize text-xl font-oswald text-red-600 ">
         {isError && error?.message}
       </p>
+      <p className="capitalize text-xl font-oswald text-red-600 ">
+        {!isError && formError ? formError : ""}
+      </p>
       <label>
         <p>Full Name</p>
         <Input name="fullname" placeholder="Enter FullName" />
@@ -62,9 +114,9 @@ function CreateProfileDetail({ mode, cancel }) {
         <Select
           name="gender"
           items={[
-            { value: "male", name: "Male" },
-            { value: "female", name: "Female" },
-            { value: "other", name: "Others" },
+            { value: "Male", name: "Male" },
+            { value: "Female", name: "Female" },
+            { value: "Other", name: "Others" },
           ]}
         />
       </label>
@@ -77,15 +129,18 @@ function CreateProfileDetail({ mode, cancel }) {
         <Select
           name="school"
           items={[
-            { value: "kwasu", name: "Kwara State University" },
-            { value: "ui", name: "University of Ibadan" },
-            { value: "unilorin", name: "University of Ilorin" },
+            { value: "Kwara State University", name: "Kwara State University" },
           ]}
         />
       </label>
       <div className="flex space-x-4">
-        <Button type="button" onClick={triggerSubmit} value={mode}>
-          {isLoading ? "..." : "submit"}
+        <Button
+          type="button"
+          loading={isLoading}
+          trigger={triggerSubmit}
+          value={mode}
+        >
+          submit
         </Button>
       </div>
     </form>
@@ -98,6 +153,7 @@ export default function ProfileUpdate({ mode }) {
   const dispatch = useDispatch();
   const [editDetail, setEditDetail] = useState("username");
 
+  const location = useLocation();
   const closeModal = () => {
     dispatch(
       ModalAction.toggleEditProfilePopOver({
@@ -112,17 +168,17 @@ export default function ProfileUpdate({ mode }) {
         {mode || "User"} Profile
       </h1>
 
-      {mode === "edit" && (
+      {(mode === "Edit" || location.pathname === "/dashboard/profile") && (
         <article className="flex *:rounded text-[16px] *:p-1 my-3 space-x-2">
           <Button
             outline={editDetail !== "username"}
-            onClick={() => setEditDetail("username")}
+            trigger={() => setEditDetail("username")}
           >
             Profile Detail
           </Button>
           <Button
             outline={editDetail !== "photo"}
-            onClick={() => setEditDetail("photo")}
+            trigger={() => setEditDetail("photo")}
           >
             Profile Picture
           </Button>
@@ -133,7 +189,6 @@ export default function ProfileUpdate({ mode }) {
         {(!editDetail || mode.toLowerCase() === "create") && (
           <CreateProfileDetail cancel={closeModal} />
         )}
-        {/* Component for Creation Of profile only */}
 
         {/* Components for Edits/Update Of profile only */}
         {editDetail === "photo" && mode === "edit" && (

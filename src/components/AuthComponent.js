@@ -147,7 +147,7 @@ export default function AuthenticationComponent() {
         if (data === "dashboard") {
           navigate("/dashboard");
         } else {
-          navigate(`/auth/new-profile?user_id=${data}`);
+          navigate(`/auth/new-profile`);
         }
       })
       .catch((e) => console.error(e?.message));
@@ -200,7 +200,7 @@ export default function AuthenticationComponent() {
         <Button
           name="mode"
           type="button"
-          elclass={` w-full py-1 px-3 text-white rounded-xl bg-purple-700
+          elclass={` w-full py-1 px-3 text-white rounded-xl bg-purple-600
         ${(emailInputError || passwordInputError) && "disabled:bg-purple-400"}`}
           disabled={emailInputError || passwordInputError}
           loading={isLoading}

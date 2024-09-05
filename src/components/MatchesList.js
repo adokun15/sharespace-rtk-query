@@ -10,6 +10,7 @@ import RoommateDetail from "./RoommateDetail";
 
 //List of MATCHES
 export default function MatchesList({ list }) {
+  console.log(list);
   const [currentMatchSelected, setCurrentMatchSelected] = useState(null);
 
   const [selectedSorted, setSelectedSort] = useState("Sort");
@@ -30,12 +31,12 @@ export default function MatchesList({ list }) {
   return (
     <div className="bg-slate-50 shadow-inner">
       <header className="flex justify-between items-center px-4 py-5">
-        <h1 className="font-oswald w-full text-3xl font-[600]">
+        <h1 className="font-oswald w-full md:text-3xl text-xl font-[600]">
           {currentMatchSelected
             ? currentMatchSelected?.username
-            : "Potential Matches in 'Kwasu'"}
+            : "Potential Matched Roommates"}
         </h1>
-        <div className="inline-flex w-[27%] text-[16px] space-x-2 *:rounded-full">
+        <div className="flex w-[27%] text-[16px] space-x-2 *:rounded-full">
           <div
             className={`relative inline-block ${
               isSortOpened && "grow"
@@ -43,7 +44,7 @@ export default function MatchesList({ list }) {
           >
             <Button
               disabled={currentMatchSelected}
-              onClick={toggleSortOption}
+              trigger={toggleSortOption}
               elClass={` ${currentMatchSelected && "opacity-50 bg-purple-200"}`}
             >
               <span>
@@ -82,39 +83,36 @@ export default function MatchesList({ list }) {
             )}
           </div>
           <Button
-            outline
+            outline={true}
             type="button"
-            onClick={() => dispatch(ModalAction.toggleFindRoommatePopover())}
+            trigger={() => dispatch(ModalAction.toggleFindRoommatePopover())}
           >
             Close
           </Button>
         </div>
       </header>
       {!currentMatchSelected && (
-        <ul className="*:shadow-purple-200 grid px-[3%] grid-cols-3 gap-5">
+        <ul className="*:shadow-purple-200 py-5  grid px-[3%] grid-cols-3 gap-5">
           {list &&
             list?.map((match) => (
               <div
-                style={{
-                  boxShadow:
-                    "0 1px 3px 0 rgba(0,0,0,0.6), 0 1px 2px -1px rgba(0,0,0,0.4)",
-                }}
                 key={match.uid}
-                className="flex gap-3 shadow-inner items-center"
+                className="flex flex-wrap gap-3 shadow px-4 min-w-[20vw] rounded bg-slate-200 shadow-slate-100 items-center"
               >
                 <div>
-                  <Image imgSrc={userProfile} />
+                  <Image h={100} w={100} imgSrc={match?.photourl} />
                 </div>
-                <article className=" py-4 space-y-4">
-                  <p className="capitalize text-2xl font-roboto font-bold">
+                <article className=" py-4 space-y-1 ">
+                  <p className="capitalize text-3xl font-roboto font-bold">
                     {match?.username}
                   </p>
-                  <p className="text-[13px]">Match Score : {match?.score}%</p>
-                  <p className="text-[13px]">
-                    Rent : {match?.preference?.rent}k
+                  <p className="text-[14px]">Match Score : {match?.score}%</p>
+                  <p className="text-[14px]">
+                    Level : {match?.preference?.level}
                   </p>
                   <Button
-                    onClick={() => {
+                    elclass="rounded-xl text-[20px] w-full"
+                    trigger={() => {
                       //console.log(match);
                       setCurrentMatchSelected(match);
                     }}

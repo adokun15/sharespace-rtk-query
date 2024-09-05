@@ -12,8 +12,8 @@ export const ModalSlice = createSlice({
       HomeNavigationPopOver: false,
       FindRoommatePopOver: false,
       SingleChatPopOver: false,
-      EditPreferencePopOver: { isOpened: false, mode: null },
-      EditProfilePopOver: { isOpened: false, mode: null },
+      EditPreferencePopOver: { isOpened: false, mode: null, prev: null },
+      EditProfilePopOver: { isOpened: false, mode: null, prev: null },
     },
     isLoading: null,
     isError: null,
@@ -77,14 +77,16 @@ export const ModalSlice = createSlice({
       // EditPreferencePopOver
       state.modal.EditPreferencePopOver.isOpened =
         !state.modal.EditPreferencePopOver.isOpened;
-      state.modal.EditPreferencePopOver.mode = action.payload.mode;
+      state.modal.EditPreferencePopOver.mode = action.payload?.mode || null;
+      state.modal.EditPreferencePopOver.prev = action.payload?.prev || null;
     },
     toggleEditProfilePopOver(state, action) {
       //Toggle visibility
       state.modal.EditProfilePopOver.isOpened =
         !state.modal.EditProfilePopOver.isOpened;
       //Provide modal
-      state.modal.EditProfilePopOver.mode = action.payload.mode;
+      state.modal.EditProfilePopOver.mode = action.payload?.mode || undefined;
+      state.modal.EditProfilePopOver.prev = action.payload?.prev || undefined;
     },
   },
 });

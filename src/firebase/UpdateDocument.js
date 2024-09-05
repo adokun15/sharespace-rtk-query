@@ -4,6 +4,8 @@ import { db } from "./init";
 
 export const RemoveADocumentArray = async (doc_id, path, updateDetail) => {
   // parentPath ---> field ---> []
+  console.log(doc_id);
+  console.log(updateDetail);
   if (!doc_id) {
     throw new UnAuthorizedError("UnAuthorized Access!");
   }

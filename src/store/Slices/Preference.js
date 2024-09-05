@@ -12,7 +12,7 @@ const PreferenceSlice = api.injectEndpoints({
         //Get Preference
         try {
           const data = await getDocument(id);
-          return { data: data?.preference };
+          return { data: { ...data?.preference, isAvail: data?.isAvailable } };
         } catch (e) {
           throw new DbError(e?.message);
         }
@@ -36,8 +36,29 @@ const PreferenceSlice = api.injectEndpoints({
         { type: "preference", id: arg.doc_id },
       ],
     }),
+
+    toggleAvailability: builder.mutation({
+      async queryFn({ uid, prevState }) {
+        try {
+          await UpdateADocumentObject(uid, "users", {
+            key: "isAvailable",
+            newValue: !prevState,
+          });
+          return { data: "done" };
+        } catch (e) {
+          throw new DbError(e?.message);
+        }
+      },
+      invalidatesTags: (result, error, arg) => [
+        { type: "preference", id: arg.uid },
+      ],
+    }),
   }),
 });
 
-export const { useEditPreferenceMutation, useGetPreferenceQuery } =
-  PreferenceSlice;
+export const {
+  useToggleAvailabilityMutation,
+
+  useEditPreferenceMutation,
+  useGetPreferenceQuery,
+} = PreferenceSlice;

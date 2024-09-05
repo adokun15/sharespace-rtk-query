@@ -88,11 +88,17 @@ export default function MatchForm({ onHandleSubmit }) {
   };
   return (
     <>
-      <h1 className="text-2xl mb-5 ">Search your for your Roommate</h1>
+      <h1
+        className="text-center font-sans_serif bg-purple-400 px-3 py-1 rounded-full w-fit 
+      m-auto mt-5 text-white
+      text-2xl mb-5 "
+      >
+        Search Roommate
+      </h1>
       <Card>
         <form
           ref={ref}
-          className="space-y-4 *:text-xl my-4 *:block block  font-oswald"
+          className="space-y-4 *:text-xl my-4 *:block block font-oswald"
         >
           <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-red-600 ">
             {formError}
@@ -156,7 +162,7 @@ export default function MatchForm({ onHandleSubmit }) {
             />
           </label>
           <label>
-            Habits | Hobbies (Seperate by ","):
+            Habits | Hobbies (Seperate by whitespace):
             <Input
               onChange={habitHandler}
               value={habitsEntriesString}

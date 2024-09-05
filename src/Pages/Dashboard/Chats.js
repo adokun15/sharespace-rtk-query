@@ -1,25 +1,13 @@
 import ChatList from "../../components/ChatList";
 import SearchChats from "../../components/SearchChats";
 import { useGetSpaceListQuery } from "../../store/Slices/Space";
+import { useIsLoggedInQuery } from "../../store/Slices/user";
 import Container from "../../UI/Container";
-import { cookie_id } from "../../utils/authHandler";
-/*const Matches = [
-  {
-    id: 1,
-    name: "SIDD",
-  },
-  {
-    id: 3,
-    name: "DORO",
-  },
-  {
-    id: 43,
-    name: "dADDF",
-  },
-];*/
 export default function ChatsPage() {
-  const { data, isError, error, isLoading } = useGetSpaceListQuery(cookie_id);
-
+  const { data: currentUser } = useIsLoggedInQuery();
+  const { data, isError, error, isLoading } = useGetSpaceListQuery(
+    currentUser?.user.uid
+  );
   if (isLoading) {
     return <p>loading...</p>;
   }
@@ -29,20 +17,21 @@ export default function ChatsPage() {
   }
 
   if (!data || data.length === 0) {
-    return <p>No Space added yet!</p>;
+    return (
+      <p className="text-3xl font-roboto font-[800] text-center my-6">
+        No Space added yet!
+      </p>
+    );
   }
 
-  console.log(data);
   return (
     <Container elClass="my-2">
-      <header className="flex justify-between px-6 items-center space-x-5">
+      <header className=" px-6 ">
         <h1 className="text-4xl  text-center my-8"> Space </h1>
-        <SearchChats />
       </header>
       <p className="text-center italic my-2">
-        Discuss Spaces are automatically deleted after 10 days.
+        Message are automatically cleared after (3) days
       </p>
-
       <ChatList chats={data} />
     </Container>
   );

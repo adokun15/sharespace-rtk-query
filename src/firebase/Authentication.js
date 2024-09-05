@@ -25,6 +25,19 @@ export async function CreateUser({ email, password }) {
       "users",
       {
         email: res?.user?.email,
+        photourl: "",
+        spaces: [],
+        profile: {},
+        preference: {},
+        username: null,
+        isAvailable: true,
+      },
+      res.user?.uid
+    );
+    await CreateDocumentWithUID(
+      "notices",
+      {
+        notifications: [],
       },
       res.user?.uid
     );

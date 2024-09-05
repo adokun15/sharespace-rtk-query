@@ -5,8 +5,11 @@ import Button from "../UI/Button";
 import ModalFullView from "../UI/ModalFullView";
 import MatchesList from "./MatchesList";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { ModalAction } from "../store/Slices/modal";
 
 export default function RoommatesMatch({ user_preferred_roommate }) {
+  const dispathch = useDispatch();
   //Get Cached User
   const { data, isError: userError } = useIsLoggedInQuery();
 
@@ -22,14 +25,14 @@ export default function RoommatesMatch({ user_preferred_roommate }) {
       uid: data?.user?.uid,
       formDetails: user_preferred_roommate,
     },
-    { skips: !data?.user || userError }
+    { skip: !data?.user || userError }
   );
 
   if (isLoading) {
     return (
       <ModalFullView>
-        <p className="mt-[10vh] animate-spin text-2xl">
-          <FontAwesomeIcon icao={faSpinner} />
+        <p className="mt-[10vh] text-center animate-spin text-2xl">
+          <FontAwesomeIcon icon={faSpinner} />
         </p>
       </ModalFullView>
     );
@@ -38,14 +41,31 @@ export default function RoommatesMatch({ user_preferred_roommate }) {
   if (isError) {
     return (
       <ModalFullView>
-        <p>{error?.message}</p>
-        <Button onClick={refetch} outline={true}>
+        <p className="text-center text-red-600">{error?.message}</p>
+        <Button trigger={refetch} outline={true}>
           Try Again
         </Button>
       </ModalFullView>
     );
   }
-
+  if (!matches || matches?.length === 0) {
+    return (
+      <ModalFullView cls="top-[20vh]">
+        <p className="text-center text-2xl text-main_color font-[700]">
+          Sadly, there is no match for your request!
+        </p>
+        <Button
+          elclass="mx-auto block my-6"
+          trigger={() => {
+            dispathch(ModalAction.toggleFindRoommatePopover());
+          }}
+          outline={true}
+        >
+          Close
+        </Button>
+      </ModalFullView>
+    );
+  }
   return (
     <ModalFullView>
       <MatchesList list={matches} />

@@ -1,10 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootPage from "./Pages/RootPage";
 import ErrorElement from "./Pages/Error";
-import BlogPage from "./Pages/Blog/BlogPage";
 import LandingPage from "./Pages/landingPage";
-import GuidePage from "./Pages/Guide/GuidePage";
-import NewsLetterPage from "./Pages/NewsLetter/NewsLetterPage";
 import AuthenticationPage from "./Pages/Auth/Auth";
 import ProfilePage from "./Pages/Dashboard/Profile";
 import PreferencePage from "./Pages/Dashboard/Preferences";
@@ -16,6 +13,7 @@ import ProfileUpdate from "./components/User/Profile";
 import UserPreferenceData from "./components/User/Preference";
 import EditUserName from "./components/User/Username";
 import ProfilePic from "./components/User/PhotoUpload";
+import { DashboardError } from "./Pages/Error/Dashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -25,9 +23,6 @@ function App() {
       errorElement: <ErrorElement />,
       children: [
         { index: true, element: <LandingPage /> },
-        { path: "/blogs", element: <BlogPage /> },
-        { path: "/guides", element: <GuidePage /> },
-        { path: "/newsletter", element: <NewsLetterPage /> },
         {
           path: "/auth",
           element: <AuthenticationPage />,
@@ -56,6 +51,7 @@ function App() {
         },
         {
           path: "/dashboard",
+          errorElement: <DashboardError />,
           children: [
             { index: true, element: <FindRoommatePage /> },
             {

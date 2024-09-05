@@ -1,6 +1,8 @@
 export const ScoresReport = function (userReq, users = []) {
   const others = [...users];
   //if(match is on || score is zero, remove user)
+
+  console.log(others, userReq);
   others.forEach(function (roommate, index) {
     //Correct only: Adjust others
     if (roommate?.preference.level === userReq?.level) {

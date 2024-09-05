@@ -1,89 +1,165 @@
 import Image from "../UI/Image";
-import ProfilePicDemo from "../image/202330014270ff.jpg";
 import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
-import { cookie_id } from "../utils/authHandler";
-import { useSpaceResponseMutation } from "../store/Slices/Space";
+import {
+  useDeleteSpaceManuallyMutation,
+  useSpaceResponseMutation,
+} from "../store/Slices/Space";
+import { useIsLoggedInQuery } from "../store/Slices/user";
+import { useGetProfileQuery } from "../store/Slices/ProfileSlice";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function ChatList({ chats }) {
+const Invites = () => {};
+const Requests = () => {};
+
+function SingleChat({ chat }) {
+  const [responseToRequest, { isLoading }] = useSpaceResponseMutation({
+    fixedCacheKey: "spaces-key",
+  });
+
+  const [deleteSpace, { isError, data: deletio, isLoading: DELETION, error }] =
+    useDeleteSpaceManuallyMutation();
   const router = useNavigate();
+  const { data: user } = useIsLoggedInQuery();
 
-  //Invalidate : spaces
-  const [responseToRequest, { data, error, isLoading }] =
-    useSpaceResponseMutation();
+  const { data: profile } = useGetProfileQuery(user.user.uid, {
+    skip: !user.user.uid,
+  });
 
-  const AwaitingResponse = async (roommateId, response) => {
+  const Setroommate = {
+    uid: chat?.author,
+    user: {
+      name: chat?.author_name,
+      photourl: chat?.author_photo,
+      email: chat?.author_email,
+    },
+    timeSent: chat?.timeSent,
+  };
+  const userDetails = {
+    photourl: profile?.photourl,
+    email: profile?.email,
+    uid: user.user.uid,
+    username: profile?.username,
+  };
+
+  const AwaitingResponse = async (response) => {
     await responseToRequest({
-      uid: cookie_id,
-      author_id: roommateId,
+      currentUserDetail: userDetails,
+      requestDetail: Setroommate,
       response,
     })
       .unwrap()
       .catch((e) => console.log(e?.message));
   };
+  //load spavr
+  const spaceObj = {
+    author_id: chat?.author,
+    author_name: chat?.author_name,
+    author_photo: chat?.author_photo,
+    spaceId: chat?.spaceId,
+    viewed: "accepted",
+  };
 
-  console.log(data);
-  console.log(error);
-  console.log(isLoading);
+  const leaveSession = async () => {
+    await deleteSpace({
+      user: userDetails,
+      spaceObj,
+    })
+      .unwrap()
+      .catch((e) => console.log(e?.message));
+  };
   return (
-    <ul className=" divide-y-2 overflow-y-scroll h-[70vh]">
-      {chats &&
-        chats.length >= 1 &&
-        chats?.map((chat, i) => (
-          <div className=" flex gap-3" key={chat.chatId}>
-            <div className="mx-3 relative ">
-              <Image imgSrc={ProfilePicDemo} />
-              {i % 2 !== 0 && <Image imgSrc={ProfilePicDemo} />}
-            </div>
+    <div className=" flex items-center gap-3">
+      <div className="mx-3 relative ">
+        <Image h={90} w={90} imgSrc={chat?.roommate.user?.photourl} />
+      </div>
 
-            <div className="py-4 space-y-6">
-              <p className="text-4xl">
-                {chat?.author ? chat?.author : chat?.roommate}{" "}
+      <div className="py-4 space-y-2">
+        <p className="text-xl font-[800] font-roboto capitalize">
+          {chat?.roommate.user.name
+            ? chat?.roommate.user?.name
+            : "Id could not be Found!"}{" "}
+        </p>
+        <>
+          {chat?.viewed === "accepted" && (
+            <article className="flex gap-3 box-border py-4">
+              <Button
+                trigger={leaveSession}
+                elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full"
+              >
+                Leave Session
+              </Button>
+
+              <Button
+                trigger={() =>
+                  chat?.spaceId ? router(`${chat?.spaceId}`) : null
+                }
+                elClass="w-full rounded-full focus:scale-75 transition-all"
+              >
+                View Space
+              </Button>
+            </article>
+          )}
+          <>
+            {isLoading && (
+              <p className="mt-[1vh] text-center animate-spin text-2xl">
+                <FontAwesomeIcon icon={faSpinner} />
               </p>
-              <p>Last Time Opened: 1hr ago</p>
-              <>
-                {chat?.viewed === "accepted" && (
-                  <article className="flex gap-3 box-border py-4">
-                    <Button elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full">
-                      Leave Session
-                    </Button>
+            )}
+            {!chat?.viewed && !isLoading && (
+              <article className="flex gap-3 box-border py-4">
+                <Button
+                  trigger={async () => {
+                    await AwaitingResponse("declined");
+                  }}
+                  elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full"
+                >
+                  Decline
+                </Button>
 
-                    <Button
-                      onClick={() =>
-                        chat?.spaceId ? router(`${chat?.spaceId}`) : null
-                      }
-                      elClass="w-full rounded-full focus:scale-75 transition-all"
-                    >
-                      View Space
-                    </Button>
-                  </article>
-                )}
+                <Button
+                  trigger={async () => {
+                    await AwaitingResponse("accepted");
+                  }}
+                  elClass="w-full rounded-full focus:scale-75 transition-all"
+                >
+                  Accept
+                </Button>
+              </article>
+            )}
+          </>
+        </>
+      </div>
+    </div>
+  );
+}
 
-                {!chat?.viewed && (
-                  <article className="flex gap-3 box-border py-4">
-                    <Button
-                      onClick={async () => {
-                        await AwaitingResponse(chat?.author, "declined");
-                      }}
-                      elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full"
-                    >
-                      Decline
-                    </Button>
+export default function ChatList({ chats }) {
+  // eslint-disable-next-line no-unused-vars
+  const [noUse, { data, isError, error }] = useSpaceResponseMutation({
+    fixedCacheKey: "spaces-key",
+  });
 
-                    <Button
-                      onClick={async () => {
-                        await AwaitingResponse(chat?.author, "accepted");
-                      }}
-                      elClass="w-full rounded-full focus:scale-75 transition-all"
-                    >
-                      Accept
-                    </Button>
-                  </article>
-                )}
-              </>
-            </div>
-          </div>
-        ))}
-    </ul>
+  console.log(chats);
+  /*
+requestDetail: user: {email, img, name}, uid, timeSent
+currentDetail: uid, user
+ */
+
+  return (
+    <>
+      <p className="text-3xl text-center my-10 text-main_color">
+        {data && data}
+      </p>
+      <p className="text-center my-4 text-red-600">
+        {isError && error.message}
+      </p>
+      <ul className=" divide-y-2 overflow-y-scroll h-[70vh]">
+        {chats &&
+          chats.length >= 1 &&
+          chats?.map((chat) => <SingleChat chat={chat} />)}
+      </ul>
+    </>
   );
 }

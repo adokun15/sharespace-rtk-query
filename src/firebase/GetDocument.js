@@ -18,7 +18,7 @@ export const getDocument = async (id, path = "users") => {
     if (docData.exists()) {
       return { ...docData.data(), id: docData.id };
     } else {
-      throw new NotFoundError("Not Found!");
+      throw new NotFoundError("Resource not found!");
     }
   } catch (e) {
     console.log(e);
