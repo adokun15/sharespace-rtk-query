@@ -24,6 +24,7 @@ function CreateProfileDetail({ mode, cancel }) {
     useEditProfileMutation();
   const navigate = useNavigate();
 
+  console.log(data);
   const triggerSubmit = async () => {
     let userProfile = {};
     userProfile.user_id = data.user?.uid;

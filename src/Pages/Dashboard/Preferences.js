@@ -10,7 +10,10 @@ export default function PreferencePage() {
   return (
     <>
       <Container>
-        <h1 className="text-4xl text-center my-8">Edit Your Preference Data</h1>
+        <h1 className="text-4xl text-center my-8 md:hidden block">
+          {" "}
+          Preferences
+        </h1>
         <PreferenceData />
       </Container>
       {EditPreferencePopOver.isOpened && (

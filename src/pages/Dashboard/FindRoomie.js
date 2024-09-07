@@ -4,6 +4,7 @@ import RoommatesMatch from "../../components/RoommateMatches";
 import { useSelector } from "react-redux";
 import Button from "../../UI/Button";
 import {
+  faBell,
   faChevronDown,
   faChevronUp,
   faSpinner,
@@ -16,7 +17,8 @@ import { useIsLoggedInQuery } from "../../store/Slices/user";
 export default function FindRoommatePage() {
   const [formInfo, setInfo] = useState(null);
 
-  const { data, isLoading } = useIsLoggedInQuery();
+  const { data, error, isFetching, isError, refetch, isLoading } =
+    useIsLoggedInQuery();
 
   const { FindRoommatePopOver: isOpened } = useSelector(
     (state) => state.modal.modal
@@ -28,15 +30,39 @@ export default function FindRoommatePage() {
 
   const [isNoticeOpen, toggleNotification] = useState(false);
 
+  if (isFetching || isLoading) {
+    return <p className=" text-center my-8 text-xl">loading...</p>;
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <p className="text-center text-3xl font-[700] my-5">
+          {error?.message || "Something went Wrong"}
+        </p>
+
+        <Button
+          trigger={refetch}
+          outline={true}
+          elclass="mx-auto cursor-pointer block my-5"
+        >
+          Try again
+        </Button>
+      </div>
+    );
+  }
   return (
     <>
       <Container>
-        <h1 className="text-4xl text-center my-8"> Dashboard</h1>
+        <h1 className="text-4xl text-center block md:hidden my-8">
+          {" "}
+          Dashboard
+        </h1>
         {!isLoading && (
           <div>
-            <article className=" my-3 flex items-center justify-between px-3 py-1 bg-slate-100 rounded ">
-              <p className="py-4 text-2xl font-[800] rounded text-purple-600 ">
-                {isNoticeOpen ? "Hide" : "Show"} Notifications
+            <article className=" my-3 flex items-center justify-between px-3 py-1 mx-auto bg-slate-100 rounded ">
+              <p className="py-1 text-xl font-[400] rounded text-purple-600 ">
+                <FontAwesomeIcon icon={faBell} />
               </p>
               <Button
                 elclass=" bg-slate-100  w-fit h-fit"

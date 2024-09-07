@@ -1,14 +1,12 @@
 import { CreateDocumentWithAutoId } from "../../firebase/CreateDocument";
 import { getDocument } from "../../firebase/GetDocument";
-import { UploadImageHelper } from "../../firebase/Storage";
 import {
   RemoveADocumentArray,
   UpdateADocumentArray,
-  UpdateADocumentObject,
 } from "../../firebase/UpdateDocument";
 import { DbError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
-import { DeleteADocument, DeleteStoragePath } from "../../firebase/DeleteDoc";
+import { DeleteADocument } from "../../firebase/DeleteDoc";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/init";
 
@@ -29,6 +27,7 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
+      providesTag: (result) => ["spaces"],
     }),
 
     //Temporarily clear notice
@@ -64,12 +63,14 @@ const UserSpaceSlice = api.injectEndpoints({
     spaceRequest: builder.mutation({
       //sender
       async queryFn({ user, roommate }) {
-        //alert roommate
+        /*   uid,username,photourl,email,*/
+
+        //alert external user:
         try {
           await UpdateADocumentArray(roommate.uid, "users", {
             key: "spaces",
             newValue: {
-              author: user?.uid,
+              author_id: user?.uid,
               author_name: user?.username || null,
               author_photo: user?.photourl || null,
               author_email: user?.email || null,
@@ -84,17 +85,18 @@ const UserSpaceSlice = api.injectEndpoints({
             key: "notifications",
             newValue: {
               type: "invites",
-              from: user,
-              seen: false,
+              from: user.username,
+              //seen: false,
               timeSent: new Date().toISOString(),
             },
           });
+
           //notice for YOU
           await UpdateADocumentArray(user?.uid, "notices", {
             key: "notifications",
             newValue: {
               type: "request",
-              to: roommate,
+              to: roommate.username,
               seen: false,
               timeSent: new Date().toISOString(),
             },
@@ -105,7 +107,7 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: (result) => [{}],
+      invalidatesTags: (result) => [{ type: "match" }],
     }),
 
     spaceResponse: builder.mutation({
@@ -116,11 +118,11 @@ const UserSpaceSlice = api.injectEndpoints({
           //Find request space: filter(remove);
           let oldRequest = {
             author: requestDetail?.uid,
-            author_name: requestDetail?.user?.name,
-            author_photo: requestDetail?.user?.photourl,
+            author_name: requestDetail?.username,
+            author_photo: requestDetail?.photourl,
             spaceId: null,
             viewed: false,
-            timeSent: requestDetail?.timeSent,
+            timeSent: requestDetail?.dateReceived,
           };
 
           //filter out;
@@ -138,30 +140,36 @@ const UserSpaceSlice = api.injectEndpoints({
                 messages: [],
               });
 
-              //update users space list;
+              //update your new space list;
               await UpdateADocumentArray(currentUserDetail?.uid, "users", {
                 key: "spaces",
                 newValue: {
-                  author: requestDetail?.uid,
-                  author_name: requestDetail?.user?.name,
-                  author_photo: requestDetail?.user?.photourl,
+                  uid: requestDetail?.uid,
+                  username: requestDetail?.username,
+                  photourl: requestDetail?.photourl,
+                  email: requestDetail?.email,
                   spaceId: space,
                   viewed: "accepted",
+                  timeSent: new Date().toISOString(),
                 },
               });
 
-              //update space list for initial  user
+              //update roomate space list for initial  user
               await UpdateADocumentArray(requestDetail?.uid, "users", {
                 key: "spaces",
                 newValue: {
-                  roommate: requestDetail,
+                  uid: currentUserDetail?.uid,
+                  username: currentUserDetail?.username,
+                  photourl: currentUserDetail?.photourl,
+                  email: currentUserDetail?.email,
                   spaceId: space,
                   viewed: "accepted",
+                  timeSent: new Date().toISOString(),
                 },
               });
 
               //add notice: for other user
-              await UpdateADocumentObject(requestDetail?.uid, "notices", {
+              await UpdateADocumentArray(requestDetail?.uid, "notices", {
                 key: "notifications",
                 newValue: {
                   type: "reply",
@@ -171,14 +179,15 @@ const UserSpaceSlice = api.injectEndpoints({
                 },
               });
               return {
-                data: "Acceptance Received!. A New Space for chatting has been created!",
+                data: "Response sent!",
               };
             case "declined":
               //add notice: for other user
-              await UpdateADocumentObject(requestDetail?.uid, "notices", {
+              await UpdateADocumentArray(requestDetail?.uid, "notices", {
                 key: "notifications",
                 newValue: {
                   type: "reply",
+                  timeSent: new Date().toISOString(),
                   from: currentUserDetail?.username,
                   response: "declined",
                 },
@@ -193,6 +202,7 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
+      invalidatesTags: (result) => ["spaces"],
     }),
     /* Space CHAT */
 
@@ -229,6 +239,7 @@ const UserSpaceSlice = api.injectEndpoints({
         await cacheEntryRemoved;
         unsub();
       },
+      providesTags: (result) => ["space"],
     }),
 
     //send update to  space db
@@ -251,6 +262,7 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
+      invalidatesTags: (result) => ["space"],
     }),
 
     //Auto-clear messages: 72 hours
@@ -299,29 +311,29 @@ const UserSpaceSlice = api.injectEndpoints({
 */
     //delete-space message
     deleteSpaceManually: builder.mutation({
-      async queryFn({ user, spaceObj }) {
-        console.log(user);
-        console.log(spaceObj);
+      async queryFn({ user, RoommateSpaceObj }) {
         try {
+          //Get both user Space
+          const space = await getDocument(RoommateSpaceObj.spaceId, "space"); //author, users, messages
+
           //Remove space from list
           await RemoveADocumentArray(user?.uid, "users", {
             key: "spaces",
-            oldValue: { ...spaceObj },
+            oldValue: { ...RoommateSpaceObj },
           });
 
-          /* if (user?.uid === spaceObj?.author_id) {
+          //check if you are the "author" -- initially sends the request
+          if (user?.uid === space.author) {
             //delete doc
-            const path = `space/${spaceObj?.spaceId}`;
-
+            const path = `space/${space?.spaceId}`;
             //delete from db
             await DeleteADocument(path);
+
             //delete from storage
-            await DeleteStoragePath(path);
+            //await DeleteStoragePath(path);
+
             //notice other user if deleted space
-            const otherRoommate = spaceObj?.users?.filter(
-              (roommate) => roommate.uid !== user?.uid
-            );
-            await UpdateADocumentArray(otherRoommate?.uid, "users", {
+            await UpdateADocumentArray(RoommateSpaceObj?.uid, "users", {
               key: "notifications",
               newValue: {
                 type: "sent_off",
@@ -331,9 +343,9 @@ const UserSpaceSlice = api.injectEndpoints({
               },
             });
           }
-          if (user?.uid !== spaceObj?.author_id) {
+          if (user?.uid !== space?.author) {
             //notice other user you left
-            await UpdateADocumentArray(spaceObj?.author_id, "users", {
+            await UpdateADocumentArray(RoommateSpaceObj?.author_id, "users", {
               key: "notifications",
               newValue: {
                 type: "left_space",
@@ -342,7 +354,7 @@ const UserSpaceSlice = api.injectEndpoints({
                 timeSent: new Date().toISOString(),
               },
             });
-          }*/
+          }
         } catch (e) {
           throw new DbError(e?.message);
         }

@@ -21,7 +21,9 @@ export const getDocument = async (id, path = "users") => {
       throw new NotFoundError("Resource not found!");
     }
   } catch (e) {
-    console.log(e);
+    if (e.code === "unavailable") {
+      throw new DbError("Slow Internet Connection!");
+    }
     throw new DbError(e?.code || e?.message || "Something went wrong");
   }
 };

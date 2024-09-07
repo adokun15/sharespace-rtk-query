@@ -8,6 +8,7 @@ import ProfileUpdate from "../../components/User/Profile";
 import { ModalAction } from "../../store/Slices/modal";
 import Modal from "../../UI/Modal";
 
+import { ageHandler } from "../../utils/TimeHandler";
 import { AnimatePresence, motion } from "framer-motion";
 import { useGetProfileQuery } from "../../store/Slices/ProfileSlice";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
@@ -19,6 +20,8 @@ export default function ProfilePage() {
     data: user,
     isLoading: userLoading,
     isFetching: userFetching,
+    isError: userError,
+    refetch: userRefetch,
   } = useIsLoggedInQuery();
   const { EditProfilePopOver } = useSelector((state) => state.modal.modal);
   const dispatch = useDispatch();
@@ -40,11 +43,27 @@ export default function ProfilePage() {
     );
   }
 
+  if (userError) {
+    return (
+      <div>
+        <p className="text-center text-2xl font-[700] my-5">
+          Something went Wrong
+        </p>
+        <Button
+          trigger={userRefetch}
+          outline={true}
+          elclass="my-1 mx-auto block"
+        >
+          Reload Page
+        </Button>
+      </div>
+    );
+  }
   if (isError) {
     return (
-      <div className="m-auto w-[70%]">
-        <p>{error?.message}</p>
-        <Button trigger={refetch} outline={true}>
+      <div>
+        <p className="text-center text-2xl font-[700] my-5">{error?.message}</p>
+        <Button trigger={refetch} outline={true} elclass="my-1 mx-auto block">
           Try Again
         </Button>
       </div>
@@ -76,7 +95,7 @@ export default function ProfilePage() {
                   </p>
 
                   <p className="w-fit p-1 rounded ml-3 bg-slate-200  text-[15px] hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                    {profile?.dob}
+                    {ageHandler(profile?.dob)} years old
                   </p>
                 </div>
 

@@ -34,7 +34,7 @@ export default function ModalSelect({ cls, backdropCls, inputName }) {
 
   const handleChange = (val, name, Iname) => {
     setItem({ value: val, name });
-    setTimeout(() => SelectOne(val, name, Iname), 50);
+    SelectOne(val, name, Iname);
   };
 
   return createPortal(

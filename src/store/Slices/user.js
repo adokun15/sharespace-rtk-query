@@ -29,11 +29,17 @@ const UserSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: () => ["user"],
+      invalidatesTags: (result, error, arg) =>
+        arg?.mode === "login" ? [{ type: "user", id: result }] : ["profile"],
     }),
     logout: builder.mutation({
       async queryFn() {
-        await LogoutUser();
+        try {
+          await LogoutUser();
+          return { data: "logged_out" };
+        } catch (e) {
+          throw new DbError(e?.message);
+        }
       },
       invalidatesTags: ["user"],
     }),
@@ -43,7 +49,7 @@ const UserSlice = api.injectEndpoints({
         return { data: { user: {} } };
       },
 
-      providesTags: () => ["user"],
+      providesTags: (result) => [{ type: "user", id: result?.user?.uid }],
       async onCacheEntryAdded(
         args,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
@@ -90,5 +96,9 @@ const UserSlice = api.injectEndpoints({
   }),
 });
 
-export const { useAuthorizeMutation, useUsernameMutation, useIsLoggedInQuery } =
-  UserSlice;
+export const {
+  useLogoutMutation,
+  useAuthorizeMutation,
+  useUsernameMutation,
+  useIsLoggedInQuery,
+} = UserSlice;

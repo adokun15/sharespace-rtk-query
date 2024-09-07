@@ -163,14 +163,14 @@ export default function AuthenticationComponent() {
         <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-red-600 ">
           {isError && error.message?.split("/")[1].split("-").join(" ")}
         </p>
-        <label className="text-2xl">Email</label>
+        <label className="text-2xl ">Email</label>
         <input
           required
           onBlur={handleEmailOnBlur}
           name="email"
           type="email"
           onChange={handleEmailOnChange}
-          className={`bg-purple-200 focus:bg-purple-300 py-2 px-3 caret-purple-800 outline-purple-600 rounded w-full
+          className={`tracking-wide bg-purple-200 font-roboto focus:bg-purple-300 py-2 px-3 caret-purple-800 outline-purple-600 rounded w-full
           ${
             emailInputError &&
             "shadow-red-400 focus:shadow outline-red-600 focus:bg-red-300 bg-red-200"
@@ -183,6 +183,7 @@ export default function AuthenticationComponent() {
         <label className="text-2xl">Password</label>
         <input
           name="password"
+          required
           onBlur={handlePasswordOnBlur}
           type="password"
           onChange={handlePasswordOnChange}

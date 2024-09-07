@@ -10,7 +10,6 @@ import { useIsLoggedInQuery } from "../store/Slices/user";
 import { useGetProfileQuery } from "../store/Slices/ProfileSlice";
 export default function RoommateDetail({ detail, onClose }) {
   const { data: currentUser, isLoading: idLoading } = useIsLoggedInQuery();
-  //  const [discussSpaceOpen, setDiscussSpaceOpen] = useState(false);
   const { data: currentUserDb, isLoading: userLoading } = useGetProfileQuery(
     currentUser.user?.uid
   );
@@ -18,6 +17,7 @@ export default function RoommateDetail({ detail, onClose }) {
   const [createSpace, { data, isLoading, error, isError }] =
     useSpaceRequestMutation();
 
+  //external user
   const RoommateInfo = {
     uid: detail?.profile.user_id,
     username: detail.username,
@@ -25,6 +25,7 @@ export default function RoommateDetail({ detail, onClose }) {
     email: detail.email,
   };
 
+  //Current User
   const userDetails = {
     uid: currentUserDb?.user_id,
     username: currentUserDb?.username,

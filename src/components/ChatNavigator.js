@@ -1,17 +1,18 @@
 import ProfileTest from "../image/202330014270ff.jpg";
-import { faArrowLeft, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import Image from "../UI/Image";
-import Button from "../UI/Button";
-import { useEffect, useState } from "react";
-import {
+//import Button from "../UI/Button";
+//import { useEffect, useState } from "react";
+/*import {
   useDeleteSpaceManuallyMutation,
   useSendmediaMutation,
 } from "../store/Slices/Space";
+*/
 
 export default function ChatNavigator({ user, spaceId, space }) {
-  const [isListOpened, setListOpen] = useState(false);
+  /*  const [isListOpened, setListOpen] = useState(false);
 
   const [file, setFile] = useState(null);
   const [sendMedia] = useSendmediaMutation();
@@ -35,7 +36,7 @@ export default function ChatNavigator({ user, spaceId, space }) {
   const handleLeaveSession = async () => {
     await leaveSession({ file, space }).catch((e) => console.log(e?.message));
   };
-
+*/
   return (
     <nav className="py-2 my-1 relative flex justify-between">
       <div className="inline-flex w-1/2 items-center space-x-3">
@@ -48,17 +49,18 @@ export default function ChatNavigator({ user, spaceId, space }) {
         </div>
       </div>
 
-      <div
-        className={`relative  ${
-          isListOpened && "grow"
-        } inline-block transition-all space-y-2 `}
+      {/*
+
+<div
+className={`relative  ${
+  isListOpened && "grow"
+} inline-block transition-all space-y-2 `}
       >
         <Button onClick={() => setListOpen((p) => !p)}>
           <span>
             <FontAwesomeIcon icon={faBars} />
           </span>
         </Button>
-        {/*List */}
         {isListOpened && (
           <ul className="absolute right-0 w-[50%] z-10  origin-top-right  bg-white shadow">
             <li className="cursor-pointer hover:bg-purple-300 px-1 py-2 ">
@@ -73,7 +75,9 @@ export default function ChatNavigator({ user, spaceId, space }) {
             </button>
           </ul>
         )}
-      </div>
+
+        </div>
+*/}
     </nav>
   );
 }

@@ -6,16 +6,14 @@ import { auth } from "./init";
 import { CreateDocumentWithUID } from "./CreateDocument";
 
 export async function LogoutUser() {
-  await auth
-    .signOut()
-    .then(() => {
-      localStorage.removeItem("user");
-    })
-    .catch(() => {
-      throw new Error("An Error Occured");
-    });
+  try {
+    await auth.signOut();
+  } catch (e) {
+    throw new Error(
+      e?.code || e?.message || "Unable to logout. An error occured!"
+    );
+  }
 }
-
 export async function CreateUser({ email, password }) {
   try {
     //Create a user Entity

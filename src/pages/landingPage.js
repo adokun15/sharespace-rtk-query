@@ -5,7 +5,10 @@ import someImage3 from "../image/undraw/undraw_Secure_server_re_8wsq.png";
 import someImage4 from "../image/undraw/undraw_Active_support_re_b7sj.png";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const navigateHandler = () => navigate("/auth");
   return (
     <main className="box-content ">
       <section className="bg-purple-300 rounded-t-2xl min-h-[80vh] md:px-[10vw] px-[4vw] py-[10vh]">
@@ -20,17 +23,15 @@ export default function LandingPage() {
           </p>
           <p>living experience</p>
         </article>
-        <div className="flex justify-center gap-10">
-          <button className="block px-8 ring-offset-1 ring-main_color ring-2 rounded py-4 text-2xl bg-main_color text-white">
-            Explore Testimonials
-          </button>
-          <button className="block px-8 ring-offset-1 ring-main_color ring-2 rounded py-4 text-2xl bg-main_color text-white">
-            Get Started
-          </button>
-        </div>
+        <button
+          onClick={navigateHandler}
+          className="block px-4 m-auto rounded-full w-[50vw] ring-offset-1 ring-main_color ring-2 py-4 text-xl bg-main_color text-white"
+        >
+          Get Started
+        </button>
       </section>
-      <section className="min-h-[80vh] p-[10vh] ">
-        <header className="text-main_color text-center text-[48px] font-[700] ">
+      <section className="min-h-[80vh] md:p-[10vh] py-[4vh]">
+        <header className="text-main_color text-center md:text-[48px] text-[36px] font-[700] ">
           How It Work
         </header>
         <article className="my-[10vh] text-main_color">
@@ -113,11 +114,11 @@ export default function LandingPage() {
           </div>
         </article>
       </section>
-      <section className="min-h-[80vh] bg-purple-200 rounded-t-2xl p-10">
-        <header className="text-main_color text-center text-[48px] py-10 font-[900] ">
+      <section className="min-h-[80vh] bg-purple-200 rounded-t-2xl md:p-10 p-4">
+        <header className="text-main_color text-center md:text-[48px] text-[36px] font-[700] ">
           Pricing
         </header>
-        <article className="text-main_color my-10 md:grid lg:grid-cols-3 md:grid-cols-2 gap-4  ">
+        <article className="text-main_color space-y-3 my-10 md:grid lg:grid-cols-3 md:grid-cols-2 gap-4  ">
           <div className="bg-white mx-auto rounded my-2 md:my-0 shadow w-full p-5">
             <h2 className="text-3xl py-3 font-[800] ">Basic Match Service</h2>
             <p className="my-2 text-xl">Free</p>
@@ -138,7 +139,10 @@ export default function LandingPage() {
                 <span className="ml-4">Limited Support</span>
               </li>
             </ul>
-            <button className="block m-auto px-8 rounded py-2 w-[90%]  mt-4 text-xl bg-main_color text-white">
+            <button
+              onClick={navigateHandler}
+              className="block m-auto px-8 rounded py-2 w-[90%]  mt-4 text-xl bg-main_color text-white"
+            >
               Get Now
             </button>
           </div>
@@ -196,7 +200,7 @@ export default function LandingPage() {
         </article>
       </section>
       <section className="min-h-[80vh] my-3">
-        <header className="text-main_color text-center text-[48px] py-10 font-[900] ">
+        <header className="text-main_color text-center md:text-[48px] text-[36px] py-10 font-[900] ">
           Frequently Asked Questions
         </header>
         <div className="md:w-[65%] space-y-3 w-[80%] m-auto">
@@ -223,25 +227,21 @@ export default function LandingPage() {
           </article>
         </div>
       </section>
-      <section className="min-h-[50vh] p-10 tracking-normal leading-[3.4rem] bg-purple-200">
+      <section className="min-h-[50vh] p-4 md:p-10 tracking-normal leading-[3.4rem] bg-purple-200">
         <div>
-          <h2 className="text-[48px] text-main_color text-center md:mx-[20vh] mx-2  my-4">
+          <h2 className="md:text-[48px] text-[36px] text-main_color text-center md:mx-[20vh] mx-2  my-4">
             Find your perfect roommate today with ShareSpace. Sign Up now and
             start your journey towards harmanious living
           </h2>
 
-          <form className="*:my-10">
-            <input
-              placeholder="Enter email address"
-              className="px-5  md:w-1/2 w-full m-auto rounded text-main_color 
-          block py-3 text-2xl outline-0 ring-offset-2 ring-4  ring-main_color shadow"
-            />
-            <button className="block m-auto px-8 rounded py-2 md:w-[20%] w-[85$]  mt-4 text-xl bg-main_color text-white">
-              Get Started
-            </button>
-          </form>
+          <button
+            onClick={navigateHandler}
+            className="block px-4 m-auto rounded-full w-[50vw] ring-offset-1 ring-main_color ring-2 py-4 text-xl bg-main_color text-white"
+          >
+            Get Started
+          </button>
         </div>
-        <div className="bg-white md:w-[50%] m-auto p-8 rounded-2xl shadow my-[10vh]">
+        <div className="bg-white md:w-[50%] m-auto p-8 leading-[2.6rem] rounded-2xl shadow my-[10vh]">
           <h5 className="mb-10 text-2xl ">Dear Students,</h5>
 
           <p className="mb-5">

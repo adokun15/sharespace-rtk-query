@@ -13,13 +13,19 @@ import { useToggleAvailabilityMutation } from "../store/Slices/Preference";
 export default function PreferenceData() {
   const dispatch = useDispatch();
 
-  const { data: user, isLoading: userLoading } = useIsLoggedInQuery();
+  const {
+    data: user,
+    isLoading: userLoading,
+    isError: userError,
+    isFetching: userFetching,
+  } = useIsLoggedInQuery();
 
   const {
     data: prefs,
     isLoading,
     refetch,
     error,
+    isFetching,
     isError,
   } = useGetPreferenceQuery(user?.user?.uid, { skip: !user?.user?.uid });
 
@@ -40,7 +46,7 @@ export default function PreferenceData() {
       .unwrap()
       .catch((e) => console.error(e.message));
   };
-  if (isLoading || userLoading) {
+  if (isLoading || userLoading || isFetching || userFetching) {
     return (
       <p className="mt-[10vh] text-center text-2xl">
         <FontAwesomeIcon
@@ -50,12 +56,14 @@ export default function PreferenceData() {
       </p>
     );
   }
-  console.log(prefs);
-  if (isError) {
+
+  if (isError || userError || !user?.user?.uid) {
     return (
       <div>
-        <p>{error?.message}</p>
-        <Button trigger={refetch} outline={true}>
+        <p className="text-center text-2xl font-[700] my-5">
+          {error?.message || "Something went Wrong"}
+        </p>
+        <Button trigger={refetch} outline={true} elclass="my-1 mx-auto block">
           Try Again
         </Button>
       </div>

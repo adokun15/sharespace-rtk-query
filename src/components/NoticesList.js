@@ -3,6 +3,7 @@ import { useGetNoticesQuery } from "../store/Slices/Space";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Button from "../UI/Button";
 import { Link } from "react-router-dom";
+import { NoticeDate } from "../utils/TimeHandler";
 
 export const NoticeList = ({ id }) => {
   const { data, isFetching, isError, error, refetch, isLoading } =
@@ -22,7 +23,7 @@ export const NoticeList = ({ id }) => {
   if (isError) {
     return (
       <>
-        <p className="text-center text-3xl text-red-600">{error?.message}</p>
+        <p className="text-center text-xl text-red-600">{error?.message}</p>
         <Button elclass="block m-auto my-3" trigger={refetch} outline={true}>
           Try Again
         </Button>
@@ -41,17 +42,17 @@ export const NoticeList = ({ id }) => {
           {notification?.type === "invites" && (
             <li className="capitalize">
               <p className="text-pretty">
-                you have an invite from {notification.from.username} to become
-                their roommate.{" "}
+                you have an invite from {notification.from} to become their
+                roommate.{" "}
                 <Link
                   to="roommates"
                   className="text-purple-500 underline-offset-1"
                 >
-                  View space
+                  View spaces
                 </Link>
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
-                {notification.timeSent}
+                {NoticeDate(notification.timeSent)}
               </p>
             </li>
           )}
@@ -62,7 +63,7 @@ export const NoticeList = ({ id }) => {
                 roommate.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
-                {notification.timeSent}
+                {NoticeDate(notification.timeSent)}
               </p>
             </li>
           )}
@@ -72,7 +73,7 @@ export const NoticeList = ({ id }) => {
                 {notification.from} has Leave the space.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
-                {notification.timeSent}
+                {NoticeDate(notification.timeSent)}
               </p>
             </li>
           )}
@@ -82,7 +83,7 @@ export const NoticeList = ({ id }) => {
                 {notification.from} has delete Chat Space!.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
-                {notification.timeSent}
+                {NoticeDate(notification.timeSent)}
               </p>
             </li>
           )}
@@ -93,7 +94,7 @@ export const NoticeList = ({ id }) => {
                 their response.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
-                {notification.timeSent}
+                {NoticeDate(notification.timeSent)}
               </p>
             </li>
           )}

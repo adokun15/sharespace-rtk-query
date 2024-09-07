@@ -17,6 +17,7 @@ export default function RoommatesMatch({ user_preferred_roommate }) {
   const {
     data: matches,
     isLoading,
+    isFetching,
     refetch,
     error,
     isError,
@@ -28,7 +29,7 @@ export default function RoommatesMatch({ user_preferred_roommate }) {
     { skip: !data?.user || userError }
   );
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <ModalFullView>
         <p className="mt-[10vh] text-center animate-spin text-2xl">
@@ -42,7 +43,7 @@ export default function RoommatesMatch({ user_preferred_roommate }) {
     return (
       <ModalFullView>
         <p className="text-center text-red-600">{error?.message}</p>
-        <Button trigger={refetch} outline={true}>
+        <Button elclass="mx-auto block my-5" trigger={refetch} outline={true}>
           Try Again
         </Button>
       </ModalFullView>
