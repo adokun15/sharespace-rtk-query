@@ -94,7 +94,10 @@ export default function ProfilePic({ mode, cancel }) {
         </div>
       </form>
       {mode?.toLowerCase() === "create" && (
-        <Link className="text-[20px] text-right block font-sans_serif text-main_color mx-4">
+        <Link
+          to="/dashboard"
+          className="text-[20px] text-right block font-sans_serif text-main_color mx-4"
+        >
           Skip
           <FontAwesomeIcon
             icon={faArrowRight}
