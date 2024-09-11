@@ -58,7 +58,7 @@ function App() {
               path: "roommates",
               children: [
                 { index: true, element: <ChatsPage /> },
-                { path: ":chatId", element: <ChatDetail /> },
+                { path: ":spaceId", element: <ChatDetail /> },
               ],
             },
             { path: "profile", element: <ProfilePage /> },

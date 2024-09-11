@@ -24,11 +24,17 @@ export const ageHandler = (date) => {
   return +supposedAge;
 };
 
-export const NoticeDate = (date) => {
+export const ChatMessageDate = (date) => {
   const dateString = new Date(date);
 
-  return `${dateString.toLocaleTimeString("en-GB", {
-    weekday: "long",
-    year: "2-digit",
-  })}`;
+  return `${dateString.getHours()}:${dateString.getMinutes()} ${
+    dateString.getHours() >= 12 && dateString.getHours() <= 23 ? "pm" : "am"
+  }`;
+};
+
+export const NoticeDate = (date) => {
+  const dateString = new Date(date);
+  const date_ = `${dateString.getFullYear()}/${dateString.getMonth()}/${dateString.getDate()}`;
+
+  return `${date_} ${ChatMessageDate(date)}`;
 };

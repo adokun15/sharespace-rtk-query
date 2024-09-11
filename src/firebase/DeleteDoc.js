@@ -1,11 +1,14 @@
-import { deleteDoc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { DbError } from "../utils/ErrorHandlers";
 import { deleteObject } from "firebase/storage";
 import { deleteUser } from "firebase/auth";
+import { db } from "./init";
 
-export const DeleteADocument = async (path) => {
+export const DeleteADocument = async (path, doc_id) => {
   try {
-    await deleteDoc(path);
+    const docRef = doc(db, path, doc_id);
+    await deleteDoc(docRef);
+    return { data: "success" };
   } catch (e) {
     throw new DbError(e?.message);
   }

@@ -5,6 +5,8 @@ import Button from "../UI/Button";
 import { Link } from "react-router-dom";
 import { NoticeDate } from "../utils/TimeHandler";
 
+import { SortListByDate } from "../utils/ListHandler";
+
 export const NoticeList = ({ id }) => {
   const { data, isFetching, isError, error, refetch, isLoading } =
     useGetNoticesQuery(id);
@@ -35,15 +37,20 @@ export const NoticeList = ({ id }) => {
     return <p className="my-5 text-center">No Notifications yet</p>;
   }
 
+  const notices = SortListByDate(data);
+
   return (
     <div className="h-[20vh] mt-1 overflow-y-scroll rounded transition-all mb-4 py-3 space-y-2 ">
-      {data.map((notification) => (
+      {notices.map((notification) => (
         <div className=" bg-slate-100 list-none py-4 px-1 rounded pl-3">
           {notification?.type === "invites" && (
             <li className="capitalize">
               <p className="text-pretty">
-                you have an invite from {notification.from} to become their
-                roommate.{" "}
+                you have an invite from
+                <span className="font-bold mx-1 font-sans_serif">
+                  {notification.from}
+                </span>
+                to become their roommate.
                 <Link
                   to="roommates"
                   className="text-purple-500 underline-offset-1"
@@ -59,8 +66,14 @@ export const NoticeList = ({ id }) => {
           {notification?.type === "reply" && (
             <li className="capitalize">
               <p className="text-pretty">
-                {notification?.from} has {notification.response} to become their
-                roommate.
+                <span className="font-bold mx-1 font-sans_serif">
+                  {notification?.from}
+                </span>
+                has
+                <span className="font-bold mx-1 font-sans_serif">
+                  {notification.response}
+                </span>
+                to become their roommate.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}
@@ -70,7 +83,10 @@ export const NoticeList = ({ id }) => {
           {notification?.type === "left_space" && (
             <li className="capitalize">
               <p className="text-pretty">
-                {notification.from} has Leave the space.
+                <span className="font-bold mx-1 font-sans_serif">
+                  {notification.from}
+                </span>
+                has Leave the space.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}
@@ -80,7 +96,10 @@ export const NoticeList = ({ id }) => {
           {notification?.type === "sent_off" && (
             <li className="capitalize">
               <p className="text-pretty">
-                {notification.from} has delete Chat Space!.
+                <span className="font-bold mx-1 font-sans_serif">
+                  {notification.from}
+                </span>
+                has delete Chat Space!.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}
@@ -90,8 +109,11 @@ export const NoticeList = ({ id }) => {
           {notification?.type === "request" && (
             <li className="capitalize">
               <p className="text-pretty">
-                Request has been sent to {notification.to.username}. Awaiting
-                their response.
+                Request has been sent to
+                <span className=" mx-1 font-bold font-sans_serif">
+                  {notification.to}.
+                </span>
+                Awaiting their response.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}

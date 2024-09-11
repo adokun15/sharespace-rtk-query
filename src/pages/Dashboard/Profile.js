@@ -1,4 +1,3 @@
-import ProfilePicDemo from "../../image/202330014270ff.jpg";
 import Button from "../../UI/Button";
 import Card from "../../UI/Card";
 import Container from "../../UI/Container";
@@ -78,11 +77,7 @@ export default function ProfilePage() {
           <Card elClass="hover:-translate-y-1 transition-all duration-700 ease-in-out">
             <article className="px-[10%] md:flex *:block my-4 items-center">
               <div className=" max-w-[40%] flex justify-center">
-                <Image
-                  imgSrc={
-                    profile?.photourl ? profile?.photourl : ProfilePicDemo
-                  }
-                />
+                <Image imgSrc={profile?.photourl ? profile?.photourl : ""} />
               </div>
               <div className="space-y-1 w-full py-2 ">
                 <p className="text-4xl ml-3  col-span-3">{profile?.fullname}</p>

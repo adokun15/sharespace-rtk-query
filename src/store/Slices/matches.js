@@ -9,8 +9,12 @@ const MatchLogicSlice = api.injectEndpoints({
         try {
           // Get Users
           const matches = await getMultipleMatches(uid);
+
+          //check if user in already added to space;
+
           //Rate Users and sort User
           const redefinedUsers = ScoresReport(formDetails, matches);
+          //
           return { data: redefinedUsers };
         } catch (e) {
           throw new DbError(e?.message);

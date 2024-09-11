@@ -36,23 +36,30 @@ export default function MainNavigation({ updateModal, toAuth }) {
         )}
 
       <div className="font-roboto inline-flex items-center gap-5">
-        <button
-          onClick={updateModal}
-          className=" px-6 py-1 text-main_color rounded text-3xl md:hidden block"
-        >
-          <FontAwesomeIcon icon={faBars} />
-        </button>
+        {isLoggedIn?.user?.uid && (
+          <button
+            onClick={updateModal}
+            className=" px-6 py-1 text-main_color rounded text-3xl md:hidden block"
+          >
+            <FontAwesomeIcon icon={faBars} />
+          </button>
+        )}
+
         {!isLoggedIn?.user?.uid && (
           <Button
             loading={isLoading}
             trigger={toAuth}
             outline={true}
-            elclass="md:block hidden py-2 px-5 rounded"
+            elclass=" py-2 px-5 rounded"
           >
             Login
           </Button>
         )}
-        {isLoggedIn?.user?.uid && <Logout />}
+        {isLoggedIn?.user?.uid && (
+          <div className="md:block hidden ">
+            <Logout />
+          </div>
+        )}
       </div>
     </motion.nav>
   );

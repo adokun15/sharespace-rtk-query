@@ -2,7 +2,7 @@ import { useLogoutMutation } from "../store/Slices/user";
 import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
 
-export const Logout = () => {
+export const Logout = ({ closeMobileModal }) => {
   const navigate = useNavigate();
   const [logout, { isLoading }] = useLogoutMutation();
   const logoutHandler = async () =>
@@ -12,7 +12,13 @@ export const Logout = () => {
       .catch((e) => console.log(e.message));
 
   return (
-    <Button trigger={logoutHandler} outline={true}>
+    <Button
+      trigger={async () => {
+        await logoutHandler();
+        closeMobileModal();
+      }}
+      outline={true}
+    >
       {isLoading ? "..." : "Logout"}
     </Button>
   );

@@ -5,9 +5,12 @@ import Image from "../UI/Image";
 //import ProfilePic from "../image/202330014270ff.jpg";
 import { faDotCircle } from "@fortawesome/free-solid-svg-icons";
 import { useSpaceRequestMutation } from "../store/Slices/Space";
-import { useEffect } from "react";
 import { useIsLoggedInQuery } from "../store/Slices/user";
 import { useGetProfileQuery } from "../store/Slices/ProfileSlice";
+import { ageHandler } from "../utils/TimeHandler";
+import { useDispatch } from "react-redux";
+import { ModalAction } from "../store/Slices/modal";
+import { useNavigate } from "react-router-dom";
 export default function RoommateDetail({ detail, onClose }) {
   const { data: currentUser, isLoading: idLoading } = useIsLoggedInQuery();
   const { data: currentUserDb, isLoading: userLoading } = useGetProfileQuery(
@@ -40,14 +43,18 @@ export default function RoommateDetail({ detail, onClose }) {
       roommate: RoommateInfo,
     })
       .unwrap()
+      .then((data) => {
+        if (data === "Request Sent Successfully!") {
+          setTimeout(() => {
+            dispatch(ModalAction.toggleFindRoommatePopover());
+            navigate("/dashboard/roomates");
+          }, 2500);
+        }
+      })
       .catch((e) => console.log(e?.message));
   };
-
-  useEffect(() => {
-    if (data && !isError) {
-      setTimeout(() => onClose(), 2500);
-    }
-  }, [data, isError, onClose]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   if (idLoading)
     return <p className="text-center my-[20vh]"> Gathering details..</p>;
@@ -106,7 +113,7 @@ export default function RoommateDetail({ detail, onClose }) {
                   <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                     Age*
                   </p>
-                  <p>{detail?.profile?.dob}</p>
+                  <p>{ageHandler(detail?.profile?.dob)} years old</p>
                 </div>
                 <div className="text-[16px]">
                   <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">

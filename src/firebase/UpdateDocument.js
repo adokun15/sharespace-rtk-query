@@ -1,24 +1,38 @@
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { DbError, UnAuthorizedError } from "../utils/ErrorHandlers";
 import { db } from "./init";
+import { getDocument } from "./GetDocument";
 
-export const RemoveADocumentArray = async (doc_id, path, updateDetail) => {
+export const FilterDocumentArray = async (doc_id, path, updateDetail) => {
   // parentPath ---> field ---> []
-  console.log(doc_id);
-  console.log(updateDetail);
+
   if (!doc_id) {
     throw new UnAuthorizedError("UnAuthorized Access!");
   }
+  //Get current document
+  const curenetDoc = await getDocument(doc_id, path);
+  console.log(curenetDoc);
 
-  let newItem = {};
+  //Get Key
+  const currentList = [...curenetDoc?.spaces];
+  console.log(currentList);
+
+  //Filteer
+  const newItem =
+    currentList.length > 0
+      ? currentList.filter((item) => item?.spaceId !== updateDetail.id)
+      : [];
+
+  console.log(newItem);
+
   //Updated value
-  newItem[updateDetail.key] = arrayRemove(updateDetail.oldValue);
-
   const docRef = doc(db, path, doc_id);
+
   try {
-    await updateDoc(docRef, newItem);
-    return "Update successful!";
+    await updateDoc(docRef, { spaces: newItem });
+    return "Removed successful!";
   } catch (e) {
+    console.log(e.message);
     throw new DbError(`An Error Occured: ${e?.code || e?.message}`);
   }
 };

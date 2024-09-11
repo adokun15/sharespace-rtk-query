@@ -1,6 +1,4 @@
 export const ScoresReport = function (userReq, users = []) {
-  console.log(userReq);
-  console.log(users);
   const others = [...users];
   //if(match is on || score is zero, remove user)
 
@@ -9,7 +7,7 @@ export const ScoresReport = function (userReq, users = []) {
   //Age
   let agegap = userReq?.age?.split("-");
   const minAge = agegap && agegap[0];
-  const maxAge = agegap && agegap[1];
+  const maxAge = agegap && agegap.length > 1 && agegap[1];
 
   if (!userReq?.age?.includes("-")) {
     agegap = +userReq?.age;
@@ -25,11 +23,14 @@ export const ScoresReport = function (userReq, users = []) {
   const roomateBudget = (b) => {
     if (!b) return;
     let rentGap = b && b?.split("-");
+    if (rentGap.length > 1) return null;
     const minRent = rentGap && +rentGap[0];
+
     const maxRent = rentGap && +rentGap[1];
 
     return rentGap ? { minRent, maxRent } : null;
   };
+
   others.forEach(function (roommate, index) {
     if (
       roommate?.preference &&
@@ -55,6 +56,13 @@ export const ScoresReport = function (userReq, users = []) {
     ) {
       roommate.score = (roommate.score || 0) + 15;
     }
+
+    if (+roommate?.preference?.rent === 120 && +userReq?.rent === 120) {
+      roommate.score = (roommate.score || 0) + 15;
+    }
+    if (+roommate?.preference?.rent === 460 && +userReq?.rent === 460) {
+      roommate.score = (roommate.score || 0) + 15;
+    }
     //Correct only: Adjust others
     if (
       roommate?.preference &&
@@ -62,6 +70,14 @@ export const ScoresReport = function (userReq, users = []) {
     ) {
       roommate.score = (roommate.score || 0) + 15;
     }
+    if (+minAge === 17 && roommateAge(roommate?.age) === minAge) {
+      roommate.score = (roommate.score || 0) + 15;
+    }
+
+    if (+minAge === 27 && roommateAge(roommate?.age) === minAge) {
+      roommate.score = (roommate.score || 0) + 15;
+    }
+
     if (
       minAge &&
       roommateAge(roommate?.age) >= +minAge &&

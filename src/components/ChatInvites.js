@@ -5,20 +5,26 @@ import { useIsLoggedInQuery } from "../store/Slices/user";
 import { useGetProfileQuery } from "../store/Slices/ProfileSlice";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SortListByDate } from "../utils/ListHandler";
+import { NoticeDate } from "../utils/TimeHandler";
 
-export default function InviteSpaceList({ chat }) {
+export default function InviteSpaceList({ invites }) {
   //Get Id
   const { data: user } = useIsLoggedInQuery();
 
   //Mutation for Response
-  const [responseToRequest, { isLoading }] = useSpaceResponseMutation({
+  const [responseToRequest, { isLoading, refetch }] = useSpaceResponseMutation({
     fixedCacheKey: "spaces-key",
   });
 
   //current user details
-  const { data: profile } = useGetProfileQuery(user.user.uid, {
-    skip: !user.user.uid,
-  });
+  const { data: profile, isLoading: userLoading } = useGetProfileQuery(
+    user.user.uid
+  );
+
+  //SortList by Date
+  const chat = SortListByDate(invites);
+  if (userLoading) return "...";
 
   //you: Replying A request
   const userDetails = {
@@ -39,65 +45,90 @@ export default function InviteSpaceList({ chat }) {
       dateReceived: chat.timeSent,
       // space, viewed
     };
-
     await responseToRequest({
       currentUserDetail: userDetails,
       requestDetail: Setroommate,
       response,
     })
       .unwrap()
+      .then(refetch)
       .catch((e) => console.log(e?.message));
   };
 
   return (
-    <ul className=" divide-y-2 overflow-y-scroll h-[70vh]">
-      {chat &&
-        chat.length >= 1 &&
-        chat?.map((chat_user) => (
-          <div className=" flex items-center gap-3">
-            {!chat_user.viewed && (
+    <>
+      <div>
+        {isLoading && (
+          <p className="mt-[1vh] text-end animate-spin text-2xl">
+            <FontAwesomeIcon icon={faSpinner} />
+          </p>
+        )}
+      </div>
+
+      <ul className=" divide-y-2 overflow-y-scroll h-[70vh]">
+        {(!chat || chat.length === 0) && (
+          <p className="text-center">NO REQUEST YET</p>
+        )}
+
+        {chat &&
+          chat.length >= 1 &&
+          chat?.map((chat_user) => (
+            <div
+              key={chat_user?.author_email}
+              className=" flex items-center gap-3"
+            >
               <>
                 <div className="mx-3 relative ">
                   <Image h={90} w={90} imgSrc={chat_user?.author_photo} />
                 </div>
 
-                <div className="py-4 space-y-2">
+                <div className="py-4 space-y-1">
                   <p className="text-xl font-[800] font-roboto capitalize">
                     {chat_user?.author_name}
                   </p>
-                  {isLoading && (
-                    <p className="mt-[1vh] text-center animate-spin text-2xl">
-                      <FontAwesomeIcon icon={faSpinner} />
-                    </p>
-                  )}
-
+                  <p className="text-[12px] text-slate-500  font-oswald ">
+                    {chat_user?.author_email}
+                  </p>
+                  <p className="text-[12px] text-slate-500  font-oswald ">
+                    {chat_user?.timeSent
+                      ? NoticeDate(chat_user?.timeSent)
+                      : chat_user?.dateReceived
+                      ? NoticeDate(chat_user?.dateReceived)
+                      : ""}
+                  </p>
                   <article className="flex gap-3 box-border py-4">
-                    {!isLoading && (
-                      <>
-                        <Button
-                          trigger={async () => {
-                            await AwaitingResponse("declined", chat_user);
-                          }}
-                          elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full"
-                        >
-                          Decline
-                        </Button>
-                        <Button
-                          trigger={async () => {
-                            await AwaitingResponse("accepted", chat_user);
-                          }}
-                          elClass="w-full rounded-full focus:scale-75 transition-all"
-                        >
-                          Accept
-                        </Button>
-                      </>
-                    )}
+                    <>
+                      {chat_user.viewed === "awaiting" ? (
+                        "sent."
+                      ) : chat_user.viewed === "declined" ? (
+                        "declined."
+                      ) : (
+                        <>
+                          <Button
+                            trigger={async () => {
+                              await AwaitingResponse("declined", chat_user);
+                            }}
+                            elClass="bg-white w-full hover:border-solid hover:border-purple-300 hover:border-[2px]  rounded-full"
+                          >
+                            Decline
+                          </Button>
+                          <Button
+                            trigger={async () => {
+                              await AwaitingResponse("accepted", chat_user);
+                            }}
+                            elClass="w-full rounded-full focus:scale-75 transition-all"
+                          >
+                            Accept
+                          </Button>
+                        </>
+                      )}
+                    </>
                   </article>
                 </div>
               </>
-            )}
-          </div>
-        ))}
-    </ul>
+            </div>
+          ))}
+      </ul>
+    </>
   );
 }

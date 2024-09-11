@@ -1,17 +1,20 @@
 export const SortListByDate = (list = []) => {
   const DateInMillisecond = (date) => {
+    if (!date) return undefined;
     const date_ = new Date(date);
     return date_.getTime();
   };
 
-  const newSortedList = list.sort(
-    (a, b) => DateInMillisecond(a.timeSent) - DateInMillisecond(b.timeSent)
-  );
+  const newSortedList = list
+    .map((item) => {
+      return {
+        ...item,
+        milli:
+          DateInMillisecond(item?.timeSent) ||
+          DateInMillisecond(item?.dateReceived),
+      };
+    })
+    .sort((a, b) => a.milli - b.milli);
 
   return newSortedList;
-};
-
-export const FilterList = (list = [], id) => {
-  const newFilterList = list.filter((item) => item.id !== id);
-  return newFilterList;
 };

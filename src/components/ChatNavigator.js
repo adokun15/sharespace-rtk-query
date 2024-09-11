@@ -1,17 +1,9 @@
-import ProfileTest from "../image/202330014270ff.jpg";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import Image from "../UI/Image";
-//import Button from "../UI/Button";
-//import { useEffect, useState } from "react";
-/*import {
-  useDeleteSpaceManuallyMutation,
-  useSendmediaMutation,
-} from "../store/Slices/Space";
-*/
 
-export default function ChatNavigator({ user, spaceId, space }) {
+export default function ChatNavigator({ users, spaceId }) {
   /*  const [isListOpened, setListOpen] = useState(false);
 
   const [file, setFile] = useState(null);
@@ -40,12 +32,17 @@ export default function ChatNavigator({ user, spaceId, space }) {
   return (
     <nav className="py-2 my-1 relative flex justify-between">
       <div className="inline-flex w-1/2 items-center space-x-3">
-        <Link to="./">
+        <Link to="/dashboard/roommates">
           <FontAwesomeIcon className="text-xl" icon={faArrowLeft} />
         </Link>
 
-        <div>
-          <Image h={45} w={45} imgSrc={ProfileTest} />
+        <div className="flex">
+          {users[0].photourl && (
+            <Image h={45} w={45} imgSrc={users[0].photourl} />
+          )}
+          {users[1].photourl && (
+            <Image h={45} w={45} imgSrc={users[1].photourl} />
+          )}
         </div>
       </div>
 

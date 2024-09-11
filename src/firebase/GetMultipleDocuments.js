@@ -13,7 +13,7 @@ export const getMultipleMatches = async (id) => {
     let matches = [];
     const allUsers = await getDocs(docRef);
     allUsers.forEach((user) => {
-      if (user?.exists()) {
+      if (user?.exists() && user?.data()?.isAvailable) {
         matches.push({ ...user?.data() });
       }
     });

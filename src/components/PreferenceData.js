@@ -88,40 +88,40 @@ export default function PreferenceData() {
           />
         </div>
         <div className="divide-y *:py-3 divide-purple-400 ">
-          <p className="text-2xl">
-            Rent :{" "}
+          <p className="flex flex-wrap justify-between px-[5vw] text-2xl">
+            <span>Rent</span>
             <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
               {minRent && maxRent
                 ? `Between ${minRent}k and ${maxRent}k `
                 : `${minRent}k`}
             </span>
           </p>
-          <p className="text-2xl">
-            Religion:{" "}
-            <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
+          <p className="flex justify-between px-[5vw] text-2xl">
+            <span>Religion</span>
+            <span className="text-end bg-purple-400/50 rounded px-3 p-1 w-fit">
               {prefs?.religion}
             </span>
           </p>
-          <p className="text-2xl">
-            Level:{" "}
+          <p className="flex justify-between px-[5vw] text-2xl">
+            <span>Level</span>
             <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
               {prefs?.level}
             </span>
           </p>
-          <p className="text-2xl">
-            Your Location:{" "}
+          <p className="flex justify-between px-[5vw] text-2xl">
+            <span>Your Location</span>
             <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
               {prefs?.location}
             </span>
           </p>
-          <p className="text-2xl">
-            Your Habit / Hobbies:{" "}
-            <span className="bg-purple-400/50 block mt-3 rounded px-3 p-1 w-fit">
+          <p className="flex flex-wrap items-center justify-between px-[5vw] text-2xl">
+            <span>Your Habit / Hobbies</span>
+            <span className="bg-purple-400/50 block text-pretty mt-3 rounded px-3 p-1 w-fit">
               {prefs?.habits.map((habit) => habit).join(",")}
             </span>
           </p>
-          <p className="text-2xl">
-            Department:
+          <p className="flex flex-wrap items-center justify-between px-[5vw] text-2xl">
+            <span>Department</span>
             <span className="bg-purple-400/50 rounded px-3 p-1 w-fit">
               {prefs?.department}
             </span>

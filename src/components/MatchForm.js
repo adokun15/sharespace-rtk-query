@@ -123,7 +123,6 @@ export default function MatchForm({ onHandleSubmit }) {
               items={[
                 { value: "Christain", name: "Christain" },
                 { value: "lslam", name: "Islam" },
-                { value: "Others", name: "Others" },
               ]}
             />
           </label>

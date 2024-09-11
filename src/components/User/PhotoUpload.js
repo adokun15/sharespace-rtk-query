@@ -3,9 +3,11 @@ import Button from "../../UI/Button";
 import { useUploadImageMutation } from "../../store/Slices/ImageUpload";
 
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { ModalAction } from "../../store/Slices/modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function ProfilePic({ mode, cancel }) {
   const [file, setFile] = useState(null);
@@ -91,6 +93,15 @@ export default function ProfilePic({ mode, cancel }) {
           </Button>
         </div>
       </form>
+      {mode?.toLowerCase() === "create" && (
+        <Link className="text-[20px] text-right block font-sans_serif text-main_color mx-4">
+          Skip
+          <FontAwesomeIcon
+            icon={faArrowRight}
+            className="ml-2 text-purple-500 "
+          />
+        </Link>
+      )}
     </>
   );
 }

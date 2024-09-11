@@ -9,7 +9,7 @@ export function ToggleButton(props) {
         props.elClass
       }`}
     >
-      {!props?.loading && <span>{!props?.state ? "on" : "off"}</span>}
+      {!props?.loading && <span>{props?.state ? "on" : "off"}</span>}
       {props?.loading && <span>..</span>}
     </button>
   );

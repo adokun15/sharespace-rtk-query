@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "react-router-dom";
 import Modal from "../UI/Modal";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-import Button from "../UI/Button";
+import { Logout } from "./Logout";
 
 export default function NavigationModal({ isOpened, updateModal, toAuth }) {
-  const { data: isLoggedIn, isLoading } = useIsLoggedInQuery();
+  const { data: isLoggedIn } = useIsLoggedInQuery();
 
   return (
     <>
@@ -20,38 +20,36 @@ export default function NavigationModal({ isOpened, updateModal, toAuth }) {
               <FontAwesomeIcon icon={faX} />
             </button>
 
-            {!isLoggedIn.user && (
+            {isLoggedIn.user?.uid && (
               <>
-                <ul className="*:block leading-10">
-                  {" "}
-                  <NavLink to="/">Home</NavLink>
-                  <NavLink to="/blogs">Blog</NavLink>
-                  <NavLink to="/guides">Guide</NavLink>
-                  <NavLink to="/newsletter">NewsLetter</NavLink>
+                <ul className="*:block mb-3 space-y-3">
+                  <NavLink onClick={updateModal} to="/dashboard">
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/prefs"
+                    onClick={updateModal}
+                    className={({ isActive }) => isActive && "text-purple-500"}
+                  >
+                    Your Preference
+                  </NavLink>
+                  <NavLink
+                    onClick={updateModal}
+                    className={({ isActive }) => isActive && "text-purple-500"}
+                    to="/dashboard/profile"
+                  >
+                    {" "}
+                    Profile
+                  </NavLink>
+                  <NavLink
+                    onClick={updateModal}
+                    className={({ isActive }) => isActive && "text-purple-500"}
+                    to="/dashboard/roommates"
+                  >
+                    Spaces{" "}
+                  </NavLink>
                 </ul>
-                <button
-                  className="my-4 block bg-main_color w-full py-2 px-5 text-white rounded"
-                  onClick={toAuth}
-                >
-                  Login
-                </button>
-              </>
-            )}
-            {isLoggedIn.user && (
-              <>
-                <ul className="*:block leading-10">
-                  <NavLink to="/dashboard">Dashboard</NavLink>
-                  <NavLink to="/dashboard/prefs">Edit Preference</NavLink>
-                  <NavLink to="/dashboard/profile">View Profile</NavLink>
-                  <NavLink to="/dashboard/roommates">Discuss Space .</NavLink>
-                </ul>
-                <Button
-                  className="my-4 block bg-main_color w-full py-2 px-5 text-white rounded"
-                  onClick={toAuth}
-                  loading={isLoading}
-                >
-                  Logout
-                </Button>
+                <Logout closeMobileModal={updateModal} />
               </>
             )}
           </nav>

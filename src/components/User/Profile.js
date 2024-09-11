@@ -117,7 +117,6 @@ function CreateProfileDetail({ mode, cancel }) {
           items={[
             { value: "Male", name: "Male" },
             { value: "Female", name: "Female" },
-            { value: "Other", name: "Others" },
           ]}
         />
       </label>
@@ -166,9 +165,16 @@ export default function ProfileUpdate({ mode }) {
   return (
     <main>
       <h1 className="text-4xl my-3 first:capitalize ">
-        {mode || "User"} Profile
+        {mode || "User"} Profile{" "}
+        {mode === "Create" && (
+          <span className="text-red-600 my-auto inline-block">*</span>
+        )}
       </h1>
-
+      {mode === "Create" && (
+        <>
+          <p className="my-4 text-[16px]">Please fill in the correct data</p>
+        </>
+      )}
       {(mode === "Edit" || location.pathname === "/dashboard/profile") && (
         <article className="flex *:rounded text-[16px] *:p-1 my-3 space-x-2">
           <Button

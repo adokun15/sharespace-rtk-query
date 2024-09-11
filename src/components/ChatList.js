@@ -12,6 +12,8 @@ export default function ChatList({ chats }) {
     fixedCacheKey: "spaces-key",
   });
 
+  const invites = chats.filter((chat) => chat.viewed !== "accepted");
+  const list_r = chats.filter((chat) => chat.viewed === "accepted");
   return (
     <>
       <p className="text-3xl text-center my-10 text-main_color">
@@ -36,9 +38,9 @@ export default function ChatList({ chats }) {
       </article>
       <div className=" divide-y-2 overflow-y-scroll h-[70vh]">
         {toggleInvite ? (
-          <InviteSpaceList chat={chats} />
+          <InviteSpaceList invites={invites} />
         ) : (
-          <AcceptedChatRequest acceptedChat={chats} />
+          <AcceptedChatRequest chat={list_r} />
         )}
       </div>
     </>

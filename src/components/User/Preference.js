@@ -137,16 +137,20 @@ export default function UserPreferenceData({ mode }) {
   return (
     <main>
       <h1 className="text-4xl my-3 first:capitalize">
-        {mode || "Edit"} your personal Preference
+        {mode || "Edit"} your personal Preference{" "}
+        {mode === "Create" && (
+          <span className="text-red-600 my-auto inline-block">*</span>
+        )}
       </h1>
-      {mode === "edit" && (
-        <>
-          <p className="my-4 text-[16px]">
-            You can leave out a space that doesn't need an Update!
-          </p>
-          <p>{p}</p>
-        </>
-      )}
+      <>
+        <p className="my-4 text-[16px]">
+          {mode.toLowerCase() === "edit"
+            ? " You can leave out a space that doesn't need an Update!"
+            : "Please fill in the correct data"}
+        </p>
+        <p>{mode === "edit" && p}</p>
+      </>
+
       <form
         ref={ref}
         autoComplete="off"
@@ -203,7 +207,6 @@ export default function UserPreferenceData({ mode }) {
             items={[
               { value: "Christain", name: "Christain" },
               { value: "lslam", name: "Islam" },
-              { value: "Others", name: "Others" },
             ]}
           />
         </label>{" "}
