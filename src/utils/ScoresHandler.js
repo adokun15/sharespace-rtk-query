@@ -22,13 +22,20 @@ export const ScoresReport = function (userReq, users = []) {
 
   const roomateBudget = (b) => {
     if (!b) return;
-    let rentGap = b && b?.split("-");
-    if (rentGap.length > 1) return null;
-    const minRent = rentGap && +rentGap[0];
 
+    if (!b.includes("-")) {
+      return {
+        minRent: 0,
+        maxRent: 0,
+      };
+    }
+    let rentGap = b?.split("-");
+    if (rentGap.length <= 1) return null;
+
+    const minRent = rentGap && +rentGap[0];
     const maxRent = rentGap && +rentGap[1];
 
-    return rentGap ? { minRent, maxRent } : null;
+    return { minRent, maxRent };
   };
 
   others.forEach(function (roommate, index) {
