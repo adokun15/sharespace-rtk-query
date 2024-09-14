@@ -10,6 +10,7 @@ export const DeleteADocument = async (path, doc_id) => {
     await deleteDoc(docRef);
     return { data: "success" };
   } catch (e) {
+    console.log(e);
     throw new DbError(e?.message);
   }
 };

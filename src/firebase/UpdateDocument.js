@@ -11,19 +11,15 @@ export const FilterDocumentArray = async (doc_id, path, updateDetail) => {
   }
   //Get current document
   const curenetDoc = await getDocument(doc_id, path);
-  console.log(curenetDoc);
 
   //Get Key
   const currentList = [...curenetDoc?.spaces];
-  console.log(currentList);
 
   //Filteer
   const newItem =
     currentList.length > 0
       ? currentList.filter((item) => item?.spaceId !== updateDetail.id)
       : [];
-
-  console.log(newItem);
 
   //Updated value
   const docRef = doc(db, path, doc_id);
@@ -32,7 +28,6 @@ export const FilterDocumentArray = async (doc_id, path, updateDetail) => {
     await updateDoc(docRef, { spaces: newItem });
     return "Removed successful!";
   } catch (e) {
-    console.log(e.message);
     throw new DbError(`An Error Occured: ${e?.code || e?.message}`);
   }
 };
@@ -78,6 +73,22 @@ export const UpdateADocumentObject = async (doc_id, path, updateDetail) => {
     await updateDoc(docRef, newItem);
     return "Update successful!";
   } catch (e) {
+    console.log(e);
     throw new DbError(`An Error Occured: ${e?.code || e?.message}`);
+  }
+};
+
+export const RemoveOneSpaceUser = async (doc_id, user) => {
+  if (!doc_id) {
+    throw new UnAuthorizedError("UnAuthorized Access!");
+  }
+  //Updated value
+  const docRef = doc(db, "space", doc_id);
+
+  try {
+    await updateDoc(docRef, { users: [user], messsages: [] });
+    return "Removed successful!";
+  } catch (e) {
+    throw new DbError(`Deletion Error: ${e?.code || e?.message}`);
   }
 };

@@ -37,10 +37,10 @@ export default function ChatNavigator({ users, spaceId }) {
         </Link>
 
         <div className="flex">
-          {users[0].photourl && (
+          {users[0]?.photourl && (
             <Image h={45} w={45} imgSrc={users[0].photourl} />
           )}
-          {users[1].photourl && (
+          {users[1]?.photourl && (
             <Image h={45} w={45} imgSrc={users[1].photourl} />
           )}
         </div>

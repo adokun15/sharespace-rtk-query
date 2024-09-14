@@ -27,13 +27,13 @@ export default function MatchesList({ list }) {
         </Button>
       </header>
       {!currentMatchSelected && (
-        <ul className="*:shadow-purple-200 py-5 block md:grid px-[3%] grid-cols-2 gap-5">
+        <ul className="*:shadow-purple-200 py-5 block md:grid px-[3%] grid-cols-2 gap-1">
           {list &&
             list?.map((match) => (
               <>
                 <div
                   key={match.uid}
-                  className="flex flex-wrap my-1 gap-3 w-full shadow px-4 min-w-[50%] py-4 md:w-fit rounded bg-slate-200 shadow-slate-100 items-center"
+                  className="flex flex-wrap md:space-x-4 md:px-[1vw] my-1 gap-3 w-full shadow px-4 min-w-[50%] py-4  rounded bg-slate-200 shadow-slate-100 items-center"
                 >
                   <div>
                     <Image h={100} w={100} imgSrc={match?.photourl} />

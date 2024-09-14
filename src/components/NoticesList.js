@@ -73,7 +73,7 @@ export const NoticeList = ({ id }) => {
                 <span className="font-bold mx-1 font-sans_serif">
                   {notification.response}
                 </span>
-                to become their roommate.
+                to become your roommate.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}
@@ -86,7 +86,7 @@ export const NoticeList = ({ id }) => {
                 <span className="font-bold mx-1 font-sans_serif">
                   {notification.from}
                 </span>
-                has Leave the space.
+                has Left the space.
               </p>
               <p className="text-end mr-[2vw] text-[12px]">
                 {NoticeDate(notification.timeSent)}

@@ -13,7 +13,7 @@ export default function AcceptedChatRequest({ chat }) {
   const { data: user } = useIsLoggedInQuery();
 
   //Delete space / leave session
-  const [deleteSpace, { isError, isLoading, error }] =
+  const [deleteSpace, { isError, refetch, isLoading, error }] =
     useDeleteSpaceManuallyMutation();
 
   //route to space
@@ -49,6 +49,7 @@ export default function AcceptedChatRequest({ chat }) {
       RoommateSpaceObj: spaceListObj,
     })
       .unwrap()
+      .then(() => refetch())
       .catch((e) => console.log(e?.message));
   };
   return (
@@ -56,7 +57,7 @@ export default function AcceptedChatRequest({ chat }) {
       <p className="text-[11px] text-red-600 font-oswald my-1">
         {isError && error?.message}
       </p>
-      <div>
+      <div className="w-fit">
         {isLoading && (
           <p className="mt-[1vh] text-center animate-spin text-[1em]">
             <FontAwesomeIcon icon={faSpinner} />
@@ -71,7 +72,7 @@ export default function AcceptedChatRequest({ chat }) {
         {acceptedChat &&
           acceptedChat.length >= 1 &&
           acceptedChat?.map((chat) => (
-            <div className=" flex items-center gap-3">
+            <div key={chat.spaceId} className=" flex items-center gap-3">
               {chat.viewed && (
                 <>
                   <div className="mx-3 relative ">

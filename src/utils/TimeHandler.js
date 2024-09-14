@@ -27,7 +27,9 @@ export const ageHandler = (date) => {
 export const ChatMessageDate = (date) => {
   const dateString = new Date(date);
 
-  return `${dateString.getHours()}:${dateString.getMinutes()} ${
+  const hours = `${dateString.getHours()}`.padStart(2, "0");
+  const minutes = `${dateString.getMinutes()}`.padStart(2, "0");
+  return `${hours}:${minutes} ${
     dateString.getHours() >= 12 && dateString.getHours() <= 23 ? "pm" : "am"
   }`;
 };

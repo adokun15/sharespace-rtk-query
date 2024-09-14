@@ -14,7 +14,7 @@ export const SortListByDate = (list = []) => {
           DateInMillisecond(item?.dateReceived),
       };
     })
-    .sort((a, b) => a.milli - b.milli);
+    .sort((a, b) => b.milli - a.milli);
 
   return newSortedList;
 };

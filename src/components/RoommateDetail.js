@@ -47,7 +47,7 @@ export default function RoommateDetail({ detail, onClose }) {
         if (data === "Request Sent Successfully!") {
           setTimeout(() => {
             dispatch(ModalAction.toggleFindRoommatePopover());
-            navigate("/dashboard/roomates");
+            navigate("/dashboard/roommates");
           }, 2500);
         }
       })

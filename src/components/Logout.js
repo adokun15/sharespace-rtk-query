@@ -8,14 +8,18 @@ export const Logout = ({ closeMobileModal }) => {
   const logoutHandler = async () =>
     await logout()
       .unwrap()
-      .then((data) => data === "logged_out" && navigate("/"))
+      .then((data) => {
+        if (data === "logged_out") {
+          navigate("/");
+          closeMobileModal && closeMobileModal();
+        }
+      })
       .catch((e) => console.log(e.message));
 
   return (
     <Button
       trigger={async () => {
         await logoutHandler();
-        closeMobileModal();
       }}
       outline={true}
     >

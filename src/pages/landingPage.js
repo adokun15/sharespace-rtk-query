@@ -6,9 +6,30 @@ import someImage4 from "../image/undraw/undraw_Active_support_re_b7sj.png";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
+import { useAuthorizeMutation } from "../store/Slices/user";
 export default function LandingPage() {
   const navigate = useNavigate();
   const navigateHandler = () => navigate("/auth");
+
+  const [authorize, { isLoading }] = useAuthorizeMutation();
+
+  const triggerDemoLogin = async () => {
+    await authorize({
+      mode: "login",
+      email: "kunleamos100@gmail.com",
+      password: "amos2005",
+    })
+      .unwrap()
+      .then((data) => {
+        //Control Navigate
+        if (!data) return;
+        if (data === "dashboard") {
+          navigate("/dashboard");
+        }
+      })
+      .catch((e) => console.error(e?.message));
+  };
+
   return (
     <main className="box-content ">
       <section className="bg-purple-300 rounded-t-2xl min-h-[80vh] md:px-[10vw] px-[4vw] py-[10vh]">
@@ -24,10 +45,10 @@ export default function LandingPage() {
           <p>living experience</p>
         </article>
         <button
-          onClick={navigateHandler}
+          onClick={triggerDemoLogin}
           className="block px-4 m-auto rounded-full w-[50vw] ring-offset-1 ring-main_color ring-2 py-4 text-xl bg-main_color text-white"
         >
-          Get Started
+          {isLoading ? "..." : "Try our Demo"}
         </button>
       </section>
       <section className="min-h-[80vh] md:p-[10vh] py-[4vh]">

@@ -2,6 +2,7 @@ import { CreateDocumentWithAutoId } from "../../firebase/CreateDocument";
 import { getDocument } from "../../firebase/GetDocument";
 import {
   FilterDocumentArray,
+  RemoveOneSpaceUser,
   UpdateADocumentArray,
   UpdateADocumentObject,
 } from "../../firebase/UpdateDocument";
@@ -29,7 +30,15 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      providesTag: (result) => ["spaces"],
+      providesTag: (result) =>
+        result
+          ? [
+              ...result.map(
+                ({ spaceId }) => ({ type: "spaces ", id: spaceId }),
+                { type: "spaces", id: "spacelist " }
+              ),
+            ]
+          : [{ type: "spaces", id: "spacelist" }],
     }),
 
     //Temporarily clear notice
@@ -124,7 +133,7 @@ const UserSpaceSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: (result) => ["match"],
+      invalidatesTags: () => [{ type: "match", id: "MATCHLIST" }],
     }),
 
     spaceResponse: builder.mutation({
@@ -133,97 +142,104 @@ const UserSpaceSlice = api.injectEndpoints({
         //create new space: (response)
         try {
           //filter out;
-          switch (response) {
-            case "accepted":
-              //create space;
-              const space = await CreateDocumentWithAutoId("space", {
-                users: [requestDetail, currentUserDetail],
-                author: requestDetail?.uid,
-                messages: [],
-              });
+          if (response === "accepted") {
+            //create space;
+            const space = await CreateDocumentWithAutoId("space", {
+              users: [requestDetail, currentUserDetail],
+              author: requestDetail?.uid,
+              messages: [],
+            });
 
-              //update your new space list;
-              await UpdateADocumentArray(currentUserDetail?.uid, "users", {
-                key: "spaces",
-                newValue: {
-                  uid: requestDetail?.uid,
-                  username: requestDetail?.username,
-                  photourl: requestDetail?.photourl,
-                  email: requestDetail?.email,
-                  spaceId: space,
-                  viewed: "accepted",
-                  timeSent: new Date().toISOString(),
-                },
-              });
+            //update your new space list;
+            await UpdateADocumentArray(currentUserDetail?.uid, "users", {
+              key: "spaces",
+              newValue: {
+                uid: requestDetail?.uid,
+                username: requestDetail?.username,
+                photourl: requestDetail?.photourl,
+                email: requestDetail?.email,
+                spaceId: space,
+                viewed: "accepted",
+                timeSent: new Date().toISOString(),
+              },
+            });
 
-              await FilterDocumentArray(currentUserDetail?.uid, "users", {
-                key: "spaces",
-                id: requestDetail?.uid,
-              });
+            await FilterDocumentArray(currentUserDetail?.uid, "users", {
+              key: "spaces",
+              id: requestDetail?.uid,
+            });
 
-              //update roomate space list for initial  user
-              await UpdateADocumentArray(requestDetail?.uid, "users", {
-                key: "spaces",
-                newValue: {
-                  uid: currentUserDetail?.uid,
-                  username: currentUserDetail?.username,
-                  photourl: currentUserDetail?.photourl,
-                  email: currentUserDetail?.email,
-                  spaceId: space,
-                  viewed: "accepted",
-                  timeSent: new Date().toISOString(),
-                },
-              });
+            //update roomate space list for initial  user
+            await UpdateADocumentArray(requestDetail?.uid, "users", {
+              key: "spaces",
+              newValue: {
+                uid: currentUserDetail?.uid,
+                username: currentUserDetail?.username,
+                photourl: currentUserDetail?.photourl,
+                email: currentUserDetail?.email,
+                spaceId: space,
+                viewed: "accepted",
+                timeSent: new Date().toISOString(),
+              },
+            });
 
-              //add notice: for other user
-              await UpdateADocumentArray(requestDetail?.uid, "notices", {
-                key: "notifications",
-                newValue: {
-                  type: "reply",
-                  from: currentUserDetail?.username,
-                  timeSent: new Date().toISOString(),
-                  response: "accepted",
-                },
-              });
-              return {
-                data: `Accepted ${requestDetail?.username} request. A new space has been created!`,
-              };
-
-            case "declined":
-              //add notice: for other user
-              await UpdateADocumentArray(requestDetail?.uid, "notices", {
-                key: "notifications",
-                newValue: {
-                  type: "reply",
-                  timeSent: new Date().toISOString(),
-                  from: currentUserDetail?.username,
-                  response: "declined",
-                },
-              });
-
-              await UpdateADocumentArray(requestDetail?.uid, "users", {
-                key: "spaces",
-                newValue: {
-                  author_id: currentUserDetail?.uid,
-                  author_name: currentUserDetail?.username,
-                  author_photo: currentUserDetail?.photourl || null,
-                  author_email: currentUserDetail?.email,
-                  spaceId: requestDetail?.uid,
-                  viewed: "declined",
-                  timeSent: new Date().toISOString(),
-                },
-              });
-
-              return { data: `Declined ${requestDetail?.username} request!` };
-
-            default:
-              return { data: null };
+            //add notice: for other user
+            await UpdateADocumentArray(requestDetail?.uid, "notices", {
+              key: "notifications",
+              newValue: {
+                type: "reply",
+                from: currentUserDetail?.username,
+                timeSent: new Date().toISOString(),
+                response: "accepted",
+              },
+            });
+            return {
+              data: `Accepted ${requestDetail?.username} request. A new space has been created!`,
+            };
           }
+
+          if (response === "declined") {
+            //add notice: for other user
+            await UpdateADocumentArray(requestDetail?.uid, "notices", {
+              key: "notifications",
+              newValue: {
+                type: "reply",
+                timeSent: new Date().toISOString(),
+                from: currentUserDetail?.username,
+                response: "declined",
+              },
+            });
+
+            //Remove from your list
+            await FilterDocumentArray(currentUserDetail?.uid, "users", {
+              key: "spaces",
+              id: requestDetail?.uid,
+            });
+
+            //add to their
+            await UpdateADocumentArray(requestDetail?.uid, "users", {
+              key: "spaces",
+              newValue: {
+                author_id: currentUserDetail?.uid,
+                author_name: currentUserDetail?.username,
+                author_photo: currentUserDetail?.photourl || null,
+                author_email: currentUserDetail?.email,
+                spaceId: requestDetail?.uid,
+                viewed: "declined",
+                timeSent: new Date().toISOString(),
+              },
+            });
+
+            return { data: `Declined ${requestDetail?.username} request!` };
+          }
+          return { data: "done" };
         } catch (e) {
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: ["spaces"],
+      invalidatesTags: (res, err, arg) => [
+        { type: "spaces", id: arg?.requestDetail?.spaceId },
+      ],
     }),
     /* Space CHAT */
 
@@ -349,6 +365,7 @@ const UserSpaceSlice = api.injectEndpoints({
           if (!RoommateSpaceObj.spaceId) return;
           //Get both user Space
           const space = await getDocument(RoommateSpaceObj?.spaceId, "space"); //author, users, messages
+          console.log(space);
           //Remove space from list
           await FilterDocumentArray(user?.uid, "users", {
             key: "spaces",
@@ -357,9 +374,6 @@ const UserSpaceSlice = api.injectEndpoints({
 
           //check if you are the "author" -- initially sends the request
           if (user?.uid === space?.author) {
-            //delete doc
-            await DeleteADocument("space", space?.id);
-
             //notice other user if deleted space
             await UpdateADocumentArray(RoommateSpaceObj?.uid, "notices", {
               key: "notifications",
@@ -376,6 +390,9 @@ const UserSpaceSlice = api.injectEndpoints({
               key: "spaces",
               id: space.id,
             });
+
+            //delete doc
+            await DeleteADocument("space", space?.id);
           }
           if (user?.uid !== space?.author) {
             //notice other user you left
@@ -389,17 +406,21 @@ const UserSpaceSlice = api.injectEndpoints({
               },
             });
 
-            await UpdateADocumentObject(space.id, "space", {
-              key: "users",
-              newValue: [RoommateSpaceObj],
-            });
+            const curent_user_staying = space?.users?.find(
+              (user_staying) => user_staying.uid !== RoommateSpaceObj?.uid
+            );
+            //Keep author only
+            await RemoveOneSpaceUser(space?.id, curent_user_staying);
           }
-          return { data: "exit success!" };
+
+          return { data: space };
         } catch (e) {
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: ["spaces"],
+      invalidatesTags: (result, err, arg) => [
+        { type: "spaces", id: arg.RoommateSpaceObj?.spaceId },
+      ],
     }),
   }),
 });

@@ -7,6 +7,7 @@ export default function Image({ imgSrc, h, w }) {
       className=" rounded-full scale-105 hover:scale-100 duration-75 ease-in-out aspect-square object-cover"
       src={imgSrc || defaultImage}
       alt="ProfilePic"
+      loading="lazy"
     />
   );
 }

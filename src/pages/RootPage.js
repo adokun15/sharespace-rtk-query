@@ -18,7 +18,6 @@ export default function RootPage() {
         updateModal={updateFunc}
         toAuth={toAuth}
       />
-
       <Outlet />
     </div>
   );

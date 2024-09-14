@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useLoadMessageQuery } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-import { ChatMessageDate } from "../utils/TimeHandler";
+import { NoticeDate } from "../utils/TimeHandler";
 
 export default function ChatBoxMessage() {
   const { data: user } = useIsLoggedInQuery();
@@ -16,7 +16,6 @@ export default function ChatBoxMessage() {
     isLoading,
   } = useLoadMessageQuery(spaceParams.spaceId);
 
-  console.log(messages);
   if (isLoading) {
     return <p>{error?.message}</p>;
   }
@@ -30,7 +29,7 @@ export default function ChatBoxMessage() {
       {!messages.messages && <p>Start a chat!</p>}
       {messages.messages &&
         messages.messages.map((chat) => (
-          <div className="last:bg-slate-300 last:my-2">
+          <div key={chat.message} className="last:my-2">
             <article
               className={`flex px-6  ${
                 chat?.uid === user?.user?.uid ? "justify-end" : "justify-start"
@@ -42,7 +41,7 @@ export default function ChatBoxMessage() {
                 </div>
                 <p className="text-wrap text-[20px]">{chat?.message}</p>
                 <span className="text-[14px] text-end block">
-                  {ChatMessageDate(chat.timeSent)}
+                  {NoticeDate(chat.timeSent)}
                 </span>
               </div>
             </article>

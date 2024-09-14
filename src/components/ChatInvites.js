@@ -51,13 +51,13 @@ export default function InviteSpaceList({ invites }) {
       response,
     })
       .unwrap()
-      .then(refetch)
+      .then(() => refetch())
       .catch((e) => console.log(e?.message));
   };
 
   return (
     <>
-      <div>
+      <div className="w-fit">
         {isLoading && (
           <p className="mt-[1vh] text-end animate-spin text-2xl">
             <FontAwesomeIcon icon={faSpinner} />
@@ -99,7 +99,7 @@ export default function InviteSpaceList({ invites }) {
                   <article className="flex gap-3 box-border py-4">
                     <>
                       {chat_user.viewed === "awaiting" ? (
-                        "sent."
+                        "invited."
                       ) : chat_user.viewed === "declined" ? (
                         "declined."
                       ) : (
