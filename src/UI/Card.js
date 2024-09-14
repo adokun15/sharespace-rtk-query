@@ -1,11 +1,7 @@
 export default function Card({ children, elClass }) {
   return (
     <div
-      style={{
-        boxShadow:
-          "0 1px 3px 0 rgba(0,0,0,0.6), 0 1px 2px -1px rgba(0,0,0,0.4)",
-      }}
-      className={`bg-white relative text-main_color my-8 py-4 px-3 min-h-[10rem] rounded-xl overflow-hidden
+      className={`bg-white relative shadow text-main_color md:my-8 my-5 py-1 md:py-4 md:px-3 px-1 min-h-[10rem] rounded-xl overflow-hidden
        ${elClass}`}
     >
       {children}
