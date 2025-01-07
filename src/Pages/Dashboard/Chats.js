@@ -1,13 +1,22 @@
 import ChatList from "../../components/ChatList";
-import Container from "../../UI/Container";
+import { useAllChatsQuery } from "../../store/Slices/matches";
+import DataError from "../../components/DataError";
+import LoaderSpinner from "@/src/components/LoaderSpinner";
 export default function ChatsPage() {
-  return (
-    <Container elClass="my-2">
-      <header className=" px-6 ">
-        <h1 className="text-4xl  text-center my-8"> Space </h1>
-      </header>
+  const { data: chats, isError, error, isLoading } = useAllChatsQuery();
 
-      <ChatList />
-    </Container>
+  if (isLoading) {
+    return <LoaderSpinner message="loading chats" />;
+  }
+
+  if (isError) {
+    return <DataError error={error} />;
+  }
+
+  return (
+    <div className="container my-2">
+      <h1 className="text-3xl text-center">Chats</h1>
+      <ChatList chats={chats} />
+    </div>
   );
 }

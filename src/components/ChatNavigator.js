@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import Image from "../UI/Image";
 
+//Send Media
 export default function ChatNavigator({ users, spaceId }) {
   /*  const [isListOpened, setListOpen] = useState(false);
 

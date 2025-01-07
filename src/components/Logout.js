@@ -1,4 +1,4 @@
-import { useLogoutMutation } from "../store/Slices/user";
+import { useLogoutMutation } from "../store/Slices/auth";
 import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
 

@@ -1,110 +1,85 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../../UI/Button";
-import { useUploadImageMutation } from "../../store/Slices/ImageUpload";
-
-import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { ModalAction } from "../../store/Slices/modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faCircleDot } from "@fortawesome/free-solid-svg-icons";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { useUploadImageMutation } from "../../store/Slices/uploads";
+import { Input } from "../ui/input";
 
-export default function ProfilePic({ mode, cancel }) {
+export default function ProfilePic({ mode, cancel, uid }) {
   const [file, setFile] = useState(null);
 
-  const [uploadMediaPhoto, { data, isError, error, isLoading }] =
+  const [uploadMyProfile, { data, isError, error, isLoading }] =
     useUploadImageMutation();
-
-  const { data: currentuser } = useIsLoggedInQuery();
 
   const handleUploadChange = (e) => {
     setFile(e?.target?.files[0]);
   };
 
-  const navigate = useNavigate();
-
-  const pathname = useLocation();
-  const dispatch = useDispatch();
-
   const handleUpload = async () => {
-    //console.log(file);
-    if (file && file.type === "image/jpeg" && currentuser?.user?.uid) {
-      await uploadMediaPhoto({ uid: currentuser?.user?.uid, file })
+    if (file && file.type === "image/jpeg" && uid) {
+      await uploadMyProfile({ uid, file })
         .unwrap()
         .then((data) => {
-          if (data && mode === "Create") {
+          console.log(data);
+          if (data && mode === "create") {
+            //Close modal
+            //Send toast
           }
-          if (data && mode === "Edit") {
+          if (data && mode === "edit") {
+            //Close modal
+            //Send toast
           }
         })
-        .catch((e) => console.log(e?.message));
+        .catch((e) => {
+          //Send toast
+          console.log(e?.message);
+        });
     }
   };
 
-  useEffect(() => {
-    if (pathname?.pathname === "/auth/new-photo" && data) {
-      navigate("/dashboard");
-    }
-
-    if (pathname?.pathname === "/dashboard/profile" && data) {
-      setTimeout(() => {
-        dispatch(
-          ModalAction.toggleEditProfilePopOver({ mode: "Edit", prevs: null })
-        );
-      }, 1500);
-    }
-  }, [data, pathname?.pathname, dispatch, navigate]);
-
   return (
-    <>
-      {mode?.toLowerCase() === "create" && (
-        <h1 className="text-3xl">Add a photo</h1>
-      )}
+    <Sheet>
+      <article className="space-y-2 shadow px-4 py-2 rounded">
+        <h4 className="text-xl font-bold font-sans">
+          <FontAwesomeIcon icon={faCircleDot} /> Add Photo
+        </h4>
+        <p>Add a Face photo of yourself.</p>
+        <Button>
+          <SheetTrigger>Add</SheetTrigger>
+        </Button>
+      </article>
+      <SheetContent>
+        <SheetTitle>Add a photo</SheetTitle>
 
-      <form className="*:block my-3 *:font-oswald space-y-5">
-        <p className="capitalize text-xl font-oswald text-red-600 ">
-          {isError && error?.message}
-        </p>
-        {data && data}
-        <label className="space-y-1">
-          <p className="text-xl">Profile Picture </p>
-          <input
-            type="file"
-            onChange={handleUploadChange}
-            className="bg-slate-300 w-full py-2 px-1"
-          />
-        </label>
+        <form className="*:block my-3 *:font-oswald space-y-5">
+          <p className="capitalize text-xl font-oswald text-red-600 ">
+            {/*isError && error?.message*/}
+          </p>
+          {/*data && data*/}
+          <label className="space-y-1">
+            <p className="text-xl">Profile Picture </p>
+            <Input
+              type="file"
+              onChange={handleUploadChange}
+              className="bg-slate-300 w-full py-2 px-1"
+            />
+          </label>
 
-        <div className="flex space-x-4">
-          {mode?.toLowerCase() === "edit" && (
-            <Button type="button" outline={true} trigger={cancel}>
-              Cancel
+          <div className="flex space-x-4">
+            <Button
+              loading={isLoading}
+              type="button"
+              elclass="disabled:bg-purple-400"
+              trigger={handleUpload}
+              disabled={!file}
+              value={mode}
+            >
+              Save
             </Button>
-          )}
-          <Button
-            loading={isLoading}
-            type="button"
-            elclass="disabled:bg-purple-400"
-            trigger={handleUpload}
-            disabled={!file}
-            value={mode}
-          >
-            Save
-          </Button>
-        </div>
-      </form>
-      {mode?.toLowerCase() === "create" && (
-        <Link
-          to="/dashboard"
-          className="text-[20px] text-right block font-sans_serif text-main_color mx-4"
-        >
-          Skip
-          <FontAwesomeIcon
-            icon={faArrowRight}
-            className="ml-2 text-purple-500 "
-          />
-        </Link>
-      )}
-    </>
+          </div>
+        </form>
+      </SheetContent>
+    </Sheet>
   );
 }

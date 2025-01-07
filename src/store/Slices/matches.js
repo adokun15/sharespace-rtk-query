@@ -1,11 +1,188 @@
-import { getMultipleMatches } from "../../firebase/GetMultipleDocuments";
-import { DbError } from "../../utils/ErrorHandlers";
-import { ScoresReport } from "../../utils/ScoresHandler";
-import { api } from "../api";
-const MatchLogicSlice = api.injectEndpoints({
+import { roomate_api } from "../api";
+const MatchLogicSlice = roomate_api.injectEndpoints({
   endpoints: (builder) => ({
-    findRoomateMatch: builder.query({
-      async queryFn({ uid, formDetails }) {
+    //attempts
+    requestsToList: builder.query({
+      query: () => ({
+        url: "chats/s",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.attempts,
+    }),
+
+    //proposals
+    requestsFromList: builder.query({
+      query: () => ({
+        url: "chats/r",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.proposals,
+    }),
+
+    //user / chats subcollection
+    allChats: builder.query({
+      keepUnusedDataFor: 10,
+      query: () => ({
+        url: "chats",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.chats,
+    }),
+
+    //Delete/Leave Single Chat
+    deleteChat: builder.query({
+      query: (chatId) => ({
+        url: `chats/${chatId}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+    }),
+
+    //add to roommate list
+    roomieSpaceForm: builder.mutation({
+      query: (info) => ({
+        url: "",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ info }),
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+    }),
+
+    //Find Close Roomate / Space
+    findRoomieSpace: builder.mutation({
+      query: (info) => ({
+        url: "find",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(info),
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+    }),
+
+    //Send A initial TEXT, then Email to the other user
+    meetRoomate: builder.mutation({
+      query: (id) => {
+        return {
+          url: `${id}`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+
+      //  invalidatesTags: ()=>[]
+    }),
+
+    //Get Info about USER
+    singleRoomate: builder.query({
+      query: (id) => {
+        return {
+          url: `${id}`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      // providesTags: ({ id }) => [{id, type: "roommate"}]
+    }),
+
+    //Get ALL ROOMMATE / space
+    roomateSpace: builder.query({
+      keepUnusedDataFor: 90,
+      query: () => ({
+        url: "",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res.roommates,
+      providesTags: (res) =>
+        res
+          ? res?.map(({ id }) => [
+              { type: "roommate", id: id },
+              { type: "roommate", id: "ROOMMATELIST" },
+            ])
+          : [{ type: "roommate", id: "ROOMMATELIST" }],
+    }),
+  }),
+});
+
+export const {
+  useRoomateSpaceQuery,
+  useSingleRoomateQuery,
+  useMeetRoomateMutation,
+  useAllChatsQuery,
+  useRequestsFromListQuery,
+  useRequestsToListQuery,
+  useRoomieSpaceFormMutation,
+  useFindRoomieSpaceMutation,
+} = MatchLogicSlice;
+
+/*
+: builder.query({
+      query({ uid, formDetails }) {
         try {
           // Get Users
           const matches = await getMultipleMatches(uid);
@@ -20,15 +197,5 @@ const MatchLogicSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      providesTags: (results, error, arg) =>
-        results
-          ? [
-              ...results.map(({ data }) => [{ type: "match", id: data?.uid }]),
-              { type: "match", id: "MATCHLIST" },
-            ]
-          : [{ type: "match", id: "MATCHLIST" }],
-    }),
-  }),
-});
-
-export const { useFindRoomateMatchQuery } = MatchLogicSlice;
+    
+*/

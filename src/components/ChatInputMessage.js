@@ -1,23 +1,20 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "../UI/Button";
+import { Button } from "../components/ui/button";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { useAddmessageMutation } from "../store/Slices/Space";
+import { useAddMessageMutation } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-export default function ChatInputMessage() {
+export default function ChatInputMessage({ spaceId }) {
   //Current User
   const { data: user } = useIsLoggedInQuery();
 
   //Message
   const [messageString, setMessage] = useState("");
 
-  //Get Space Id
-  const spaceParamId = useParams().spaceId;
-
   //Message Function!
-  const [addToStackMessage] = useAddmessageMutation({
+  const [addToStackMessage] = useAddMessageMutation({
     fixedCachedKey: "add-message",
+    skip: !user,
   });
 
   //handle message change
@@ -26,17 +23,18 @@ export default function ChatInputMessage() {
   };
 
   const addToMessage = async () => {
-    if (!spaceParamId || !messageString) return;
+    if (!spaceId || !messageString) return;
 
     const objProp = {
       chat: messageString,
       timeSent: new Date().toISOString(),
-      uid: user?.user?.uid,
+      uid: user?.uid,
       id: new Date().getTime(),
     };
     setMessage("");
+
     await addToStackMessage({
-      spaceId: spaceParamId,
+      spaceId,
       message: objProp,
     })
       .unwrap()
@@ -52,9 +50,9 @@ export default function ChatInputMessage() {
       />
       <Button
         type="button"
-        trigger={addToMessage}
+        onClick={addToMessage}
         disable={!messageString}
-        elClass="absolute w-[20%] left-[80%] outline-none"
+        className="absolute w-[20%] left-[80%] outline-none"
       >
         <FontAwesomeIcon icon={faPaperPlane} />
       </Button>

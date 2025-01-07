@@ -1,104 +1,117 @@
-import { onAuthStateChanged } from "firebase/auth";
-import {
-  CreateUser,
-  LoginUser,
-  LogoutUser,
-} from "../../firebase/Authentication";
-import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
-import { DbError } from "../../utils/ErrorHandlers";
-import { api } from "../api";
-import { auth } from "../../firebase/init";
+import { user_api } from "../api";
 
-const UserSlice = api.injectEndpoints({
+const userSlice = user_api.injectEndpoints({
   endpoints: (builder) => ({
-    authorize: builder.mutation({
-      async queryFn({ mode, email, password }) {
-        try {
-          let credential;
-          switch (mode) {
-            case "login":
-              credential = await LoginUser({ email, password });
-              return { data: credential };
-            case "signup":
-              credential = await CreateUser({ email, password });
-              return { data: credential };
-            default:
-              return null;
-          }
-        } catch (e) {
-          throw new DbError(e?.message);
-        }
+    verifyEmail: builder.mutation({
+      query: () => {
+        return {
+          url: "verify",
+          method: "POST",
+        };
       },
-      invalidatesTags: (result, error, arg) =>
-        arg?.mode === "login" ? [{ type: "user", id: result }] : ["profile"],
-    }),
-    logout: builder.mutation({
-      async queryFn() {
-        try {
-          await LogoutUser();
-          return { data: "logged_out" };
-        } catch (e) {
-          throw new DbError(e?.message);
-        }
-      },
-      invalidatesTags: ["user"],
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      invalidatesTags: ({ userId }) => [{ type: "auth", id: userId }],
     }),
 
     isLoggedIn: builder.query({
-      queryFn() {
-        return { data: { user: {} } };
+      query: () => {
+        return {
+          url: "verify",
+          method: "GET",
+        };
       },
-
-      providesTags: (result) => [{ type: "user", id: result?.user?.uid }],
-      async onCacheEntryAdded(
-        args,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
-      ) {
-        await cacheDataLoaded;
-
-        //monitor local changes in firestore
-        const unsub = onAuthStateChanged(auth, (user) => {
-          if (user) {
-            updateCachedData((draft) => {
-              draft.user = {
-                uid: user?.uid,
-                email: user?.email,
-              };
-            });
-          } else {
-            updateCachedData((draft) => {
-              draft.user = {};
-            });
-          }
-        });
-
-        await cacheEntryRemoved;
-        unsub();
-      },
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.user,
+      providesTag: ({ user }) => [{ type: "auth", id: user.uid }],
     }),
 
-    username: builder.mutation({
-      async queryFn({ id, name }) {
-        try {
-          const obj = await UpdateADocumentObject(id, "users", {
-            key: "username",
-            newValue: name,
-          });
-          return { data: obj };
-        } catch (e) {
-          throw new DbError(e?.message);
-        }
-      },
-      invalidatesTags: (result, error, arg) => [
-        { type: "profile", id: arg.id },
+    //Get User
+    getUser: builder.query({
+      query: () => ({
+        url: "",
+        method: "GET",
+      }),
+      transformResponse: (res) => res?.user,
+      providesTag: ({ userId }) => [{ type: "user", id: userId }],
+    }),
+
+    setUser: builder.mutation({
+      query: (formData) => ({
+        url: "",
+        method: "POST",
+        body: JSON.stringify(formData),
+      }),
+      transformResponse: (res) => res?.message,
+      invalidatesTags: (__, error, args) => [
+        { type: "user", id: args?.userId },
+      ],
+    }),
+
+    getUserTokenTransactions: builder.query({
+      query: () => ({
+        url: "transactions",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformResponse: (res) => res?.transactions,
+    }),
+
+    editUser: builder.mutation({
+      query: (formData) => ({
+        url: "",
+        method: "PATCH",
+        body: JSON.stringify(formData),
+      }),
+      transformResponse: (res) => res?.message,
+      invalidatesTags: (__, error, args) => [
+        { type: "user", id: args?.userId },
       ],
     }),
   }),
 });
 
 export const {
-  useLogoutMutation,
-  useAuthorizeMutation,
-  useUsernameMutation,
+  useVerifyEmailMutation,
+  //USER
   useIsLoggedInQuery,
-} = UserSlice;
+  useEditUserMutation,
+  useSetUserMutation,
+  useGetUserQuery,
+  useGetUserTokenTransactionsQuery,
+} = userSlice;
+
+/*
+    //Manage Cookies
+    createCookie: builder.mutation({
+      query: (token) => ({
+        url: "cookie",
+        method: "POST",
+        credientials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+
+    deleteCeookie: builder.mutation({
+      query: (token) => ({
+        url: "cookie",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+*/

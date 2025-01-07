@@ -1,15 +1,13 @@
-import { useDispatch } from "react-redux";
 import Button from "../UI/Button";
 import Image from "../UI/Image";
-import { ModalAction } from "../store/Slices/modal";
+//import { ModalAction } from "../store/Slices/modal";
 import { useState } from "react";
 import RoommateDetail from "./RoommateDetail";
 
-//List of MATCHES
+//List of MATCHES: LATER FEATURE
 export default function MatchesList({ list }) {
   const [currentMatchSelected, setCurrentMatchSelected] = useState(undefined);
 
-  const dispatch = useDispatch();
   return (
     <div className="bg-slate-50 shadow-inner">
       <header className="flex justify-between items-center px-4 py-5 flex-wrap">
@@ -21,7 +19,9 @@ export default function MatchesList({ list }) {
         <Button
           outline={true}
           type="button"
-          trigger={() => dispatch(ModalAction.toggleFindRoommatePopover())}
+          trigger={
+            /*() => dispatch(ModalAction.toggleFindRoommatePopover())*/ ""
+          }
         >
           Close
         </Button>

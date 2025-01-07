@@ -1,38 +1,33 @@
-import { useParams } from "react-router-dom";
 import { useLoadMessageQuery } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
 import { NoticeDate } from "../utils/TimeHandler";
 
-export default function ChatBoxMessage() {
+export default function ChatBoxMessage({ spaceId }) {
   const { data: user } = useIsLoggedInQuery();
 
-  const spaceParams = useParams();
+  const { data, error, isError, isFetching, isLoading } = useLoadMessageQuery(
+    spaceId,
+    { skip: !spaceId || !user }
+  );
 
-  // message: sent
-  const {
-    data: messages,
-    error,
-    isError,
-    isLoading,
-  } = useLoadMessageQuery(spaceParams.spaceId);
-
-  if (isLoading) {
-    return <p>{error?.message}</p>;
+  if (isLoading || isFetching) {
+    return <p>spinner</p>;
   }
 
   if (isError) {
     return <p>{error?.message}</p>;
   }
 
+  console.log(user);
   return (
     <main>
-      {!messages.messages && <p>Start a chat!</p>}
-      {messages.messages &&
-        messages.messages.map((chat) => (
+      {!data?.chat && <p>Start a chat!</p>}
+      {data?.chat &&
+        data?.chat.map((chat) => (
           <div key={chat.message} className="last:my-2">
             <article
               className={`flex px-6  ${
-                chat?.uid === user?.user?.uid ? "justify-end" : "justify-start"
+                chat?.uid === user?.uid ? "justify-end" : "justify-start"
               }`}
             >
               <div className="rounded-2xl  w-fit pr-2 min-w-[30%] max-w-[70%] px-4  my-4 bg-purple-500/50 p-1">

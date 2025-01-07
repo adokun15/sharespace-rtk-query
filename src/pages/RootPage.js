@@ -8,16 +8,18 @@ export default function RootPage() {
   const toAuth = () => {
     navigateAuth("/auth");
   };
+  /*
+  <MainNavigation toAuth={toAuth} updateModal={updateFunc} />
+ <NavigationModal
+ isOpened={controlledModalState}
+ updateModal={updateFunc}
+ toAuth={toAuth}
+/>
 
+*/
   const updateFunc = () => setControlledState((prevState) => !prevState);
   return (
     <div className="relative overscroll-none">
-      <MainNavigation toAuth={toAuth} updateModal={updateFunc} />
-      <NavigationModal
-        isOpened={controlledModalState}
-        updateModal={updateFunc}
-        toAuth={toAuth}
-      />
       <Outlet />
     </div>
   );

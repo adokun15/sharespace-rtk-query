@@ -1,11 +1,11 @@
 import { api } from "../api";
 import { DbError, UnAuthorizedError } from "../../utils/ErrorHandlers";
-import { UpdateADocumentObject } from "../../firebase/UpdateDocument";
-import { storage } from "../../firebase/init";
+import { db, storage } from "../../firebase/init";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-
+import { updateDoc, doc } from "firebase/firestore";
 const UploadImageSlice = api.injectEndpoints({
   endpoints: (builder) => ({
+    UploadImageInAchat: builder.mutation({}),
     UploadImage: builder.mutation({
       async queryFn({ file, uid }) {
         //  return { data: null };
@@ -13,6 +13,7 @@ const UploadImageSlice = api.injectEndpoints({
           if (!uid) {
             throw new UnAuthorizedError("UNAUTHORIZED ACCESS!");
           }
+
           const filePath = `users/${uid}/${file?.name}`;
 
           const storageRef = ref(storage, filePath);
@@ -20,11 +21,8 @@ const UploadImageSlice = api.injectEndpoints({
           const upload = await uploadBytes(storageRef, file);
           const url = await getDownloadURL(upload.ref);
 
-          await UpdateADocumentObject(uid, "users", {
-            key: "photourl",
-            newValue: url,
-          });
-          return { data: "success " };
+          await updateDoc(doc(db, "users", uid), { photo: url });
+          return { data: "success" };
 
           // return { data: null };
         } catch (err) {
