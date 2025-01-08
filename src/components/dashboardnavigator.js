@@ -47,14 +47,13 @@ export default function DashboardNavigator({ isLoggedIn }) {
           </div>
         </header>
 
-        {error &&
-          !data &&
-          error?.status !==
-            401(
-              <p className="text-center text-red-600 ">
-                {error?.message || "Something went wrong!"}
-              </p>
-            )}
+        {error && !data && (
+          //error?.status !==
+          // 401(
+          <p className="text-center text-red-600 ">
+            {error?.message || "Something went wrong!"}
+          </p>
+        )}
       </SidebarHeader>
       <SidebarSeparator />
       {(isLoading || isFetching) && (

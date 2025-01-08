@@ -1,7 +1,7 @@
 import ChatList from "../../components/ChatList";
 import { useAllChatsQuery } from "../../store/Slices/matches";
 import DataError from "../../components/DataError";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
+import LoaderSpinner from "../../components/LoaderSpinner";
 export default function ChatsPage() {
   const { data: chats, isError, error, isLoading } = useAllChatsQuery();
 

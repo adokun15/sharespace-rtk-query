@@ -11,8 +11,7 @@ import { useIsLoggedInQuery } from "../../store/Slices/user";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
-import SingleRoommateInfo from "@/src/components/SingleRoomieData";
-import InviteModal from "@/src/components/InviteModal";
+import InviteModal from "../../components/InviteModal";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
