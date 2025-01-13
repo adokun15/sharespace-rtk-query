@@ -6,9 +6,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: () => ({
         url: "chats/s",
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
@@ -23,9 +20,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: () => ({
         url: "chats/r",
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
@@ -41,9 +35,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: () => ({
         url: "chats",
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
@@ -58,9 +49,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: (chatId) => ({
         url: `chats/${chatId}`,
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
@@ -74,9 +62,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: (info) => ({
         url: "",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ info }),
       }),
       transformErrorResponse: (err) => ({
@@ -91,9 +76,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: (info) => ({
         url: "find",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(info),
       }),
       transformErrorResponse: (err) => ({
@@ -109,9 +91,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         return {
           url: `${id}`,
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
       },
       transformErrorResponse: (err) => ({
@@ -129,9 +108,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         return {
           url: `${id}`,
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
       },
       transformErrorResponse: (err) => ({
@@ -148,9 +124,6 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       query: () => ({
         url: "",
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,

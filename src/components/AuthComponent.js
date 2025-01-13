@@ -354,11 +354,12 @@ export default function AuthenticationComponent() {
 
   const triggerSubmit = async () => {
     if (
-     ( !enteredValue?.fname ||
-      !enteredValue?.lname ||
-      !enteredValue?.password ||
-      !enteredValue?.email
-    ) && mode === "signup")
+      (!enteredValue?.fname ||
+        !enteredValue?.lname ||
+        !enteredValue?.password ||
+        !enteredValue?.email) &&
+      mode === "signup"
+    )
       return;
     await authorize({
       mode,
@@ -376,9 +377,10 @@ export default function AuthenticationComponent() {
   };
   return (
     <>
-      <p className="text-center mb-9 text-xl font-roboto tracking-wider">
+      {/*<p className="text-center mb-9 text-xl font-roboto tracking-wider">
         ShareSpace
       </p>
+     */}
       <h1 className="md:text-5xl text-center font-roboto text-3xl">
         {mode === "login"
           ? "Login to your Account"
@@ -479,13 +481,12 @@ export default function AuthenticationComponent() {
         <article>
           {mode === "login" ? (
             <>
-              <button
-                type="button"
-                onClick={() => setAuthState("signup")}
+              <Link
                 className="block m-auto text-blue-800 hover:text-purple-500"
+                to="forgotPassword"
               >
                 I forgot my password
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => setAuthState("signup")}

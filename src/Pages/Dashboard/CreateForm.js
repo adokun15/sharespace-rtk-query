@@ -7,13 +7,20 @@ import LoaderSpinner from "../../components/LoaderSpinner";
 //Add data, then Video
 
 export default function CreateRoomieSpaceForm() {
-  const { isError, error, data: user, isLoading } = useGetUserQuery();
+  const {
+    isError,
+    error,
+    data: user,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useGetUserQuery();
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <LoaderSpinner message="loading" />;
   }
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError error={error} refetch={refetch} />;
   }
 
   return (

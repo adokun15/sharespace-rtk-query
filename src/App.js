@@ -19,7 +19,7 @@ import Privacy from "./Pages/privacy";
 import Term from "./Pages/tos";
 import SingleRoommateInfo from "./components/SingleRoomieData";
 import Guide from "./components/Guides";
-
+import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
 function App() {
   const router = createBrowserRouter([
     {
@@ -79,6 +79,10 @@ function App() {
             {
               index: true,
               element: <AuthenticationComponent />,
+            },
+            {
+              path: "forgotPassword",
+              element: <ForgetPasswordComponent />,
             },
           ],
         },

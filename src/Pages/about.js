@@ -25,25 +25,44 @@ export default function About() {
         </TabsList>
         <TabsContent value="about">
           <div className="space-y-3">
-            <h2 className="text-2xl font-semibold">Our Story</h2>
+            <h2 className="text-2xl font-semibold">Our Mission</h2>
             <p>
-              Sharespace was created by a student in the Kwara State University.
-              I created ShareSpace to help fellow student who has trouble
-              finding compactible roomate by using our platform, the risk of
-              choosing a wrong roommate is LESS. Sharespace is a social platform
-              that connect individuals seeking roommate by:
+              At <b>ShareSpace</b>, we believe finding the right place to live
+              and the right people to live with shouldn't be stressful. Our
+              mission is to simplify the process of connecting students with
+              trusted roommates and shared accomodations that suit their needs
+              and preferences.
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold">What we Do</h2>
+            <p>
+              <b>Sharespace</b> is a platform designed exclusively for
+              university students. We provide a safe, user-friendly space where
+              student can:{" "}
             </p>
             <ul>
-              <li>Check out Explore page and send message to other user</li>
-              <li>Use our Find match features to see specific roomates</li>
+              <li>Discover available accomodation</li>
+              <li>Connect with potential roommates</li>
               <li>
-                Can't find your match. then create your own roomate post to
-                receive request from different user
+                Create your own roomate post to receive request from different
+                user
               </li>
             </ul>
+            <h2 className="mt-3 text-2xl font-semibold">
+              {" "}
+              Why Choose ShareSpace?
+            </h2>
+            <ul>
+              <li>Simple Search and filter</li>
+              <li>Commmunity Support</li>
+            </ul>
+            <h2 className="text-2xl font-semibold">Our CommitMent</h2>
             <p>
-              The fee for the use of our service is based credit token system
+              We are dedicated to continually improving the platform, ensuring
+              that students have a seamless experience while finding a home that
+              feels right.
             </p>
+            <h2 className="text-2xl font-semibold">Contact Us</h2>
+            <p>For inquiries, feedback or support reach out to our email</p>
           </div>
         </TabsContent>
         <TabsContent value="faq">

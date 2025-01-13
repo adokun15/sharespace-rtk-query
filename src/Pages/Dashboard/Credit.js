@@ -14,13 +14,15 @@ export default function ManageCredit() {
     error,
     isError,
     isLoading,
+    isFetching,
+    refetch,
   } = useGetUserTokenTransactionsQuery();
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <LoaderSpinner />;
   }
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError refetch={refetch} error={error} />;
   }
   return (
     <>

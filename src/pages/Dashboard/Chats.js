@@ -1,16 +1,24 @@
 import ChatList from "../../components/ChatList";
 import { useAllChatsQuery } from "../../store/Slices/matches";
 import DataError from "../../components/DataError";
-import LoaderSpinner from "@/src/components/LoaderSpinner";
+import LoaderSpinner from "../../components/LoaderSpinner";
 export default function ChatsPage() {
-  const { data: chats, isError, error, isLoading } = useAllChatsQuery();
+  const {
+    data: chats,
+    isError,
+    error,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useAllChatsQuery();
 
-  if (isLoading) {
+  console.log(error);
+  if (isLoading || isFetching) {
     return <LoaderSpinner message="loading chats" />;
   }
 
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError error={error} refetch={refetch} />;
   }
 
   return (

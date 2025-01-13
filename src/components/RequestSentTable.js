@@ -11,6 +11,7 @@ export default function RequestSentTable() {
     isError,
     isFetching,
     error,
+    refetch,
     isLoading,
   } = useRequestsToListQuery();
 
@@ -19,7 +20,7 @@ export default function RequestSentTable() {
   }
 
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError refetch={refetch} error={error} />;
   }
   return (
     <Card elClass="overflow-x-auto w-full relative space-y-6">

@@ -12,6 +12,7 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import InviteModal from "../../components/InviteModal";
+import { Button } from "../../components/ui/button";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
@@ -36,7 +37,10 @@ const ExplorePage = () => {
   return (
     <>
       <main className="mb-20 space-y-3 w-full">
-        <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
+          <Button> Create Post</Button>
+        </div>
         {/* Work on Later */}
         <Dialog
           open={isRoomieInviteOpen}

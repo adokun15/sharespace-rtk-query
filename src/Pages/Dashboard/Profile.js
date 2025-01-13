@@ -15,7 +15,7 @@ import {
   AccordionTrigger,
 } from "../../components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
-import { AlertCircleIcon, Sheet } from "lucide-react";
+import { AlertCircleIcon, Radio, Sheet } from "lucide-react";
 import EmailVerificationComponent from "../../components/User/EmailVerification";
 import ProfilePic from "../../components/User/PhotoUpload";
 import Profile from "../../components/User/Profile";
@@ -42,14 +42,21 @@ import {
 } from "../../components/ui/dialog";
 
 export default function ProfilePage() {
-  const { data: user, isLoading, error, isError } = useGetUserQuery();
+  const {
+    data: user,
+    isFetching,
+    refetch,
+    isLoading,
+    error,
+    isError,
+  } = useGetUserQuery();
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <LoaderSpinner message="Loading Profile" />;
   }
 
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError error={error} refetch={refetch} />;
   }
 
   const profile_complete =
@@ -147,17 +154,31 @@ export default function ProfilePage() {
                   <h4 className="text-xl font-bold font-sans_serif">
                     Manage Credit
                   </h4>
-                  <p>Buy Credit and find your roommate instantly!</p>
-                  <DialogTrigger asChild>
-                    <Button>Choose Plan</Button>
-                  </DialogTrigger>
+                  <p>Buy Credits and find your roommate instantly!</p>
+                  <div className="flex gap-3">
+                    <Button variant="outline">View History</Button>
+                    <DialogTrigger asChild>
+                      <Button>Choose Plan</Button>
+                    </DialogTrigger>
+                  </div>
                 </article>
 
                 <DialogContent>
                   <DialogTitle>Select Plan to Continue</DialogTitle>
-                  <p>
-                    You be Redirect to Paystack to complete payment for credits
-                  </p>
+                  <>
+                    <article>
+                      <div>
+                        <p>60 Credits | NGN100</p>
+                      </div>
+                      <div>
+                        <p>500 Credits | NGN400</p>
+                      </div>
+                      <div>
+                        <p>1000 Credits | NGN700</p>
+                      </div>
+                    </article>
+                    <Button>Buy Now</Button>
+                  </>
                 </DialogContent>
               </Dialog>
 

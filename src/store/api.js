@@ -9,8 +9,8 @@ export const user_api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${
       process.env.NODE_ENV === "development"
-        ? `http://localhost:8080/user/`
-        : `${process.env.REACT_APP_LIVE_SERVER_URL}/user/`
+        ? "http://localhost:8080/user/"
+        : "https://sharespace-server.vercel.app/user/"
     }`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("sharespace_token");
@@ -30,8 +30,8 @@ export const roomate_api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${
       process.env.NODE_ENV === "development"
-        ? `http://localhost:8080/roommates/`
-        : `${process.env.REACT_APP_LIVE_SERVER_URL}/roommates/`
+        ? "http://localhost:8080/roommates/"
+        : "https://sharespace-server.vercel.app/roommates/"
     }`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("sharespace_token");
@@ -51,11 +51,11 @@ export const credit_api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${
       process.env.NODE_ENV === "development"
-        ? `http://localhost:8080/credit`
-        : `${process.env.REACT_APP_LIVE_SERVER_URL}/credit`
+        ? "http://localhost:8080/credit"
+        : "https://sharespace-server.vercel.app/credit/"
     }`,
   }),
-  tagTypes: ["user"],
+  tagTypes: ["credits"],
   endpoints: () => ({}),
 });
 

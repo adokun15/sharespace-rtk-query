@@ -14,7 +14,6 @@ import {
 } from "../components/ui/sidebar";
 import Logo from "../image/sharespace_logo.jpg";
 import { Link } from "react-router-dom";
-import { useIsLoggedInQuery } from "../store/Slices/user";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -25,12 +24,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useIsLoggedInQuery } from "../store/Slices/user";
 
-export default function DashboardNavigator({ isLoggedIn }) {
+export default function DashboardNavigator({ loadContent }) {
   const { isMobile } = useSidebar();
 
-  const { data, error, isLoading, isFetching } = isLoggedIn;
-
+  const { data, error, isLoading, isFetching, refetch } = useIsLoggedInQuery(
+    null,
+    {
+      skip: !loadContent,
+    }
+  );
+  console.log(data);
+  console.log(error);
   return (
     <Sidebar side={isMobile ? "right" : "left"}>
       <SidebarHeader>
@@ -47,9 +53,7 @@ export default function DashboardNavigator({ isLoggedIn }) {
           </div>
         </header>
 
-        {error && !data && (
-          //error?.status !==
-          // 401(
+        {error && !data && error?.statusCode !== 401 && (
           <p className="text-center text-red-600 ">
             {error?.message || "Something went wrong!"}
           </p>
@@ -119,13 +123,29 @@ export default function DashboardNavigator({ isLoggedIn }) {
       </>
 
       <SidebarFooter>
-        {!data && !isLoading && !isFetching && (
+        {(isLoading || isFetching) && (
           <>
-            <Button asChild>
-              <Link className="text-center" to="/auth">
-                Login
-              </Link>
-            </Button>
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={index}>
+                <Skeleton className="h-3 m-2 rounded-xl p-3 py-1 " />
+              </div>
+            ))}
+          </>
+        )}
+
+        {!isLoading && !isFetching && (error?.statusCode === 401 || !data) && (
+          <>
+            <>
+              {+error?.statusCode === 500 ? (
+                <Button onClick={refetch}>Reload({error?.statusCode})</Button>
+              ) : (
+                <Button asChild>
+                  <Link className="text-center" to="/auth">
+                    Login
+                  </Link>
+                </Button>
+              )}
+            </>
             <ul className="font-roboto divide-x-2 justify-center gap-2 *:px-1 flex text-xs text-center">
               <li>
                 <Link to="/about">About</Link>

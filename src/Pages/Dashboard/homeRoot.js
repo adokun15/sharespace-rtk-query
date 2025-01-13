@@ -1,21 +1,16 @@
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import DashboardNavigator from "../../components/dashboardnavigator";
 import { SidebarProvider } from "../../components/ui/sidebar";
 import TriggerSidebar from "../../UI/TriggerSidebar";
-import { useIsLoggedInQuery } from "../../store/Slices/user";
 //import ExplorePage from "./Explore";
 import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 export default function HomeRoot() {
   const location = useLocation();
-  const reRoute = useNavigate();
+  //const reRoute = useNavigate();
 
   const token = localStorage.getItem("sharespace_token");
   const [isPrivate, setRouteIsPrivate] = useState(false);
-
-  const isLoggedIn = useIsLoggedInQuery(null, {
-    skip: isPrivate,
-  });
 
   const dashboardRoute = location.pathname.split("/");
 
@@ -36,18 +31,19 @@ export default function HomeRoot() {
     } else {
       if (token) {
         setRouteIsPrivate(true);
-      } else {
-        reRoute("/auth");
       }
     }
-  }, [dashboardRoute, reRoute, token]);
+  }, [dashboardRoute, token]);
 
+  console.log(isPrivate);
   return (
     <SidebarProvider>
-      <DashboardNavigator isLoggedIn={isLoggedIn} />
-      <main className=" px-[3rem] w-full  my-[2rem]">
+      <DashboardNavigator loadContent={isPrivate} />
+      <main className="w-full relative space-y-[4rem]">
         <TriggerSidebar />
-        <Outlet />
+        <div className=" md:px-[3rem] px-[1rem]   my-[2rem]">
+          <Outlet />
+        </div>
       </main>
       <Toaster />
     </SidebarProvider>

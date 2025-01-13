@@ -11,6 +11,8 @@ import LoaderSpinner from "./LoaderSpinner";
 export default function RoommateDetail({
   roommate,
   loading,
+  refetch,
+  fetching,
   error: roomateError,
 }) {
   const { data: user } = useGetUserQuery();
@@ -54,12 +56,12 @@ export default function RoommateDetail({
       .catch((e) => console.log(e?.message));
   };
 
-  if (loading) {
+  if (loading || fetching) {
     return <LoaderSpinner message="Loading..." />;
   }
 
   if (roomateError) {
-    return <DataError error={roomateError} />;
+    return <DataError refetch={refetch} error={roomateError} />;
   }
 
   return (

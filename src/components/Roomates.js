@@ -30,12 +30,16 @@ const Roomates = ({ singleRoomateId }) => {
     data: roommates,
     isLoading,
     isError,
+    refetch,
+    isFetching,
   } = useRoomateSpaceQuery(null);
 
   const {
     singleRoomieError,
     data: roomie,
     isError: isSingleRoomieError,
+    isFetching: fetchingRoomie,
+    refetch: refetchRoomie,
     isLoading: loadingSingleRoomie,
   } = useSingleRoomateQuery(null, { skip: !singleRoomateId });
 
@@ -45,14 +49,21 @@ const Roomates = ({ singleRoomateId }) => {
     if (
       roomie &&
       !loadingSingleRoomie &&
+      !fetchingRoomie &&
       !isSingleRoomieError &&
       singleRoomateId
     ) {
       setRoommate(roomie);
     }
-  }, [isSingleRoomieError, loadingSingleRoomie, roomie, singleRoomateId]);
+  }, [
+    isSingleRoomieError,
+    fetchingRoomie,
+    loadingSingleRoomie,
+    roomie,
+    singleRoomateId,
+  ]);
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     //Skeleton
     return (
       <>
@@ -78,7 +89,7 @@ const Roomates = ({ singleRoomateId }) => {
   }
 
   if (isError) {
-    return <DataError error={error} />;
+    return <DataError refetch={refetch} error={error} />;
   }
 
   const oneRoomateDetail = (id) => {
@@ -144,9 +155,9 @@ const Roomates = ({ singleRoomateId }) => {
           </PopoverContent>
         </Popover>
 */}
-        <div className="grow">
+        {/* <div className="grow">
           <Input placeholder="Search by School Name" />
-        </div>
+        </div>*/}
       </article>
       <ul className="md:grid *:min-h-[4rem] grid-cols-3 block  gap-5">
         {roommates &&
@@ -223,6 +234,8 @@ const Roomates = ({ singleRoomateId }) => {
         <RoommateDetail
           roommate={roommate}
           error={singleRoomieError}
+          refetch={refetchRoomie}
+          fetching={fetchingRoomie}
           loading={loadingSingleRoomie}
         />
       </SheetContent>
