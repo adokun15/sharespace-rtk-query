@@ -1,27 +1,38 @@
 import { useLogoutMutation } from "../store/Slices/auth";
-import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
 
-export const Logout = ({ closeMobileModal }) => {
-  const navigate = useNavigate();
-  const [logout, { isLoading }] = useLogoutMutation();
-  const logoutHandler = async () =>
+export const LogoutXomponent = ({ refetch }) => {
+  const [logout, { isLoading, reset }] = useLogoutMutation();
+  const reroute = useNavigate();
+
+  const handleLogout = async () => {
     await logout()
       .unwrap()
-      .then((data) => {
-        if (data === "logged_out") {
-          navigate("/");
-          closeMobileModal && closeMobileModal();
-        }
-      })
-      .catch((e) => console.log(e.message));
+      .then((d) => {
+        //alert user
+        toast.success("Logged Out!");
 
+        //Redirect
+        reroute("/");
+
+        window.location.reload();
+      })
+      .catch((e) => {
+        //alert user
+        toast.error("Logged Out Operation Failed!", {
+          description: e?.message,
+        });
+      })
+      .finally(reset);
+  };
   return (
     <Button
-      trigger={async () => {
-        await logoutHandler();
+      onClick={async () => {
+        await handleLogout();
       }}
-      outline={true}
+      variant="ghost"
     >
       {isLoading ? "..." : "Logout"}
     </Button>

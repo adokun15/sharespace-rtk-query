@@ -6,7 +6,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./init";
 import { CreateDocumentWithUID } from "./CreateDocument";
-import { credit_api } from "../store/api";
+
 //import { CreateDocumentWithUID } from "./CreateDocument";
 
 export async function ForgotPassword(email) {
@@ -15,7 +15,7 @@ export async function ForgotPassword(email) {
       url: `${
         process.env.NODE_ENV === "development"
           ? "http://localhost:3000"
-          : process.env.REACT_APP_URL
+          : "https://sharespace.com.ng"
       }/auth`,
     });
   } catch (e) {
@@ -24,9 +24,14 @@ export async function ForgotPassword(email) {
     );
   }
 }
+
 export async function LogoutUser() {
   try {
     await auth.signOut();
+    //Clear localstorage
+    localStorage.removeItem("sharespace_token");
+
+    return "logged_out";
   } catch (e) {
     throw new Error(
       e?.code || e?.message || "Unable to logout. An error occured!"

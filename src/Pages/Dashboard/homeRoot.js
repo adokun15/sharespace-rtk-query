@@ -35,7 +35,6 @@ export default function HomeRoot() {
     }
   }, [dashboardRoute, token]);
 
-  console.log(isPrivate);
   return (
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />

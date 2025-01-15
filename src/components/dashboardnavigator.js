@@ -1,4 +1,11 @@
-import { HomeIcon, MessageSquareCodeIcon, Settings2 } from "lucide-react";
+import {
+  ExternalLink,
+  HomeIcon,
+  LogOut,
+  MessageSquareCodeIcon,
+  Settings2,
+  User,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +20,7 @@ import {
   SidebarSeparator,
 } from "../components/ui/sidebar";
 import Logo from "../image/sharespace_logo.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -25,6 +32,16 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useIsLoggedInQuery } from "../store/Slices/user";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowRight,
+  faCoins,
+  faPeopleGroup,
+  faPerson,
+  faReply,
+  faToolbox,
+} from "@fortawesome/free-solid-svg-icons";
+import { LogoutXomponent } from "./Logout";
 
 export default function DashboardNavigator({ loadContent }) {
   const { isMobile } = useSidebar();
@@ -35,8 +52,10 @@ export default function DashboardNavigator({ loadContent }) {
       skip: !loadContent,
     }
   );
+
   console.log(data);
-  console.log(error);
+  console.log(isFetching, "loaded again");
+
   return (
     <Sidebar side={isMobile ? "right" : "left"}>
       <SidebarHeader>
@@ -73,7 +92,9 @@ export default function DashboardNavigator({ loadContent }) {
       <>
         <SidebarContent
           className={
-            !isLoading && data && !isFetching ? "visible" : "invisible"
+            !isLoading && data && !isFetching && !error
+              ? "visible"
+              : "invisible"
           }
         >
           <SidebarGroup>
@@ -133,11 +154,11 @@ export default function DashboardNavigator({ loadContent }) {
           </>
         )}
 
-        {!isLoading && !isFetching && (error?.statusCode === 401 || !data) && (
+        {!isLoading && !isFetching && (error || !data) && (
           <>
             <>
               {+error?.statusCode === 500 ? (
-                <Button onClick={refetch}>Reload({error?.statusCode})</Button>
+                <Button onClick={refetch}>Reload</Button>
               ) : (
                 <Button asChild>
                   <Link className="text-center" to="/auth">
@@ -160,34 +181,58 @@ export default function DashboardNavigator({ loadContent }) {
             </ul>
           </>
         )}
-        {data && !isLoading && !isFetching && (
+        {!error && data && !isLoading && !isFetching && (
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Button variant="outline">Account</Button>
+              <Button variant="outline">
+                <User />
+                Account
+              </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent>
+            <DropdownMenuContent className="min-w-[13rem]">
               <DropdownMenuGroup>
                 <DropdownMenuItem>
+                  <FontAwesomeIcon icon={faPerson} />
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem>
-                  <Link to="/settings">Settings</Link>
+                  <FontAwesomeIcon icon={faCoins} />
+                  Buy Credit
+                  <FontAwesomeIcon icon={faArrowRight} />
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Link>Feedback</Link>
-                </DropdownMenuItem>
+              <DropdownMenuItem>
+                <FontAwesomeIcon icon={faToolbox} />
 
-                <DropdownMenuItem>
-                  <Link>Support</Link>
-                </DropdownMenuItem>
+                <Link to="/settings">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuGroup>
+                <Link>
+                  <DropdownMenuItem>
+                    <FontAwesomeIcon icon={faReply} />
+                    <span>Feedback</span>
+                    <ExternalLink />
+                  </DropdownMenuItem>
+                </Link>
+
+                <Link>
+                  <DropdownMenuItem>
+                    <FontAwesomeIcon icon={faPeopleGroup} />
+                    <span>Support</span>
+                    <ExternalLink />
+                  </DropdownMenuItem>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>
+                <LogOut />
+                <LogoutXomponent refetch={refetch} />
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -195,24 +240,3 @@ export default function DashboardNavigator({ loadContent }) {
     </Sidebar>
   );
 }
-/**
- * <h3 className="font-sans_serif font-medium text-center">
-          Created by{" "}
-          <a href="https://ohida.vercel.app" target="_blank" rel="noreferrer">
-            Ohida
-          </a>
-        </h3>
-          <ul className="font-roboto text-center">
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-
-            <li>
-              <Link to="/terms">Terms</Link>
-            </li>
-            <li>
-              <Link to="/privacy">Privacy</Link>
-            </li>
-          </ul>
-        )}
- */

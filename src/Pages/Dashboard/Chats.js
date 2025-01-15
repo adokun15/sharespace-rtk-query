@@ -12,7 +12,6 @@ export default function ChatsPage() {
     refetch,
   } = useAllChatsQuery();
 
-  console.log(error);
   if (isLoading || isFetching) {
     return <LoaderSpinner message="loading chats" />;
   }

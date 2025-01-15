@@ -30,7 +30,7 @@ const userSlice = user_api.injectEndpoints({
         message: err?.data?.message,
       }),
       transformResponse: (res) => res?.user,
-      providesTag: ({ user }) => [{ type: "auth", id: user.uid }],
+      providesTags: () => ["auth"],
     }),
 
     //Get User

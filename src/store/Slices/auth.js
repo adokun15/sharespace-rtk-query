@@ -19,7 +19,7 @@ const UserSlice = api.injectEndpoints({
               return { data: credential };
             case "signup":
               credential = await CreateUser({ name, email, password });
-              console.log(credential);
+              //        console.log(credential);
               return { data: credential };
             default:
               return null;
@@ -28,8 +28,8 @@ const UserSlice = api.injectEndpoints({
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: (result, error, arg) =>
-        arg?.mode === "login" ? [{ type: "auth", id: result }] : ["auth"],
+      invalidatesTags: () => ["auth"],
+      //  arg?.mode === "login" ? [{ type: "auth", id: result }] : ,
     }),
 
     forgotPassword: builder.mutation({
@@ -46,13 +46,13 @@ const UserSlice = api.injectEndpoints({
     logout: builder.mutation({
       async queryFn() {
         try {
-          await LogoutUser();
-          return { data: "logged_out" };
+          const l = await LogoutUser();
+          return { data: l };
         } catch (e) {
           throw new DbError(e?.message);
         }
       },
-      invalidatesTags: ["auth"],
+      invalidatesTags: () => ["auth"],
     }),
   }),
 });
