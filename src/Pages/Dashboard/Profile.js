@@ -174,7 +174,14 @@ export default function ProfilePage() {
 
                 <DialogContent>
                   <DialogTitle>Change profile Setting </DialogTitle>
-                  <EditUser onClose={toggleDialogModalUser} />
+                  <EditUser
+                    prevData={{
+                      department: user?.profile?.department,
+                      school: user?.profile?.school,
+                      level: user?.profile?.level,
+                    }}
+                    onClose={toggleDialogModalUser}
+                  />
                 </DialogContent>
               </Dialog>
             </TabsContent>

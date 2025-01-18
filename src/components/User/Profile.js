@@ -65,9 +65,11 @@ export default function Profile({ mode, previousData }) {
 
       //Can be changed!
       targetType: "",
-      hobby: [],
-      habit: [],
-      socials: [],
+
+      //Later Feature
+      //    hobby: [],
+      //   habit: [],
+      //  socials: [],
     },
   });
 

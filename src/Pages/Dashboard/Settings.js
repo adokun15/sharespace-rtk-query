@@ -1,25 +1,145 @@
-import { Link } from "react-router-dom";
-import Button from "../../UI/Button";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "../../UI/Card";
-
+import {
+  useDeleteUserMutation,
+  useEditUserMutation,
+  useGetUserQuery,
+} from "../../store/Slices/user";
+import {
+  Select,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "../../components/ui/select";
+import { Button } from "../../components/ui/button";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  DialogClose,
+  DialogContent,
+  Dialog,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
 export default function Settings() {
+  const reRoute = useNavigate();
+  const { data: user } = useGetUserQuery();
+
+  const [editUser, { isLoading: loading }] = useEditUserMutation();
+
+  const [deleteUser, { isLoading: deleting, error }] = useDeleteUserMutation();
+
+  console.log(deleting);
+  console.log(error);
+  const deleteAccount = async () => {
+    await deleteUser()
+      .unwrap()
+      .then((d) => {
+        //Clear Storage
+        localStorage.removeItem("sharespace_token");
+        console.log(d);
+        //alert user: "changes made"
+        toast.success("Account Deleted!", {
+          description: "Thank you for using our service.",
+        });
+
+        setTimeout(() => {
+          //redirect
+          reRoute("/");
+
+          //reloadd
+          //     window.location.reload();
+        }, 1500);
+      })
+      .catch(({ data }) => {
+        console.log(data?.message);
+        toast.error(data?.status || "Something WENT wrong!", {
+          description: data?.message,
+          //Add a button to login if (401)
+        });
+      });
+  };
+
+  const roommateHandler = async (value) => {
+    await editUser({ targetType: value })
+      .unwrap()
+      .then(() => {
+        //alert user: "changes made"
+        toast.success("Roommate Type Changed!", {
+          description: "Change will be applied in few minutes",
+        });
+      })
+      .catch(({ data }) => {
+        toast.error(data?.status || "Something WENT wrong!", {
+          description: data?.message,
+          //Add a button to login if (401)
+        });
+      });
+  };
+
   return (
     <main className="mb-4">
-      <h2 className="text-4xl">Settings</h2>
+      <h2 className="text-2xl">Settings</h2>
       <Card elClass="space-y-4">
         <h2 className="capitalize text-3xl font-roboto font-bold">
-          Account removal
+          Roommate Type
         </h2>
-        <p className="font-oswald">
-          Remove your account permanently from ShareSpace
-        </p>
-        <Button elclass="bg-red-600 text-white ring-1 ring-red-700 ring-offset-2 font-oswald">
-          Delete
-        </Button>
+
+        {loading && <Loader2 />}
+
+        <p className="font-oswald">Who are looking forward to live with?</p>
+
+        <Select onValueChange={roommateHandler}>
+          <SelectTrigger>
+            <SelectValue
+              defaultValue={user?.targetType}
+              placeholder="Select Option"
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="roomie">
+              <span>Someone who already has a hostel</span>
+            </SelectItem>
+            <SelectItem value="spacer">
+              <span>
+                Someone who looking for accomodation and has no hostel
+              </span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </Card>
+      <Card elClass="space-y-4">
+        <Dialog>
+          <h2 className="capitalize text-3xl font-roboto font-bold">
+            Account removal
+          </h2>
+          <p className="font-oswald">
+            Remove your account permanently from ShareSpace
+          </p>
+          <DialogTrigger asChild>
+            <Button
+              disabled={!user}
+              className="bg-red-600 text-white ring-1 ring-red-700 rounded-xl ring-offset-2 font-oswald"
+            >
+              Delete
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Delete ShareSpace permanently</DialogTitle>
+            <p>This action is irreversible and you will lose all your data</p>
+            <Button variant="destructive" onClick={deleteAccount}>
+              {deleting ? "deleting..." : "Delete Account"}
+            </Button>
+            <DialogClose>Close</DialogClose>
+          </DialogContent>
+        </Dialog>
       </Card>
       <div className="text-center *:px-2 divide-x-2">
-        <Link className=" text-purple-500 underline font-oswald">Terms</Link>
-        <Link className=" text-purple-500 underline font-oswald">
+        <Link to="/terms" className=" text-purple-500 underline font-oswald">
+          Terms
+        </Link>
+        <Link to="/privacy" className=" text-purple-500 underline font-oswald">
           Privacy Policy
         </Link>
       </div>

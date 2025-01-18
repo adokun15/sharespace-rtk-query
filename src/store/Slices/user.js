@@ -14,7 +14,7 @@ const userSlice = user_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
-      invalidatesTags: ({ userId }) => [{ type: "auth", id: userId }],
+      invalidatesTags: () => ["auth"],
     }),
 
     isLoggedIn: builder.query({
@@ -40,7 +40,7 @@ const userSlice = user_api.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (res) => res?.user,
-      providesTag: ({ userId }) => [{ type: "user", id: userId }],
+      providesTags: ["user"],
     }),
 
     setUser: builder.mutation({
@@ -50,9 +50,7 @@ const userSlice = user_api.injectEndpoints({
         body: JSON.stringify(formData),
       }),
       transformResponse: (res) => res?.message,
-      invalidatesTags: (__, error, args) => [
-        { type: "user", id: args?.userId },
-      ],
+      invalidatesTags: () => ["user"],
     }),
 
     getUserTokenTransactions: builder.query({
@@ -73,9 +71,16 @@ const userSlice = user_api.injectEndpoints({
         body: JSON.stringify(formData),
       }),
       transformResponse: (res) => res?.message,
-      invalidatesTags: (__, error, args) => [
-        { type: "user", id: args?.userId },
-      ],
+      invalidatesTags: () => ["user"],
+    }),
+
+    deleteUser: builder.mutation({
+      query: () => ({
+        url: "",
+        method: "DELETE",
+      }),
+      transformResponse: (res) => res?.message,
+      invalidatesTags: () => ["user"],
     }),
   }),
 });
@@ -88,6 +93,7 @@ export const {
   useSetUserMutation,
   useGetUserQuery,
   useGetUserTokenTransactionsQuery,
+  useDeleteUserMutation,
 } = userSlice;
 
 /*
