@@ -8,9 +8,9 @@ import {
   FormLabel,
 } from "./ui/form";
 import { Button } from "./ui/button.js";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
-//import { z } from "zod";
+import { z } from "zod";
 import { useRoomieSpaceFormMutation } from "../store/Slices/matches";
 import { Slider } from "./ui/slider";
 import {
@@ -20,53 +20,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useState } from "react";
-
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 export default function AddPreferences({ user }) {
   const [createpost] = useRoomieSpaceFormMutation();
 
-  const [formerror, setFormError] = useState("");
-  const form = useForm({
-    defaultValues: {
-      rent: 150,
-      location: "",
-      description: "",
-      proposal: 10,
-      numberOfRoommates: 1,
-    },
+  //Validate Input
+  const formSchema = z.object({
+    description: z.string().min(5, "Quote too Short"),
+    location: z.string().min(2, "Invalid Location Length"),
+    rent: z.number().array(),
+    proposal: z.number().array(),
+    numberOfRoommates: z.string().max(2),
   });
 
-  //Validate Input
-  //  const formSchema = z.object({});
+  const reRoute = useNavigate();
+
+  const form = useForm({
+    defaultValues: {
+      description: "",
+      location: "",
+      rent: [150],
+      proposal: [10],
+      numberOfRoommates: "1",
+    },
+    resolver: zodResolver(formSchema),
+  });
 
   const createPostHandler = async (data) => {
     //Validate create here first
-    /*  if (!user) {
-      setFormError("You seemed to be logged out!");
+    if (!user || !user?.targetType) {
+      toast.warning("You seemed to be logged out!");
       return;
     }
 
-    if (
+    //Check Credit
+    /*  if (
       !(user?.credits && user?.credits > 30 && user?.proposal <= 10) ||
       !(user?.credits && user?.proposal > 10 && user?.credits > 50)
-    ) {
-      setFormError("Insufficient credits to complete process!");
-      return;
-    }
-*/
-    const {
-      rent: [rent],
-      proposal: [proposal],
-      ...others
-    } = data;
+      ) {
+        toast.error("Insufficient credits to complete process!");
+        return;
+        }
+        */
+    const { numberOfRoommates, rent, proposal, ...others } = data;
 
     const timePosted = new Date().toISOString();
+
     const info = {
       ...others,
+      numberOfRoommates: +numberOfRoommates,
       target: user?.targetType,
-      age: user?.dob,
-      rent,
-      proposal,
+      proposal: typeof proposal === "number" ? proposal : proposal[0],
       name: user?.name,
       department: user?.profile?.department,
       level: user?.profile?.level,
@@ -74,62 +79,121 @@ export default function AddPreferences({ user }) {
       religion: user?.religion,
       id: user?.userId,
       photo: user?.photo,
-      socials: user?.socials,
       timePosted,
     };
+    const BudgetRent = user?.targetType === "roomie" ? "rent" : "budget";
 
-    console.log(info);
-    console.log(user?.credits);
+    info[BudgetRent] = typeof rent === "number" ? rent : rent[0];
+
     await createpost(info)
-      .then((data) => console.log(data))
-      .catch((e) => console.log(e));
+      .unwrap()
+      .then((data) => {
+        toast.error(data?.message, {
+          description: "Check under 'my post' to review post",
+        });
+
+        reRoute("/");
+      })
+      .catch((error) => {
+        toast.error(error?.status || "Error", {
+          description: error?.message,
+          //Stay longer, add button to buy credit
+        });
+      });
   };
+
+  if (!user?.targetType) {
+    return (
+      <div className="text-center space-y-6">
+        <p>Kindly complete your profile to continue</p>
+        <Button asChild variant="outline">
+          <Link to="/profile">Complete Profile</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
       <form
-        className="space-y-3"
+        className="space-y-8"
         onSubmit={form.handleSubmit(createPostHandler)}
       >
-        {formerror && <p>{formerror}</p>}
         <FormField
-          name="numberOfRoommates"
+          name="description"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Number of Roommates</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="How many?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
-                  <SelectItem value="3">3</SelectItem>
-                  <SelectItem value="4">4</SelectItem>
-                  <SelectItem value="5">5</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormLabel className="font-bold text-xl font-sans_serif">
+                Quote
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  className="min-h-4 rounded"
+                  placeholder="Enter descriptions..."
+                />
+              </FormControl>
+
               <FormDescription>
-                Note: These are the number of people you want to live with
+                <p>0 / 200</p>
+                <p>
+                  {user?.targetType === "roomie"
+                    ? "Enter a brief of quote about your hostel"
+                    : "Enter a brief quote about your lifestyle, budget or what you do not like."}
+                </p>
               </FormDescription>
             </FormItem>
           )}
         />
+
+        {user?.targetType === "roomie" && (
+          <FormField
+            name="numberOfRoommates"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-bold text-xl font-sans_serif">
+                  Number of Roommates
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="How many?" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Note: These are the number of people you want to live with
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           name="rent"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Rent</FormLabel>
+              <FormLabel className="font-bold text-xl font-sans_serif">
+                {user?.targetType === "spacer" ? "Rent" : "Budget"}
+              </FormLabel>
               <FormControl>
                 <Slider
                   defaultValue={[100]}
                   min={100}
                   onValueChange={field.onChange}
-                  value={[field.value]}
+                  value={[...field.value]}
                   step={5}
                   max={600}
                 />
@@ -142,41 +206,19 @@ export default function AddPreferences({ user }) {
         />
 
         <FormField
-          name="description"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  className=""
-                  placeholder="enter description"
-                />
-              </FormControl>
-              <FormDescription>
-                <p>0 / 200</p>
-                <p>
-                  Enter A brief of yourself and what kind of roomate you are
-                  looking for
-                </p>
-              </FormDescription>
-            </FormItem>
-          )}
-        />
-
-        <FormField
           name="proposal"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Proposal limit</FormLabel>
+              <FormLabel className="font-bold text-xl font-sans_serif">
+                Proposal limit
+              </FormLabel>
               <FormControl>
                 <Slider
                   defaultValue={[10]}
                   min={1}
                   onValueChange={field.onChange}
-                  value={[field.value]}
+                  value={[...field.value]}
                   step={1}
                   max={50}
                 />
@@ -201,7 +243,9 @@ export default function AddPreferences({ user }) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel className="font-bold text-xl font-sans_serif">
+                Location
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} placeholder="Your Location" />
@@ -210,9 +254,7 @@ export default function AddPreferences({ user }) {
             </FormItem>
           )}
         />
-        <Button className="bg-purple-500 text-blue-950 rounded font-bold tracking-wide">
-          Create Roomie Post
-        </Button>
+        <Button className="rounded font-bold tracking-wide">Upload Post</Button>
       </form>
     </Form>
   );

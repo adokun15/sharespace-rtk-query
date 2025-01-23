@@ -9,8 +9,17 @@ export default function TriggerSidebar() {
 
   return (
     <>
+      <div className="text-xs md:text-xl md:text-center w-full bg-purple-400 text-white text-center py-1 px-5">
+        <p className="md:hidden">
+          <span className="font-bold">
+            ShareSpace
+          </span>
+          {" "}is currently in beta! We're working to improve your experience. Have
+          feedback? Let us know!
+        </p>
+      </div>
       {isMobile && (
-        <nav className="flex bg-transparent absolute top-0 w-full py-4 text-2xl  mb-3 px-12 font-sans_serif   bg-white  shadow  justify-between">
+        <nav className="flex bg-transparent  w-full py-4 text-2xl  mb-3 px-12 font-sans_serif   bg-white  shadow  justify-between">
           <div className="flex gap-2 justify-center items-center">
             <img
               src={Logo}

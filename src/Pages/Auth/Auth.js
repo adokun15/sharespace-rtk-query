@@ -5,7 +5,7 @@ export default function AuthenticationPage() {
   return (
     <>
       <main className="min-h-[90vh] py-[4vh] ">
-        <div className=" shadow-slate-400   md:px-10 px-2  py-3 backdrop-blur-lg  bg-white shadow min-h-40 mt-30 rounded-[1rem] ">
+        <div className=" md:px-10 px-[4rem] py-3  min-h-40 mt-30 md:w-rounded-[1rem] ">
           <Outlet />
         </div>
       </main>

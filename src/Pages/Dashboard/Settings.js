@@ -30,8 +30,6 @@ export default function Settings() {
 
   const [deleteUser, { isLoading: deleting, error }] = useDeleteUserMutation();
 
-  console.log(deleting);
-  console.log(error);
   const deleteAccount = async () => {
     await deleteUser()
       .unwrap()
@@ -49,7 +47,7 @@ export default function Settings() {
           reRoute("/");
 
           //reloadd
-          //     window.location.reload();
+          window.location.reload();
         }, 1500);
       })
       .catch(({ data }) => {

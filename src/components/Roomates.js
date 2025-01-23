@@ -1,12 +1,9 @@
-import {
-  useRoomateSpaceQuery,
-  useSingleRoomateQuery,
-} from "../store/Slices/matches";
+import { useRoomateSpaceQuery } from "../store/Slices/matches";
 import Card from "../UI/Card";
 import { Button } from "../components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet";
 import RoommateDetail from "./RoommateDetail";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BookOpen, ContactRound, ReceiptText, School } from "lucide-react";
 //import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 //import {
@@ -16,7 +13,6 @@ import { BookOpen, ContactRound, ReceiptText, School } from "lucide-react";
 //  SelectTrigger,
 //  SelectValue,
 //} from "./ui/select";
-import { Input } from "./ui/input";
 //import { Slider } from "./ui/slider";
 import { Badge } from "./ui/badge";
 //import { Label } from "./ui/label";
@@ -24,7 +20,7 @@ import { Skeleton } from "./ui/skeleton";
 import DataError from "./DataError";
 //import LoaderSpinner from "./LoaderSpinner";
 
-const Roomates = ({ singleRoomateId }) => {
+const Roomates = () => {
   const {
     error,
     data: roommates,
@@ -32,36 +28,9 @@ const Roomates = ({ singleRoomateId }) => {
     isError,
     refetch,
     isFetching,
-  } = useRoomateSpaceQuery(null);
-
-  const {
-    singleRoomieError,
-    data: roomie,
-    isError: isSingleRoomieError,
-    isFetching: fetchingRoomie,
-    refetch: refetchRoomie,
-    isLoading: loadingSingleRoomie,
-  } = useSingleRoomateQuery(null, { skip: !singleRoomateId });
+  } = useRoomateSpaceQuery();
 
   const [roommate, setRoommate] = useState(null);
-
-  useEffect(() => {
-    if (
-      roomie &&
-      !loadingSingleRoomie &&
-      !fetchingRoomie &&
-      !isSingleRoomieError &&
-      singleRoomateId
-    ) {
-      setRoommate(roomie);
-    }
-  }, [
-    isSingleRoomieError,
-    fetchingRoomie,
-    loadingSingleRoomie,
-    roomie,
-    singleRoomateId,
-  ]);
 
   if (isLoading || isFetching) {
     //Skeleton
@@ -93,10 +62,8 @@ const Roomates = ({ singleRoomateId }) => {
   }
 
   const oneRoomateDetail = (id) => {
-    if (!singleRoomateId) {
-      const r = roommates?.find((r) => r.userId === id);
-      setRoommate(r);
-    }
+    const r = roommates?.find((r) => r.id === id);
+    setRoommate(r);
   };
 
   return (
@@ -219,7 +186,7 @@ const Roomates = ({ singleRoomateId }) => {
               <div className="flex justify-between  rounded py-2 px-3 items-center">
                 <Button
                   className=" rounded"
-                  onClick={() => oneRoomateDetail(roomate?.userId)}
+                  onClick={() => oneRoomateDetail(roomate?.id)}
                 >
                   <SheetTrigger>View</SheetTrigger>
                 </Button>
@@ -231,13 +198,7 @@ const Roomates = ({ singleRoomateId }) => {
           ))}
       </ul>
       <SheetContent side="bottom" className="min-h-[40vh]">
-        <RoommateDetail
-          roommate={roommate}
-          error={singleRoomieError}
-          refetch={refetchRoomie}
-          fetching={fetchingRoomie}
-          loading={loadingSingleRoomie}
-        />
+        <RoommateDetail roommate={roommate} />
       </SheetContent>
     </Sheet>
   );

@@ -44,7 +44,7 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       transformResponse: (res) => res?.chats,
     }),
 
-    //Delete/Leave Single Chat
+    // Delete / Leave Single Chat
     deleteChat: builder.query({
       query: (chatId) => ({
         url: `chats/${chatId}`,
@@ -69,6 +69,9 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
+      invalidatesTags: (result, err, arg) => [
+        { id: arg?.id, type: "roommates" },
+      ],
     }),
 
     //Find Close Roomate / Space
@@ -104,9 +107,9 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
 
     //Get Info about USER
     singleRoomate: builder.query({
-      query: (id) => {
+      query: ({ id, invited }) => {
         return {
-          url: `${id}`,
+          url: `${id}?invited=${invited}`,
           method: "GET",
         };
       },
@@ -115,7 +118,24 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
-      // providesTags: ({ id }) => [{id, type: "roommate"}]
+      providesTags: (res) =>
+        res ? [{ id: res?.id, type: "roommate" }] : [{ type: "roommate" }],
+    }),
+
+    //Delete Info about User
+    deleteSingleRoomate: builder.mutation({
+      query: (id) => {
+        return {
+          url: `${id}`,
+          method: "DELETE",
+        };
+      },
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      invalidatesTags: (result, err, id) => [{ id, type: "roommate" }],
     }),
 
     //Get ALL ROOMMATE / space
@@ -134,10 +154,10 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       providesTags: (res) =>
         res
           ? res?.map(({ id }) => [
-              { type: "roommate", id: id },
-              { type: "roommate", id: "ROOMMATELIST" },
+              { type: "roommates", id: id },
+              { type: "roommates", id: "ROOMMATELIST" },
             ])
-          : [{ type: "roommate", id: "ROOMMATELIST" }],
+          : [{ type: "roommates", id: "ROOMMATELIST" }],
     }),
   }),
 });
@@ -151,6 +171,7 @@ export const {
   useRequestsToListQuery,
   useRoomieSpaceFormMutation,
   useFindRoomieSpaceMutation,
+  useDeleteSingleRoomateMutation,
 } = MatchLogicSlice;
 
 /*

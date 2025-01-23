@@ -30,6 +30,7 @@ const userSlice = user_api.injectEndpoints({
         message: err?.data?.message,
       }),
       transformResponse: (res) => res?.user,
+
       providesTags: () => ["auth"],
     }),
 
@@ -41,6 +42,11 @@ const userSlice = user_api.injectEndpoints({
       }),
       transformResponse: (res) => res?.user,
       providesTags: ["user"],
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
     }),
 
     setUser: builder.mutation({
@@ -50,6 +56,11 @@ const userSlice = user_api.injectEndpoints({
         body: JSON.stringify(formData),
       }),
       transformResponse: (res) => res?.message,
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
       invalidatesTags: () => ["user"],
     }),
 
@@ -60,6 +71,11 @@ const userSlice = user_api.injectEndpoints({
         headers: {
           "Content-Type": "application/json",
         },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
       }),
       transformResponse: (res) => res?.transactions,
     }),

@@ -38,10 +38,19 @@ export default function HomeRoot() {
   return (
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />
-      <main className="w-full relative space-y-[4rem]">
+      <main className="w-full relative ">
         <TriggerSidebar />
-        <div className=" md:px-[3rem] px-[1rem]   my-[2rem]">
-          <Outlet />
+        <div>
+          <div className="w-full bg-purple-400 text-white text-xs md:text-xl md:text-center py-2 md:block hidden">
+            <p>
+              ShareSpace is currently in beta! We're working to improve your
+              experience. Have feedback? Let us know!
+            </p>
+          </div>
+
+          <article className="md:space-y-[4rem] md:px-[3rem] px-[1rem] md:my-[2rem]">
+            <Outlet />
+          </article>
         </div>
       </main>
       <Toaster />

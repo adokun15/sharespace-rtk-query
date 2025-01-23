@@ -14,21 +14,18 @@ import { Dialog, DialogContent } from "../../components/ui/dialog";
 import InviteModal from "../../components/InviteModal";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
+import { Loader2, Plus } from "lucide-react";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
-  const { data: user } = useIsLoggedInQuery();
+  const { data: user, isLoading } = useIsLoggedInQuery();
   const token = localStorage.getItem("sharespace_token");
   const reRoute = useNavigate();
 
-  const [param_id, setParamId] = useState(null);
   const [roomie_param] = useSearchParams();
 
   const [isRoomieInviteOpen, setRoomieInviteOpen] = useState(false);
 
-  const SetDefaultRoomateId = (id) => {
-    setParamId(id);
-  };
   //once mount open modal
   useEffect(() => {
     if (roomie_param.get("roomie")) {
@@ -39,28 +36,37 @@ const ExplorePage = () => {
   const handleReRoute = () => {
     if (!user) {
       toast.warning("Login or Create an account to proceed");
+      return;
     }
 
     reRoute("/create");
   };
+
   return (
     <>
       <main className="mb-20 space-y-3 w-full">
         <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-          <Button onClick={handleReRoute}> Create Post</Button>
+          <Button onClick={handleReRoute}>
+            {isLoading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                <Plus /> <span>Create post</span>
+              </>
+            )}
+          </Button>
         </div>
 
-        {/* Work on Later */}
         <Dialog
           open={isRoomieInviteOpen}
+          className="max-h-[80%] max-w-[90%]"
           onOpenChange={() => setRoomieInviteOpen((p) => !p)}
         >
-          <DialogContent>
+          <DialogContent className="overflow-scroll">
             <InviteModal
               onClose={() => setRoomieInviteOpen(false)}
               roomieId={roomie_param.get("roomie")}
-              triggerSingleModal={SetDefaultRoomateId}
             />
           </DialogContent>
         </Dialog>
@@ -74,7 +80,7 @@ const ExplorePage = () => {
             </TabsList>
             <TabsContent value="roommates">
               {/* Work on Later on Roomate itSelf*/}
-              <Roomates singleRoomateId={param_id} />
+              <Roomates />
             </TabsContent>
 
             <TabsContent value="proposal">

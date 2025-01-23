@@ -1,14 +1,15 @@
 import { Button } from "../ui/button";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import Card from "../../UI/Card";
-import { Copy, ReceiptText, Share } from "lucide-react";
+import { Clock, Copy, ReceiptText, Share } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Link } from "react-router-dom";
-import { useSingleRoomateQuery } from "../../store/Slices/matches";
+import {
+  useDeleteSingleRoomateMutation,
+  useSingleRoomateQuery,
+} from "../../store/Slices/matches";
 import DataError from "../DataError";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,27 +17,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
+import LoaderSpinner from "../LoaderSpinner";
+import { useState } from "react";
 
 export default function UserRoommateData() {
-  const { data: user } = useIsLoggedInQuery();
+  const {
+    data: user,
+    isLoading: userLoading,
+    refetch: userRefetch,
+    error: userError,
+    isError: isUserError,
+  } = useIsLoggedInQuery();
 
   const {
     data: r,
     isError,
     error,
+    refetch,
     isLoading,
     isFetching,
-  } = useSingleRoomateQuery(user?.uid);
+  } = useSingleRoomateQuery(
+    { id: user?.uid, invited: false }, //The User his trying to data
+    { skip: !user?.uid }
+  );
 
-  if (isLoading || isFetching) {
-    return <p>Loader Skeleton</p>;
+  const [deletePost, { isLoading: deleting }] = useDeleteSingleRoomateMutation({
+    skip: !user?.uid,
+  });
+
+  const [contact, setContact] = useState("");
+  const [controlledModal, setControlModal] = useState(false);
+
+  if (isLoading || isFetching || userLoading) {
+    return <LoaderSpinner message="Getting your post.." />;
   }
 
-  if (isError) {
-    return <DataError error={error} />;
+  if (isError || isUserError) {
+    return (
+      <DataError refetch={userRefetch || refetch} error={userError || error} />
+    );
   }
 
   async function copyLink() {
@@ -44,29 +65,58 @@ export default function UserRoommateData() {
       toast.error("Failed to copy", { description: "Something went wrong!" });
       return;
     }
+
+    //const toNumber = +contact
+    if (!contact || contact.length !== 10 || isNaN(+contact)) {
+      toast.error("Failed to copy", { description: "Invalid Input" });
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(
-        `https://sharespace.com.ng?roomie=${r?.id}`
+        `https://sharespace.com.ng?roomie=${r?.id}&wn=${contact}`
       );
+      //Alert User
       toast.success("Copied to Clipboard");
+
+      //CLose Modal
+      setControlModal((p) => !p);
     } catch (err) {
       toast.error("Failed to copy", { description: err });
     }
   }
 
-  console.log(r);
-  console.log(error);
+  async function DeletePostHandler() {
+    if (!user?.uid) {
+      toast.error("Something went wrong");
+    }
+    await deletePost(user?.uid)
+      .unwrap()
+
+      .then((data) => toast.success(data?.message))
+      .catch((err) =>
+        toast.error("Failed To Delete", { description: err?.message })
+      );
+  }
   return (
-    <main className="md:min-w-[450px]">
+    <main className="md:min-w-[450px] space-y-6">
       <div className="flex flex-wrap px-3 items-center justify-between">
         <article>
           <h1 className="text-2xl font-semibold font-sans_serif">Your Post</h1>
           <p className="text-slate-400 text-[16px] font-sans_serif">
-            View Post Information and proposals
+            {r?.target === "roomie"
+              ? "Roommate"
+              : r?.target === "spacer"
+              ? "Accomodation"
+              : ""}{" "}
+            Post
           </p>
         </article>
         <div className="gap-3">
-          <Dialog>
+          <Dialog
+            open={controlledModal}
+            onOpenChange={() => setControlModal((p) => !p)}
+          >
             <DialogTrigger asChild>
               <Button variant="outline">
                 <Share />
@@ -75,74 +125,92 @@ export default function UserRoommateData() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Share link</DialogTitle>
-                <DialogDescription>
-                  Anyone who has this link will be able to send you a proposal.
-                </DialogDescription>
+                <DialogTitle>
+                  <h1 className="text-xl font-serif">Share Post link</h1>
+                </DialogTitle>
               </DialogHeader>
-              <div className="flex items-center space-x-2">
+              <div className=" ">
                 <div className="grid flex-1 gap-2">
-                  <Label htmlFor="link" className="sr-only">
-                    Link
-                  </Label>
-                  <Input
-                    id="link"
-                    defaultValue={`https://sharespace.com.ng?roomie=${r?.id}`}
-                    readOnly
-                  />
+                  <div className="flex gap-2 items-center">
+                    <p className="font-medium text-2xl">(+234)</p>
+                    <Input
+                      value={contact}
+                      maxLength={10}
+                      onChange={(e) => {
+                        setContact(e?.target?.value);
+                      }}
+                      id="contact"
+                      placeholder="Enter your WhatsApp Contact"
+                    />
+                  </div>
+                  <p className="my-3 text-xs break-all">
+                    {`https://sharespace.com.ng?roomie=${r?.id}`}
+                    <span
+                      className={`transition duration-500 ease-in-out ${
+                        contact ? "visible" : "invisible"
+                      }`}
+                    >{`&wn=${contact}`}</span>
+                  </p>
                 </div>
                 <Button
+                  disabled={contact.length !== 10}
                   onClick={copyLink}
                   type="submit"
+                  variant=""
                   size="sm"
-                  className="px-3"
+                  className="w-full px-3"
                 >
-                  <span className="sr-only">Copy</span>
+                  <span className="">Copy Link</span>
                   <Copy />
                 </Button>
               </div>
               <DialogFooter className="sm:justify-start">
-                <DialogClose asChild>
+                <DialogDescription>
+                  Share link to friends or group to find your roommate quicker.{" "}
+                  {/*  <Link
+                    to="#"
+                    className="text-purple-500 underline tracking-wider"
+                  >
+                    Share to WhatApp
+                  </Link>
+                */}
+                </DialogDescription>
+
+                {/*<DialogClose asChild>
                   <Button type="button" variant="secondary">
                     Close
                   </Button>
-                </DialogClose>
+                </DialogClose>*/}
               </DialogFooter>
             </DialogContent>
           </Dialog>
-
-          <Button className="rounded" asChild>
-            <Link to="/space/proposals">
-              <ReceiptText />
-              <span>View Proposals</span>
-            </Link>
-          </Button>
         </div>
       </div>
-      <Card elClass="mx-auto max-w-[680px]">
-        <div className="border-b-2 flex flex-wrap  justify-between">
-          <h2 className="text-xl font-semibold font-sans_serif tracking-wider">
-            {r?.name}
-          </h2>
+      <div className="mx-auto max-w-[680px]">
+        <div className="flex justify-between border-b-2 ">
           <p>
             <span className="font-sans_serif font-semibold ">
-              {r?.proposal}{" "}
+              {r?.noOfProposals} / {r?.proposal}{" "}
             </span>
             people have reach out to you
           </p>
+          <p className="flex gap-2">
+            <Clock />
+            <span>2h ago</span>
+          </p>
         </div>
-        <section className="md:flex px-10 gap-3 items-center my-4">
-          <Avatar className="h-[120px] block md:mx-auto rounded-full w-[120px]">
-            <AvatarImage src={r?.photo} />
-            <AvatarFallback>...</AvatarFallback>
-          </Avatar>
-          <div className="grid grid-cols-3 gap-4 ">
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Age
-              </h3>
-              <p className="text-2xl font-sans_serif">19</p>
-            </article>
+        <section className="px-10 my-2">
+          <div>
+            <Avatar className="h-[120px] block md:mx-auto rounded-full w-[120px]">
+              <AvatarImage src={r?.photo} />
+              <AvatarFallback>...</AvatarFallback>
+            </Avatar>
+          </div>
+          <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
+            Personal
+          </h2>
+
+          <div className="md:grid grid-col-3 space-y-4 md:space-y-0 md:ml-10 py-2 justify-between">
             <article>
               <h3 className="text-xs text-slate-500 font-poppins font-semibold">
                 Religion
@@ -163,48 +231,45 @@ export default function UserRoommateData() {
             </article>
             <article>
               <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Proposal Limit
+                Institution
               </h3>
-              <p className="text-2xl font-sans_serif">{r?.proposal}</p>
+              <p className="text-2xl font-sans_serif">{r?.school}</p>
             </article>
             <article>
               <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Time posted
+                Department
               </h3>
-              <p className="text-2xl font-sans_serif">{"No done yet"}</p>
+              <p className="text-2xl font-sans_serif">{r?.department}</p>
+            </article>
+            <article>
+              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
+                Level
+              </h3>
+              <p className="text-2xl font-sans_serif">{r?.level}</p>
             </article>
           </div>
         </section>
-        <section>
-          <h2 className="text-xl font-semibold font-sans_serif tracking-wider">
+
+        <section className="px-10 my-1">
+          <h2 className="text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
             Quote
           </h2>
           <p className="italic px-4 w-full text-slate-500 text-wrap ">
             {r?.description}{" "}
           </p>
         </section>
-      </Card>
-      <Card elClass="flex flex-wrap justify-around min-h-6">
-        <article>
-          <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-            School
-          </h3>
-          <p className="text-2xl font-sans_serif">{r?.school}</p>
-        </article>
-        <article>
-          <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-            Department
-          </h3>
-          <p className="text-2xl font-sans_serif">{r?.department}</p>
-        </article>
-        <article>
-          <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-            Level
-          </h3>
-          <p className="text-2xl font-sans_serif">{r?.level}</p>
-        </article>
-      </Card>
-      <Button variant="destructive">Delete Post</Button>
+      </div>
+      <div className="flex gap-3">
+        <Button variant="destructive" onClick={DeletePostHandler}>
+          {deleting ? "deleting..." : "Delete Post"}
+        </Button>
+        <Button className="rounded" asChild>
+          <Link to="/space/proposals">
+            <ReceiptText />
+            <span>View Proposals</span>
+          </Link>
+        </Button>
+      </div>
     </main>
   );
 }

@@ -482,7 +482,7 @@ export default function AuthenticationComponent() {
           {mode === "login" ? (
             <>
               <Link
-                className="block m-auto text-blue-800 hover:text-purple-500"
+                className="block m-auto text-center underline text-blue-800 hover:text-purple-500"
                 to="forgotPassword"
               >
                 I forgot my password
@@ -490,7 +490,7 @@ export default function AuthenticationComponent() {
               <button
                 type="button"
                 onClick={() => setAuthState("signup")}
-                className="block m-auto hover:text-purple-500"
+                className="block m-auto hover:text-purple-500 underline"
               >
                 Dont have an account...Sign up!
               </button>
@@ -507,7 +507,7 @@ export default function AuthenticationComponent() {
           {mode !== "login" && (
             <p className="mb-3 text-slate-500 text-center font-[100]">
               By signing up, you are agreeing to our{" "}
-              <Link className="border-b-2 border-dotted">
+              <Link className="border-b-2 border-dotted" to="/terms">
                 Terms of Service.
               </Link>
             </p>

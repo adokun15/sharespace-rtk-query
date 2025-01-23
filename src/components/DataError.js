@@ -11,8 +11,10 @@ export default function DataError({ error, refetch = null }) {
       <AlertDescription>
         <p>{error?.message || "Something went wrong"}</p>
         <>
-          {error?.statusCode === 500 || error?.statusCode === 503 ? (
+          {error?.statusCode === 500 ? (
             <Button onClick={refetch}>Reload</Button>
+          ) : error?.statusCode === 503 ? (
+            ""
           ) : (
             <Button asChild>
               <Link className="text-center" to="/auth">

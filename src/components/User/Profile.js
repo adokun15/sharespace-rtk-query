@@ -1,15 +1,9 @@
 import { faCircleDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet";
-import {
-  useEditUserMutation,
+  //useEditUserMutation,
   useSetUserMutation,
 } from "../../store/Slices/user";
 import { useForm } from "react-hook-form";
@@ -21,7 +15,6 @@ import {
   FormItem,
   FormLabel,
 } from "../ui/form";
-import Card from "../../UI/Card";
 import { Input } from "../ui/input";
 import {
   Select,
@@ -31,25 +24,31 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Link } from "react-router-dom";
-import { Label } from "../ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
-import { handleDashedString } from "../../utils/TimeHandler";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 //import { z } from "zod";
 
 export default function Profile({ mode, previousData }) {
   //Set up profile
-  const [setUpProfile, { isLoading: setProfileLoading }] = useSetUserMutation();
-  //edit up profile
-  const [editProfile, { isLoading: editProfileLoading }] =
-    useEditUserMutation();
-
-  const loading = setProfileLoading || editProfileLoading;
+  const [setUpProfile, { isLoading: loading }] = useSetUserMutation();
 
   //CloseModal
   const [toggleModal, setToggleModal] = useState(true);
 
+  //Validate Input
+  const formValidator = z.object({
+    school: z.string().min(1),
+    level: z.string().min(1),
+    department: z.string().min(2),
+    gender: z.string().min(1),
+    religion: z.string().min(1),
+    targetType: z.string().min(1),
+  });
   const form = useForm({
+    resolver: zodResolver(formValidator),
+
     defaultValues: {
       //profile: {}
       //Can be changed!
@@ -59,7 +58,7 @@ export default function Profile({ mode, previousData }) {
       //Attached to object!
 
       //Can't be changed!
-      dob: "",
+      //   dob: "",
       gender: "",
       religion: "",
 
@@ -72,7 +71,7 @@ export default function Profile({ mode, previousData }) {
       //  socials: [],
     },
   });
-
+  /*
   const userAgeAllowed = (age) => {
     const ageString = handleDashedString(age);
 
@@ -95,61 +94,49 @@ export default function Profile({ mode, previousData }) {
       return user_dob.toISOString();
     }
   };
-
+*/
   const handleSubmit = async (formData) => {
     //let asyncFunc = new Promise();
 
-    if (mode === "create") {
-      //Validate Credential
-      const { school, department, dob, level, ...others } = formData;
+    //Validate Credential
+    const { school, department, dob, level, ...others } = formData;
 
-      const age = userAgeAllowed(dob);
+    //    const age = userAgeAllowed(dob);
 
-      const data = {
-        profile: {
-          school,
-          department,
-          level,
-        },
-        dob: age,
-        ...others,
-      };
+    const data = {
+      profile: {
+        school,
+        department,
+        level,
+      },
+      //    dob: age,
+      ...others,
+    };
 
-      //console.log(data);
-      await setUpProfile(data)
-        .unwrap()
-        .then((data) => {
-          console.log(data);
-          //Clear form
-          form.reset();
+    //console.log(data);
+    await setUpProfile(data)
+      .unwrap()
+      .then(() => {
+        //    console.log(data);
+        //Clear form
+        form.reset();
 
-          //Close Modal
-          setToggleModal(false);
+        //Close Modal
+        setToggleModal(false);
 
-          //Notice User
-          toast("Successful", {
-            position: "bottom-center",
-            description: "Your Profile upload was successful.",
-          });
-        })
-        .catch(({ data }) => {
-          toast(data?.message || "Something went wrong", {
-            position: "bottom-center",
-            description: "Profile upload failed.",
-          });
+        //Notice User
+        toast("Successful", {
+          position: "bottom-center",
+          description: "Your Profile upload was successful.",
         });
-    }
-
-    if (mode === "edit") {
-      //Validate Credential
-      //  asyncFunc = await editProfile(formData);
-    }
+      })
+      .catch(({ data }) => {
+        toast(data?.message || "Something went wrong", {
+          position: "bottom-center",
+          description: "Profile upload failed.",
+        });
+      });
   };
-
-  //Validate Input
-  // const formValidator = z.object({
-  //  school:
-  //})
 
   return (
     <Sheet open={toggleModal} onOpenChange={() => setToggleModal((p) => !p)}>
@@ -157,17 +144,22 @@ export default function Profile({ mode, previousData }) {
         <h4 className="text-xl font-bold font-sans">
           <FontAwesomeIcon icon={faCircleDot} /> Add Profile Info
         </h4>
-        <p>Submit correct data to get matches that suite you</p>
+        <p>Submit correct information to get matches that suite you</p>
         <Button>
           <SheetTrigger>Add</SheetTrigger>
         </Button>
       </article>
-      <SheetContent className="overflow-y-auto">
-        <SheetTitle>Set Up Profile</SheetTitle>
+      <SheetContent className="space-y-4 overflow-y-auto">
+        <SheetTitle className="text-slate-400 font-sans_serif">
+          Set Up Profile
+        </SheetTitle>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
-            <Card>
-              <h1>Roomie Type</h1>
+          <form
+            className="space-y-6"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            <div>
+              <h1 className="text-xl font-bold font-poppins">Roomie Type</h1>
               <FormField
                 name="targetType"
                 control={form.control}
@@ -184,23 +176,23 @@ export default function Profile({ mode, previousData }) {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="spacer">
-                          Someone with a Hostel. But no roommate
+                          Someone with a Hostel(Accomodation)
                         </SelectItem>
                         <SelectItem value="roomie">
-                          Someone with no hostel at all
+                          Someone with no hostel at all(Roommate)
                         </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Enter the type of roomate we should look at for you.
+                      Enter the type of roomate we should look out for you.
                     </FormDescription>
                   </FormItem>
                 )}
               />
-            </Card>
-            <Card>
-              <h1>Personal Info</h1>
-              <FormField
+            </div>
+            <div>
+              <h1 className="text-xl font-bold font-poppins">Personal Info</h1>
+              {/*<FormField
                 name="dob"
                 control={form.control}
                 render={({ field }) => (
@@ -211,12 +203,12 @@ export default function Profile({ mode, previousData }) {
                         type="date"
                         {...field}
                         placeholder="Enter Your Date Of birth"
-                      />
+                        />
                     </FormControl>
                   </FormItem>
                 )}
               />
-
+*/}
               <FormField
                 name="religion"
                 control={form.control}
@@ -294,16 +286,17 @@ export default function Profile({ mode, previousData }) {
                       We collect this Information to find a match for you
                     </FormDescription>
                   </FormItem>
-                )}
+                  )}
               />*/}
-            </Card>
-            <Card>
-              <h1>School Info</h1>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold font-poppins">School Info</h1>
               <FormField
                 name="school"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Institute</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -316,12 +309,6 @@ export default function Profile({ mode, previousData }) {
                       <SelectContent>
                         <SelectItem value="kwasu">
                           Kwara State University
-                        </SelectItem>
-                        <SelectItem value="unilorin">
-                          University of Ilorin
-                        </SelectItem>
-                        <SelectItem value="alhikmat">
-                          Al-hikmat University
                         </SelectItem>
                         <SelectItem value="others">Others</SelectItem>
                       </SelectContent>
@@ -339,6 +326,7 @@ export default function Profile({ mode, previousData }) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Level</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -365,33 +353,21 @@ export default function Profile({ mode, previousData }) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Enter Department" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="cs">Computer Science</SelectItem>
-                        <SelectItem value="bua">Business Admin</SelectItem>
-                        <SelectItem value="acc">Accounting</SelectItem>
-                        <SelectItem value="mcm">Mass Communication</SelectItem>
-                        <SelectItem value="psc">Political Science</SelectItem>
-                        <SelectItem value="others">others</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Department</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter Your Department" />
+                    </FormControl>
                     <FormDescription>
-                      Can't find your department. Kindly reach out to{" "}
-                      <Link>me</Link> to include your department
+                      Enter In Complete Format eg Public health Science, Mass
+                      communication.
                     </FormDescription>
                   </FormItem>
                 )}
               />
-            </Card>
-            <Button>{loading ? "..." : "Submit"}</Button>
+            </div>
+            <Button className="w-full rounded">
+              {loading ? "..." : "Submit"}
+            </Button>
           </form>
         </Form>
       </SheetContent>

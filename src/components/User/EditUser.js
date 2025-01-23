@@ -1,5 +1,4 @@
 import { Button } from "../ui/button";
-import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { useEditUserMutation } from "../../store/Slices/user";
 import { useForm } from "react-hook-form";
@@ -45,7 +44,6 @@ export default function EditUser({ onClose, prevData }) {
 
     if (data?.level !== prevData?.level) {
       user.profile.level = data?.level;
-
       user.profile.school = prevData?.school;
       user.profile.department = prevData?.department;
     }
