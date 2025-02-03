@@ -19,6 +19,7 @@ export default function ChatInputMessage({ spaceId }) {
 
   //handle message change
   const handleInputState = (e) => {
+    // if(e.target.value === "") return
     setMessage(e?.target?.value);
   };
 

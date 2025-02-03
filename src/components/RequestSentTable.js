@@ -15,6 +15,8 @@ export default function RequestSentTable() {
     isLoading,
   } = useRequestsToListQuery();
 
+  console.log(requests);
+
   if (isLoading || isFetching) {
     return <p>Loading skeleton...</p>;
   }
@@ -30,7 +32,7 @@ export default function RequestSentTable() {
             Applied Roommate Post
           </h2>
           <p className="text-slate-400 font-sans_serif">
-            List of students that you want to roommate with{" "}
+            List of students that you want to be roommate with{" "}
           </p>
         </article>
         <Button>
@@ -53,100 +55,35 @@ export default function RequestSentTable() {
         </thead>
         <tbody>
           <>
-            <tr
-              className={` border-l  
-                     border-b `}
-            >
-              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Some123
-              </th>
-              <td
-                className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-              >
-                <p>Daniel Amos</p>
-              </td>
-              <td className={`px-6  py-4 font-bold font-roboto tracking-wider`}>
-                <p className="line-clamp-1">
-                  I saw your hostel and i like it alot you get because it is
-                  dope
-                </p>
-              </td>
-              <td className={`px-6 py-4 font-bold font-roboto tracking-wider`}>
-                <p>Abandoned</p>
-              </td>
-              <td className="px-6 py-4  hover:underline">View</td>
-            </tr>
-            <tr
-              className={` border-l  
-                     border-b `}
-            >
-              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Some123
-              </th>
-              <td
-                className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-              >
-                <p>Daniel Amos</p>
-              </td>
-              <td className={`px-6  py-4 font-bold font-roboto tracking-wider`}>
-                <p className="line-clamp-1">
-                  I saw your hostel and i like it alot you get because it is
-                  dope
-                </p>
-              </td>
-              <td className={`px-6 py-4 font-bold font-roboto tracking-wider`}>
-                <p>Abandoned</p>
-              </td>
-              <td className="px-6 py-4  hover:underline">View</td>
-            </tr>
-            <tr
-              className={` border-l  
-                     border-b `}
-            >
-              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Some123
-              </th>
-              <td
-                className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-              >
-                <p>Daniel Amos</p>
-              </td>
-              <td className={`px-6  py-4 font-bold font-roboto tracking-wider`}>
-                <p className="line-clamp-1">
-                  I saw your hostel and i like it alot you get because it is
-                  dope
-                </p>
-              </td>
-              <td className={`px-6 py-4 font-bold font-roboto tracking-wider`}>
-                <p>Abandoned</p>
-              </td>
-              <td className="px-6 py-4  hover:underline">View</td>
-            </tr>
-            <tr
-              className={` border-l  
-                     border-b `}
-            >
-              <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                Some123
-              </th>
-              <td
-                className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-              >
-                <p>Daniel Amos</p>
-              </td>
-              <td className={`px-6  py-4 font-bold font-roboto tracking-wider`}>
-                <p className="line-clamp-1">
-                  I saw your hostel and i like it alot you get because it is
-                  dope
-                </p>
-              </td>
-              <td className={`px-6 py-4 font-roboto tracking-wider`}>
-                <Badge>Accepted</Badge>
-              </td>
-              <td className="px-6 py-4  hover:underline">
-                <MoreVertical />
-              </td>
-            </tr>
+            {requests &&
+              requests?.map((roomie) => (
+                <tr className={`border-l border-b `}>
+                  <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    {roomie?.receiver?.requestId}
+                  </th>
+                  <td
+                    className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p>{roomie?.receiver?.name}</p>
+                  </td>
+                  <td
+                    className={`px-6  py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p className="line-clamp-1">{roomie?.message}</p>
+                  </td>
+                  <td className={`px-6 py-4 font-roboto tracking-wider`}>
+                    <Badge>{roomie?.status}</Badge>
+                  </td>
+                  <td className="px-6 py-4  hover:underline">
+                    <MoreVertical />
+                    {/**
+                 if "pending" show "withdraw" or accept --> "view chats" or decline "Delete Attempt"
+
+                 then view profile
+                 */}
+                  </td>
+                </tr>
+              ))}
           </>
         </tbody>
       </table>

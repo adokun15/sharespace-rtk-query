@@ -33,10 +33,11 @@ export default function ChatNavigator({ users, spaceId }) {
   return (
     <nav className="py-2 my-1 relative flex justify-between">
       <div className="inline-flex w-1/2 items-center space-x-3">
-        <Link to="/dashboard/roommates">
+        <Link to="/">
           <FontAwesomeIcon className="text-xl" icon={faArrowLeft} />
         </Link>
 
+       {/*
         <div className="flex">
           {users[0]?.photourl && (
             <Image h={45} w={45} imgSrc={users[0].photourl} />
@@ -45,6 +46,7 @@ export default function ChatNavigator({ users, spaceId }) {
             <Image h={45} w={45} imgSrc={users[1].photourl} />
           )}
         </div>
+        */}
       </div>
 
       {/*

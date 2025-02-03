@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./init";
 import { CreateDocumentWithUID } from "./CreateDocument";
+import { lIVE_CLIENT_WEB_URL, LOCAL_CLIENT_WEB_URL } from "../lib/utils";
 
 //import { CreateDocumentWithUID } from "./CreateDocument";
 
@@ -14,8 +15,8 @@ export async function ForgotPassword(email) {
     await sendPasswordResetEmail(auth, email, {
       url: `${
         process.env.NODE_ENV === "development"
-          ? "http://localhost:3000"
-          : "https://sharespace.com.ng"
+          ? LOCAL_CLIENT_WEB_URL
+          : lIVE_CLIENT_WEB_URL
       }/auth`,
     });
   } catch (e) {
@@ -44,9 +45,11 @@ export async function CreateUser({ name, email, password }) {
     const res = await createUserWithEmailAndPassword(auth, email, password);
 
     await updateProfile(res.user, { displayName: name });
+
+    //Credit -- 100 -- Beta USER!
     await CreateDocumentWithUID(
       "users",
-      { credit: 0, userId: res?.user.uid },
+      { credit: 100, userId: res?.user.uid },
       res?.user.uid
     );
 

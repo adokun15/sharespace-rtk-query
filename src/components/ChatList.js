@@ -1,19 +1,11 @@
-import { Button } from "../components/ui/button";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { MoreVertical } from "lucide-react";
+//import { Button } from "../components/ui/button";
+//import { MoreVertical } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import ChatDetail from "./ChatDetail";
 export default function ChatList({ chats }) {
   const [id, setChatId] = useState(null);
-
-  if (chats?.length === 0) {
-    return (
-      <p className="text-xl font-roboto font-[400] text-center my-6">
-        No Space added yet!
-      </p>
-    );
-  }
 
   return (
     <Sheet side="bottom">
@@ -31,9 +23,9 @@ export default function ChatList({ chats }) {
                     <h3 className="text-xl font-bold">{chat?.user?.name}</h3>
                   </article>
                 </div>
-                <Button className="justify-end" variant="ghost">
+                {/* <Button className="justify-end" variant="ghost">
                   <MoreVertical />
-                </Button>
+                </Button> */}
               </div>
             </SheetTrigger>
           ))}

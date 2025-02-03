@@ -1,24 +1,25 @@
 import { initializeApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
-import { connectStorageEmulator, getStorage } from "firebase/storage";
-/*const firebaseConfig = {
-  apiKey: process.env.REACT_APP_APIKEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
-};
-*/
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import {
+  FIREBASE_APIKEY,
+  FIREBASE_APP_ID,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+} from "../lib/utils";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDsU2heMX_fy89fl1WjvjHel6O1lFyeuAk",
-  authDomain: "sharespace.com.ng",
-  projectId: "sharespaceng",
-  storageBucket: "sharespaceng.appspot.com",
-  messagingSenderId: "579110495977",
-  appId: "1:579110495977:web:f4f9f2734bb60c00bdb278",
+  apiKey: FIREBASE_APIKEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
 };
+
 /*
 async function setup_Auth_Emulator(auth) {
   const url = "http://127.0.0.1:9092";

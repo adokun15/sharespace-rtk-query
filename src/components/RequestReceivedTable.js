@@ -1,5 +1,4 @@
-import { MoreVertical, Settings2Icon } from "lucide-react";
-//import { useRequestsFromListQuery } from "../store/Slices/matches";
+import { Loader2, MoreVertical, Settings2Icon } from "lucide-react";
 import Card from "../UI/Card";
 import { Button } from "./ui/button";
 import {
@@ -11,8 +10,10 @@ import {
 } from "./ui/breadcrumb";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Link } from "react-router-dom";
-import { Input } from "./ui/input";
-import { useRequestsFromListQuery } from "../store/Slices/matches";
+import {
+  useRequestsFromListQuery,
+  useRespondToProposalMutation,
+} from "../store/Slices/matches";
 import DataError from "./DataError";
 
 export default function RequestReceivedTable() {
@@ -24,19 +25,55 @@ export default function RequestReceivedTable() {
     isLoading,
   } = useRequestsFromListQuery();
 
+  const [sendResponse, { isLoading: responding }] =
+    useRespondToProposalMutation();
   if (isLoading || isFetching) {
     return <p>Loading...</p>;
   }
+
   if (isError) {
     return <DataError error={error} />;
   }
+  /*
+department
+email
+level
+message
+name
+photo
+religion
+requestId
+school
+*/
+
+  const respondToRequest = async (type, info) => {
+    console.log(type);
+    console.log(info);
+    await sendResponse({
+      reply: type,
+      request: {
+        requestId: info?.requestId,
+        photo: info?.photo,
+        name: info?.name,
+        // age: info?.age,
+        //Add more Info to this later --
+      },
+    })
+      .unwrap()
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((e) => [console.log(e)]);
+  };
 
   return (
     <>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink>Home</BreadcrumbLink>
+            <BreadcrumbLink>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -45,7 +82,7 @@ export default function RequestReceivedTable() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <Card elClass="overflow-x-auto w-full relative space-y-6">
+      <Card elClass="w-full relative space-y-6">
         <div className="flex justify-between items-center px-4">
           <article className="space-y-2">
             <h2 className="text-2xl font-sans_serif font-semibold">
@@ -71,7 +108,13 @@ export default function RequestReceivedTable() {
           </Popover>
         </div>
 
-        <table className="w-full text-gray-500  text-left">
+        {responding && (
+          <p>
+            <Loader2 className="animate-spin my-2" />
+          </p>
+        )}
+
+        <table className="overflow-x-auto w-full text-gray-500  text-left">
           <thead className="text-xs text-gray-500 uppercase bg-gray-50 ">
             <tr>
               <th scope="col" className="px-6 text-nowrap py-3">
@@ -79,220 +122,75 @@ export default function RequestReceivedTable() {
               </th>
               <th className="px-6 py-3">Name</th>
               <th className="px-6 py-3">message</th>
-              <th className="px-6 py-3">Budget</th>
+              <th className="px-6 py-3">Level</th>
               <th className="px-6 py-3">Religion</th>
               <th className="px-6 py-3">Action</th>
             </tr>
           </thead>
           <tbody>
             <>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
+              {requests?.map((roomie) => (
+                <tr
+                  className={` border-l  
+                  border-b `}
                 >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">View</td>
-              </tr>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">
-                  <Popover>
-                    <PopoverTrigger>
-                      <MoreVertical />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <ul className="*:block">
-                        <Button variant="ghost" asChild>
-                          <Link to="123">View Profile</Link>
-                        </Button>
-                        <Button variant="outline">Accept Request</Button>
-                        <Button variant="destructive">Declined Request</Button>
-                      </ul>
-                    </PopoverContent>
-                  </Popover>
-                </td>
-              </tr>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">View</td>
-              </tr>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">View</td>
-              </tr>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">View</td>
-              </tr>
-              <tr
-                className={` border-l  
-                     border-b `}
-              >
-                <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  Some123
-                </th>
-                <td
-                  className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Daniel Amos</p>
-                </td>
-                <td
-                  className={`px-6  py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p className="line-clamp-1">
-                    I saw your hostel and i like it alot you get because it is
-                    dope
-                  </p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>120k</p>
-                </td>
-                <td
-                  className={`px-6 py-4 font-bold font-roboto tracking-wider`}
-                >
-                  <p>Christian</p>
-                </td>
-                <td className="px-6 py-4  hover:underline">View</td>
-              </tr>
+                  <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    {roomie?.requestId}
+                  </th>
+                  <td
+                    className={`px-6 text-nowrap py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p>{roomie?.name}</p>
+                  </td>
+                  <td
+                    className={`px-6  py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p className="line-clamp-1">{roomie?.message}</p>
+                  </td>
+                  <td
+                    className={`px-6 py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p>{roomie?.level}</p>
+                  </td>
+                  <td
+                    className={`px-6 py-4 font-bold font-roboto tracking-wider`}
+                  >
+                    <p>{roomie?.religion}</p>
+                  </td>
+                  <td className="px-6 py-4  hover:underline">
+                    <Popover>
+                      <PopoverTrigger>
+                        <MoreVertical />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <ul className="*:block">
+                          <Button variant="ghost" asChild>
+                            <Link to="123">View Profile</Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={async () => {
+                              // decline
+                              await respondToRequest("decline", roomie);
+                            }}
+                          >
+                            Declined Request
+                          </Button>
+                          <Button
+                            variant=""
+                            onClick={async () => {
+                              // accept
+                              await respondToRequest("accept", roomie);
+                            }}
+                          >
+                            Accept Request
+                          </Button>
+                        </ul>
+                      </PopoverContent>
+                    </Popover>
+                  </td>
+                </tr>
+              ))}
             </>
           </tbody>
         </table>

@@ -8,6 +8,8 @@ import { useState } from "react";
 import DataError from "./DataError";
 import LoaderSpinner from "./LoaderSpinner";
 import { Link } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function RoommateDetail({ roommate }) {
   const {
@@ -32,6 +34,7 @@ export default function RoommateDetail({ roommate }) {
       counter: e.target.value?.split(" ")?.length,
     }));
   };
+
   //external user
   const roomieInfo = {
     id: roommate?.id,
@@ -48,9 +51,11 @@ export default function RoommateDetail({ roommate }) {
 
     const info = {
       ...user,
-      message,
+      message: message?.text,
     };
 
+    console.log(info);
+    console.log(roomieInfo);
     if (!user) return;
 
     await createProposal({
@@ -59,7 +64,9 @@ export default function RoommateDetail({ roommate }) {
     })
       .unwrap()
       .then((data) => console.log(data))
-      .catch((e) => console.log(e?.message));
+      .catch((e) => {
+        toast.error("Unable to send", { description: e?.message });
+      });
   };
 
   if (userLoading || isFetching) {
@@ -166,7 +173,11 @@ export default function RoommateDetail({ roommate }) {
                       onClick={createNewMesageProposal}
                       className="w-full bg-purple-600 text-white rounded hover:bg-purple-300"
                     >
-                      {isLoading ? "..." : "Send Message"}
+                      {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Send Message"
+                      )}
                     </Button>
                   </form>
                 </div>

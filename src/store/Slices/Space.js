@@ -1,3 +1,7 @@
+import {
+  UpdateADocumentArray,
+  UpdateADocumentObject,
+} from "../../firebase/UpdateDocument";
 import { getDocument } from "../../firebase/GetDocument";
 import { DbError } from "../../utils/ErrorHandlers";
 import { api } from "../api";
@@ -11,12 +15,13 @@ const UserSpaceSlice = api.injectEndpoints({
       async queryFn(spaceId) {
         try {
           const space = await getDocument(spaceId, "space");
-          return { data: { ...space, spaceId } };
+          return { data: space };
         } catch (e) {
           throw new DbError(e?.message);
         }
       },
     }),
+
     loadMessage: builder.query({
       async queryFn(spaceId) {
         try {
@@ -53,7 +58,7 @@ const UserSpaceSlice = api.injectEndpoints({
     addMessage: builder.mutation({
       async queryFn({ spaceId, message }) {
         try {
-          /*          await UpdateADocumentArray(spaceId, "space", {
+          await UpdateADocumentArray(spaceId, "space", {
             key: "messages",
             newValue: {
               message: message?.chat,
@@ -62,8 +67,8 @@ const UserSpaceSlice = api.injectEndpoints({
               messageId: message.id,
             },
           });
-          */
-          //return { data: "delivered" };
+
+          return { data: "delivered" };
         } catch (e) {
           throw new DbError(e?.message);
         }
@@ -72,29 +77,31 @@ const UserSpaceSlice = api.injectEndpoints({
     }),
 
     //add downloadable url to space
-    sendMedia: builder.mutation({
+    /*  sendMedia: builder.mutation({
       async queryFn({ file, spaceId, user }) {
         try {
-          //const filePath = `space/${spaceId}/${file?.name}`;
-          //   const url = await UploadImageHelper(filePath, file);
-          /* await UpdateADocumentObject(spaceId, filePath, {
+          const filePath = `space/${spaceId}/${file?.name}`;
+          // const url = await UploadImageHelper(filePath, file);
+
+          await UpdateADocumentObject(spaceId, filePath, {
             key: "message",
             newValue: {
               type: "media",
-              url,
+              url: "",
               user: user?.username,
               timeSent: new Date(),
               messageId: "SomeRandomkeys",
             },
-          });*/
-          // return { data: null };
+          });
+          return { data: null };
         } catch (err) {
           throw new DbError(err?.message);
         }
       },
-    }),
-    deleteMessage: builder.mutation({}),
-    deleteSingleSpace: builder.mutation({}),
+    }),*/
+
+    //    deleteMessage: builder.mutation({}),
+    //deleteSingleSpace: builder.mutation({}),
   }),
 });
 

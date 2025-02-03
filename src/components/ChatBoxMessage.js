@@ -1,27 +1,36 @@
 import { useLoadMessageQuery } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
 import { NoticeDate } from "../utils/TimeHandler";
+import { Badge } from "./ui/badge";
 
 export default function ChatBoxMessage({ spaceId }) {
-  const { data: user } = useIsLoggedInQuery();
+  const {
+    data: user,
+    error: userError,
+    isError: isUserError,
+    isLoading: userLoading,
+  } = useIsLoggedInQuery();
 
   const { data, error, isError, isFetching, isLoading } = useLoadMessageQuery(
     spaceId,
     { skip: !spaceId || !user }
   );
 
-  if (isLoading || isFetching) {
+  if (isLoading || isFetching || userLoading) {
     return <p>spinner</p>;
   }
 
-  if (isError) {
-    return <p>{error?.message}</p>;
+  if (isError || isUserError) {
+    return <p>{error?.message || userError?.message}</p>;
   }
 
-  console.log(user);
   return (
     <main>
-      {!data?.chat && <p>Start a chat!</p>}
+      {!data?.chat && (
+        <p>
+          <Badge>Start a chat!</Badge>
+        </p>
+      )}
       {data?.chat &&
         data?.chat.map((chat) => (
           <div key={chat.message} className="last:my-2">

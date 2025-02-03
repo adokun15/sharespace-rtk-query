@@ -1,19 +1,29 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-
-//♾️
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
+//
+// ♾️
 export default function Term() {
   return (
     <main className="w-[95%] space-y-4 md:w-4/5 mx-auto shadoww">
-      <p>
-        <Button
-          asChild
-          className="text-purple-500 md:hidden text-xl tracking-wide"
-          variant="outline"
-        >
-          <Link to="/">Home</Link>
-        </Button>
-      </p>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <b>Terms of service</b>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
         Terms of Service
       </h1>

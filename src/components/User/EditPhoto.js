@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import placeImg from "../../image/undraw/undraw_Meditation_re_gll0.png";
 import { useUploadImageMutation } from "../../store/Slices/uploads";
-
-export default function EditPhoto({ uid, imgUrl }) {
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+export default function EditPhoto({ uid, imgUrl, closePhotoModal }) {
   //Img Preview
   const [previewImg, setPreviewImage] = useState("");
-  //Img Large Error : > 5mb
+  //Img Large Error : > 50mb
   const [imgError, setImageError] = useState("");
 
   //Current File
@@ -45,21 +46,22 @@ export default function EditPhoto({ uid, imgUrl }) {
       await uploadMyProfile({ uid, file })
         .unwrap()
         .then((data) => {
-          console.log(data);
+          //Close Modal
+          closePhotoModal();
+          //Alert User
+          toast.success("Profile pic updated", { description: data });
         })
         .catch((e) => {
           //Send toast
-          console.log(e?.message);
+          toast.error("Profile pic update failed ", {
+            description: e?.message,
+          });
         });
     }
   };
 
   return (
-    <form
-      className=" px-5 py-4 rounded shadow  shadow-slate-400 space-y-4 lg:w-[35%]  mx-auto
-  bg-white w-full min-h-full overflow-y-auto md:h-fit block md:w-[55%] md:mx-auto md:mt-[5vh]
-  "
-    >
+    <form className=" px-5 py-4  space-y-4  overflow-y-auto md:h-fit block  md:mx-auto md:mt-[2vh] ">
       <p className="text-xs text-red-600">{imgError}</p>
       <div className="rounded overflow-hidden">
         <img
@@ -82,7 +84,7 @@ export default function EditPhoto({ uid, imgUrl }) {
             onChange={handleImgChange}
             className="hidden"
           />
-          {previewImg ? "Change Image" : "Upload Picture"}
+          {previewImg ? "Change Image" : "Upload new Photo"}
         </label>
         {previewImg && (
           <Button
@@ -90,7 +92,7 @@ export default function EditPhoto({ uid, imgUrl }) {
             onClick={handleUpload}
             clxName="bg-teal-800 text-slate-200"
           >
-            {isLoading ? "..." : "Save Image"}
+            {isLoading ? <Loader2 className="animate-spin" /> : "Save Image"}
           </Button>
         )}
       </div>

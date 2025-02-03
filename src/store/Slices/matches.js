@@ -29,6 +29,23 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       transformResponse: (res) => res?.proposals,
     }),
 
+    respondToProposal: builder.mutation({
+      //info -- { reply, request }
+
+      query: (info) => ({
+        url: `chats/r/${info?.request?.requestId}`,
+        method: "POST",
+        body: JSON.stringify(info),
+      }),
+
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.message,
+    }),
+
     //user / chats subcollection
     allChats: builder.query({
       keepUnusedDataFor: 10,
@@ -90,10 +107,12 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
 
     //Send A initial TEXT, then Email to the other user
     meetRoomate: builder.mutation({
-      query: (id) => {
+      query: (info) => {
+        console.log(info.roomieInfo);
         return {
-          url: `${id}`,
+          url: `${info?.roomieInfo?.id}`,
           method: "POST",
+          body: JSON.stringify(info),
         };
       },
       transformErrorResponse: (err) => ({
@@ -172,6 +191,7 @@ export const {
   useRoomieSpaceFormMutation,
   useFindRoomieSpaceMutation,
   useDeleteSingleRoomateMutation,
+  useRespondToProposalMutation,
 } = MatchLogicSlice;
 
 /*

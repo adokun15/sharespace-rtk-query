@@ -1,18 +1,28 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 
 export default function Privacy() {
   return (
     <main>
-      <p>
-        <Button
-          asChild
-          className="text-purple-500 md:hidden text-xl tracking-wide"
-          variant="outline"
-        >
-          <Link to="/">Home</Link>
-        </Button>
-      </p>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <b>Privacy policy</b>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
         Privacy and Policy
       </h1>

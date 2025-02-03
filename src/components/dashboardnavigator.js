@@ -42,9 +42,12 @@ import {
   faToolbox,
 } from "@fortawesome/free-solid-svg-icons";
 import { LogoutXomponent } from "./Logout";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function DashboardNavigator({ loadContent }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, openMobile, setOpenMobile } = useSidebar();
 
   const { data, error, isLoading, isFetching, refetch } = useIsLoggedInQuery(
     null,
@@ -53,12 +56,35 @@ export default function DashboardNavigator({ loadContent }) {
     }
   );
 
+  //control Modal
+  const closeModal = () => {
+    if (isMobile) {
+      setOpenMobile((p) => !p);
+    }
+  };
+
+  //Link to google form
+  const toFeedbackSpace = () => {
+    window.location.href = FEEDBACK_URL;
+    closeModal();
+  };
+
+  //Link to email
+  const toMyEmail = () => {
+    window.location.href = SUPPORT_EMAIL;
+    closeModal();
+  };
+
   return (
     <>
-      <Sidebar side={isMobile ? "right" : "left"}>
+      <Sidebar
+        side={isMobile ? "right" : "left"}
+        onOpenChange={() => setOpenMobile((p) => !p)}
+        open={openMobile}
+      >
         <SidebarHeader>
           <header className="my-[10px]">
-            <Link to="/">
+            <Link onClick={closeModal} to="/">
               <div className="flex gap-2 justify-center items-center">
                 <img
                   src={Logo}
@@ -104,6 +130,7 @@ export default function DashboardNavigator({ loadContent }) {
                     <SidebarMenuButton
                       className="flex text-xl justify-center"
                       asChild
+                      onClick={closeModal}
                     >
                       <Link to="/">
                         <HomeIcon className="text-purple-400" />
@@ -116,6 +143,7 @@ export default function DashboardNavigator({ loadContent }) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
+                      onClick={closeModal}
                       className="flex text-xl justify-center"
                     >
                       <Link to="/space">
@@ -130,6 +158,7 @@ export default function DashboardNavigator({ loadContent }) {
                     <SidebarMenuButton
                       className="text-xl flex justify-center"
                       asChild
+                      onClick={closeModal}
                     >
                       <Link to="/guide">
                         <Settings2 />
@@ -169,14 +198,20 @@ export default function DashboardNavigator({ loadContent }) {
               </>
               <ul className="font-roboto divide-x-2 justify-center gap-2 *:px-1 flex text-xs text-center">
                 <li>
-                  <Link to="/about">About</Link>
+                  <Link onClick={closeModal} to="/about">
+                    About
+                  </Link>
                 </li>
 
                 <li>
-                  <Link to="/terms">Terms</Link>
+                  <Link onClick={closeModal} to="/terms">
+                    Terms
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/privacy">Privacy</Link>
+                  <Link onClick={closeModal} to="/privacy">
+                    Privacy
+                  </Link>
                 </li>
               </ul>
             </>
@@ -192,19 +227,28 @@ export default function DashboardNavigator({ loadContent }) {
 
               <DropdownMenuContent className="min-w-[13rem]">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={closeModal}>
                     <FontAwesomeIcon icon={faPerson} />
                     <Link to="/profile">Profile</Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem>
-                    <FontAwesomeIcon icon={faCoins} />
-                    Buy Credit
-                    <FontAwesomeIcon icon={faArrowRight} />
+                    <Dialog>
+                      <DialogTrigger>
+                        <FontAwesomeIcon icon={faCoins} />
+                        <span>Buy Credit</span>
+                        <FontAwesomeIcon icon={faArrowRight} />
+                      </DialogTrigger>
+                      <DialogContent>
+                        <p>THIS IS A PAYMENT</p>
+                        <DialogClose onClick={closeModal}>Close</DialogClose>
+                      </DialogContent>
+                    </Dialog>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+
+                <DropdownMenuItem onClick={closeModal}>
                   <FontAwesomeIcon icon={faToolbox} />
 
                   <Link to="/settings">Settings</Link>
@@ -212,21 +256,28 @@ export default function DashboardNavigator({ loadContent }) {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <Link>
-                    <DropdownMenuItem>
-                      <FontAwesomeIcon icon={faReply} />
-                      <span>Feedback</span>
+                  <Button variant="ghost" asChild onClick={toFeedbackSpace}>
+                    <DropdownMenuItem className="flex justify-between">
+                      <span>
+                        <FontAwesomeIcon icon={faReply} />
+                        Feedback
+                      </span>
                       <ExternalLink />
                     </DropdownMenuItem>
-                  </Link>
+                  </Button>
 
-                  <Link>
-                    <DropdownMenuItem>
-                      <FontAwesomeIcon icon={faPeopleGroup} />
-                      <span>Support</span>
+                  <Button variant="ghost" asChild onClick={toMyEmail}>
+                    <DropdownMenuItem className="flex justify-between">
+                      <span>
+                        <FontAwesomeIcon
+                          className="mx-2"
+                          icon={faPeopleGroup}
+                        />
+                        Support
+                      </span>
                       <ExternalLink />
                     </DropdownMenuItem>
-                  </Link>
+                  </Button>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>

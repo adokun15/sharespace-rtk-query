@@ -20,6 +20,7 @@ export default function ChatsPage() {
     return <DataError error={error} refetch={refetch} />;
   }
 
+  console.log(chats);
   return (
     <div className="container my-2">
       <h1 className="text-3xl text-center">Chats</h1>

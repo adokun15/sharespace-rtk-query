@@ -1,10 +1,8 @@
 import {
   useAddMessageMutation,
-  useLoadMessageQuery,
   useLoadSpaceUserQuery,
   //  useLoadSpaceUserQuery,
 } from "../store/Slices/Space";
-import Container from "../UI/Container";
 import ChatBoxMessage from "./ChatBoxMessage";
 import ChatInputMessage from "./ChatInputMessage";
 import ChatNavigator from "./ChatNavigator";
@@ -35,13 +33,13 @@ export default function ChatDetail({ spaceId }) {
   }
 
   return (
-    <Container>
+    <>
       {isAddMessageError && addMessageError?.message}
       <ChatNavigator users={space?.users} spaceId={space?.spaceId} />
       <div className="shadow py-3 rounded  overflow-y-scroll h-[50vh] bg-white ">
         <ChatBoxMessage spaceId={space?.spaceId} />
       </div>
       <ChatInputMessage spaceId={space?.spaceId} />
-    </Container>
+    </>
   );
 }

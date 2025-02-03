@@ -22,13 +22,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
+import { Skeleton } from "../../components/ui/skeleton";
+import DataError from "../../components/DataError";
 export default function Settings() {
   const reRoute = useNavigate();
-  const { data: user } = useGetUserQuery();
+  const {
+    data: user,
+    isLoading,
+    refetch,
+    isError,
+    error: userError,
+  } = useGetUserQuery();
 
   const [editUser, { isLoading: loading }] = useEditUserMutation();
 
   const [deleteUser, { isLoading: deleting, error }] = useDeleteUserMutation();
+
+  console.log(user);
+  if (isLoading) {
+    return (
+      <>
+        <Card>
+          <Skeleton className="w-48 h-12" />
+        </Card>
+        <Card>
+          <Skeleton className="w-48 h-12" />
+        </Card>
+      </>
+    );
+  }
+
+  if (isError) {
+    <DataError error={userError} refetch={refetch} />;
+  }
 
   const deleteAccount = async () => {
     await deleteUser()
@@ -51,9 +77,9 @@ export default function Settings() {
         }, 1500);
       })
       .catch(({ data }) => {
-        console.log(data?.message);
         toast.error(data?.status || "Something WENT wrong!", {
           description: data?.message,
+          action: () => reRoute("/auth"),
           //Add a button to login if (401)
         });
       });
@@ -62,7 +88,8 @@ export default function Settings() {
   const roommateHandler = async (value) => {
     await editUser({ targetType: value })
       .unwrap()
-      .then(() => {
+      .then((d) => {
+        console.log(d);
         //alert user: "changes made"
         toast.success("Roommate Type Changed!", {
           description: "Change will be applied in few minutes",
@@ -91,8 +118,8 @@ export default function Settings() {
         <Select onValueChange={roommateHandler}>
           <SelectTrigger>
             <SelectValue
+              placeholder="Select an option"
               defaultValue={user?.targetType}
-              placeholder="Select Option"
             />
           </SelectTrigger>
           <SelectContent>
@@ -100,9 +127,7 @@ export default function Settings() {
               <span>Someone who already has a hostel</span>
             </SelectItem>
             <SelectItem value="spacer">
-              <span>
-                Someone who looking for accomodation and has no hostel
-              </span>
+              <span>Someone who looking for accomodation</span>
             </SelectItem>
           </SelectContent>
         </Select>

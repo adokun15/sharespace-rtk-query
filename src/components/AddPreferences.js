@@ -22,8 +22,9 @@ import {
 } from "./ui/select";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 export default function AddPreferences({ user }) {
-  const [createpost] = useRoomieSpaceFormMutation();
+  const [createpost, { isLoading }] = useRoomieSpaceFormMutation();
 
   //Validate Input
   const formSchema = z.object({
@@ -54,16 +55,20 @@ export default function AddPreferences({ user }) {
       return;
     }
 
-    //Check Credit
-    /*  if (
-      !(user?.credits && user?.credits > 30 && user?.proposal <= 10) ||
-      !(user?.credits && user?.proposal > 10 && user?.credits > 50)
-      ) {
-        toast.error("Insufficient credits to complete process!");
-        return;
-        }
-        */
     const { numberOfRoommates, rent, proposal, ...others } = data;
+
+    const proposal_limit =
+      typeof proposal === "number" ? proposal : proposal[0];
+
+    //Check Credit
+
+    if (
+      !(user?.credits && proposal_limit > 10 && user?.credits >= 50)
+      //!(user?.credits && user?.credits >= 30 && proposal_limit <= 10)
+    ) {
+      toast.error("Insufficient credits to complete process!");
+      return;
+    }
 
     const timePosted = new Date().toISOString();
 
@@ -71,12 +76,13 @@ export default function AddPreferences({ user }) {
       ...others,
       numberOfRoommates: +numberOfRoommates,
       target: user?.targetType,
-      proposal: typeof proposal === "number" ? proposal : proposal[0],
+      proposal: proposal_limit,
       name: user?.name,
       department: user?.profile?.department,
       level: user?.profile?.level,
       school: user?.profile?.school,
       religion: user?.religion,
+      gender: user?.gender,
       id: user?.userId,
       photo: user?.photo,
       timePosted,
@@ -254,7 +260,12 @@ export default function AddPreferences({ user }) {
             </FormItem>
           )}
         />
-        <Button className="rounded font-bold tracking-wide">Upload Post</Button>
+        <Button
+          disabled={isLoading}
+          className="rounded font-bold tracking-wide"
+        >
+          {isLoading ? <Loader2 className="animate-spin" /> : "Upload Post"}
+        </Button>
       </form>
     </Form>
   );

@@ -1,8 +1,9 @@
 import { useGetUserQuery } from "../../store/Slices/user";
 import AddPreferences from "../../components/AddPreferences";
-//import Card from "../../UI/Card";
+import Card from "../../UI/Card";
 import DataError from "../../components/DataError";
 import LoaderSpinner from "../../components/LoaderSpinner";
+import { Skeleton } from "../../components/ui/skeleton";
 
 //Add data, then Video
 export default function CreateRoomieSpaceForm() {
@@ -16,7 +17,19 @@ export default function CreateRoomieSpaceForm() {
   } = useGetUserQuery();
 
   if (isLoading || isFetching) {
-    return <LoaderSpinner message="Loading..." />;
+    return (
+      <Card className="space-y-8">
+        <h2>
+          <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
+          <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
+        </h2>
+        <article>
+          <div>
+            <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
+          </div>
+        </article>
+      </Card>
+    );
   }
 
   if (isError) {
