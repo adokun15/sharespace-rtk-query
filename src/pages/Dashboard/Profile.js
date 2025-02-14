@@ -25,7 +25,6 @@ import {
   TabsTrigger,
 } from "../../components/ui/tabs";
 import DataError from "../../components/DataError";
-import LoaderSpinner from "../../components/LoaderSpinner";
 import {
   DialogTrigger,
   Dialog,
@@ -35,6 +34,7 @@ import {
 import EditPhoto from "../../components/User/EditPhoto";
 import EditUser from "../../components/User/EditUser";
 import { useState } from "react";
+import { Skeleton } from "../../components/ui/skeleton";
 export default function ProfilePage() {
   const {
     data: user,
@@ -49,7 +49,26 @@ export default function ProfilePage() {
   const [controlledDialogModal2, setDialogToggle2] = useState(false);
 
   if (isLoading || isFetching) {
-    return <LoaderSpinner message="Loading Profile" />;
+    return (
+      <div className="space-y-10">
+        <div className="items-end justify-center flex gap-3">
+          <Skeleton className="w-24 h-24 rounded-full" />
+          <Skeleton className="rounded w-16 p-3 hover:bg-purple-300/15" />
+        </div>
+
+        <div className="mt-5 even:mx-auto odd:mx-0 space-y-3">
+          <Skeleton className="text-3xl w-2/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="text-3xl w-1/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="text-3xl w-2/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="font-oswald w-1/5 p-3 text-slate-400 text-center my-1" />
+          <Skeleton className="font-oswald p-3 w-2/5 text-slate-600 text-center my-1" />
+          <Skeleton className="font-oswald p-3 w-1/5 text-slate-600 text-center my-1" />
+        </div>
+        <div>
+          <Skeleton className="mx-auto rounded w-24 h-12 p-3 hover:bg-purple-300/15" />
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
@@ -127,6 +146,7 @@ export default function ProfilePage() {
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="credits">Buy Credits</TabsTrigger>
             </TabsList>
+
             <TabsContent value="profile">
               <Dialog
                 open={controlledDialogModal1}

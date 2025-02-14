@@ -4,7 +4,14 @@ import { Button } from "../components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet";
 import RoommateDetail from "./RoommateDetail";
 import { useState } from "react";
-import { BookOpen, ContactRound, ReceiptText, School } from "lucide-react";
+import {
+  BookOpen,
+  ContactRound,
+  MoreVertical,
+  MoveVertical,
+  ReceiptText,
+  School,
+} from "lucide-react";
 //import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 //import {
 //  Select,
@@ -126,75 +133,84 @@ const Roomates = () => {
           <Input placeholder="Search by School Name" />
         </div>*/}
       </article>
-      <ul className="md:grid *:min-h-[4rem] grid-cols-3 block  gap-5">
+      <ul className="md:grid grid-cols-3 block  gap-5">
         {roommates &&
           roommates?.map((roomate) => (
-            <Card elClass="px-4 shadow-gray-400 rounded">
-              <div className="mt-2 space-y-4">
-                <Badge
-                  variant="secondary"
-                  className="rounded-full text-[15px] font-sans_serif ring-purple-500 bg-purple-200 tracking-wide font-semibold ring-2"
-                >
+            <div className="min-h-full">
+              <Card elClass="px-4 mb-1 shadow-gray-400 rounded">
+                <div className="mt-2 space-y-4">
+                  <Badge className="rounded-full text-[12px] font-sans_serif  tracking-wide font-semibold">
+                    {/*
                   <School width={20} height={20} className="mx-1" />
-                  {roomate?.school}
-                </Badge>
-              </div>
-              <article className="line-clamp-4 font-bold px-2 tracking-wide my-3">
-                {roomate?.description}
-              </article>
-              <div className=" my-4 px-1 space-y-1 ">
-                <div className="flex-wrap flex space-y-1  mt-2 text-slate-600 font-bold items-center gap-2 ">
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                  >
-                    <ContactRound
-                      className="text-purple-500 mx-1"
-                      width={20}
-                      height={20}
-                    />
-                    <span className="">
-                      {roomate?.numberOfRoommates} roommate
-                      {roomate?.numberOfRoommates > 1 ? "s" : ""}{" "}
-                    </span>
-                  </Badge>
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                  >
-                    <ReceiptText
-                      className="text-purple-500 mx-1"
-                      width={20}
-                      height={20}
-                    />
-                    <span>{roomate?.rent}k</span>
-                  </Badge>
-                  <Badge
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                    variant="secondary"
-                  >
-                    <BookOpen
-                      className="mx-1 text-purple-500"
-                      width={20}
-                      height={20}
-                    />
-                    <span>{roomate?.department}</span>
+                  roomate?.school*/}{" "}
+                    available : 10 month
                   </Badge>
                 </div>
-              </div>
-              <p>{roomate?.noOfProposals || 0} reached out</p>
-              <div className="flex justify-between  rounded py-2 px-3 items-center">
-                <Button
-                  className=" rounded"
-                  onClick={() => oneRoomateDetail(roomate?.id)}
-                >
-                  <SheetTrigger>View</SheetTrigger>
+                <article className="min-h-12 line-clamp-4 font-poppins px-2 tracking-wide my-3">
+                  {roomate?.description}
+                </article>
+                <div className=" my-4 px-1 space-y-1 ">
+                  <div className="flex-wrap flex space-y-1  mt-2 text-slate-600 font-bold items-center gap-2 ">
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <ContactRound
+                        className="text-purple-500 mx-1"
+                        width={20}
+                        height={20}
+                      />
+                      <span className="">
+                        {roomate?.numberOfRoommates} roommate
+                        {roomate?.numberOfRoommates > 1 ? "s" : ""}{" "}
+                      </span>
+                    </Badge>
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <ReceiptText
+                        className="text-purple-500 mx-1"
+                        width={20}
+                        height={20}
+                      />
+                      <span>{roomate?.rent}k</span>
+                    </Badge>
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <BookOpen
+                        className="mx-1 text-purple-500"
+                        width={20}
+                        height={20}
+                      />
+                      <span>{roomate?.department}</span>
+                    </Badge>
+                  </div>
+                </div>
+                {/*<p>{roomate?.noOfProposals || 0} reached out</p>
+                <div className="flex justify-between  rounded py-2 px-3 items-center">
+                  <Button
+                    className=" rounded"
+                    onClick={() => oneRoomateDetail(roomate?.id)}
+                  >
+                    <SheetTrigger>View</SheetTrigger>
+                  </Button>
+                  <p className="text-xl font-semibold text-slate-400 font-serif tracking-wide">
+                    {roomate?.name?.split(" ")[0]}
+                  </p>
+                </div>*/}
+              </Card>
+              <div className="flex gap-1">
+                <Button className="grow" variant="secondary">
+                  Show Details
                 </Button>
-                <p className="text-xl font-semibold text-slate-400 font-serif tracking-wide">
-                  {roomate?.name?.split(" ")[0]}
-                </p>
+                <Button className="shadow" variant="muted">
+                  <MoreVertical />
+                </Button>
               </div>
-            </Card>
+            </div>
           ))}
       </ul>
       <SheetContent side="bottom" className="min-h-[40vh]">

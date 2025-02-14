@@ -18,8 +18,16 @@ import { Loader2, Plus } from "lucide-react";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
-  const { data: user, isLoading } = useIsLoggedInQuery();
+  const {
+    data: user,
+    error,
+    isLoading,
+    isFetching,
+    refetch: loadUser,
+  } = useIsLoggedInQuery();
+
   const token = localStorage.getItem("sharespace_token");
+
   const reRoute = useNavigate();
 
   const [roomie_param] = useSearchParams();
@@ -34,8 +42,23 @@ const ExplorePage = () => {
   }, [roomie_param]);
 
   const handleReRoute = () => {
-    if (!user) {
-      toast.warning("Login or Create an account to proceed");
+    if (error?.status === 500) {
+      toast.error("Something went Wrong", {
+        action: {
+          label: "Reload",
+          onClick: () => loadUser(),
+        },
+      });
+      return;
+    }
+
+    if (!user || error?.status === 401) {
+      toast.warning("Login or Create an account to proceed", {
+        action: {
+          label: "login",
+          onClick: () => reRoute("/auth"),
+        },
+      });
       return;
     }
 
@@ -47,8 +70,8 @@ const ExplorePage = () => {
       <main className="mb-20 space-y-3 w-full">
         <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-          <Button onClick={handleReRoute}>
-            {isLoading ? (
+          <Button className="rounded" onClick={handleReRoute}>
+            {isLoading || isFetching ? (
               <Loader2 className="animate-spin" />
             ) : (
               <>

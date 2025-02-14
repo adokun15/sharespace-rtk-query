@@ -13,7 +13,7 @@ import {
 
 export default function About() {
   return (
-    <main className=" w-full px-4 mx-auto shadoww">
+    <main className="mb-6 w-full px-4 mx-auto shadoww">
       <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
         About Us
       </h1>
@@ -24,67 +24,61 @@ export default function About() {
           <TabsTrigger value="faq">Faqs</TabsTrigger>
         </TabsList>
         <TabsContent value="about">
-          <div className="space-y-3">
-            <h2 className="text-2xl font-semibold">Our Mission</h2>
-            <p>
-              At <b>ShareSpace</b>, we believe finding the right place to live
-              and the right people to live with shouldn't be stressful. Our
-              mission is to simplify the process of connecting students with
-              trusted roommates and shared accomodations that suit their needs
-              and preferences.
+          <div className="space-y-3 my-6">
+            <h2 className="text-muted text-3xl font-semibold font-sans_serif ">
+              Our mission
+            </h2>
+            <p className="text-xl font-poppins">
+              <b>ShareSpace</b> was created because we believe finding the right
+              place to live and the right people to live with shouldn't be
+              stressful. Our mission is to simplify the process of connecting
+              students with trusted roommates and shared accomodations that suit
+              their needs and preferences.
             </p>
-            <h2 className="mt-3 text-2xl font-semibold">What we Do</h2>
-            <p>
+            <h2 className="mt-4 text-muted text-3xl font-semibold font-sans_serif ">
+              What we do
+            </h2>
+
+            <p className="text-xl font-poppins">
               <b>Sharespace</b> is a platform designed exclusively for
               university students. We provide a safe, user-friendly space where
-              student can:{" "}
+              student can :
             </p>
-            <ul>
-              <li>Discover available accomodation</li>
+            <ul className="list-disc font-poppins *:ml-4">
+              <li>Discover available shared accomodations</li>
               <li>Connect with potential roommates</li>
-              <li>
-                Create your own roomate post to receive request from different
-                user
-              </li>
+              <li>Create your own roomate post</li>
             </ul>
-            <h2 className="mt-3 text-2xl font-semibold">
-              {" "}
-              Why Choose ShareSpace?
+            <h2 className="mt-4 text-muted text-3xl font-semibold font-sans_serif ">
+              Our Commitment
             </h2>
-            <ul>
-              <li>Simple Search and filter</li>
-              <li>Commmunity Support</li>
-            </ul>
-            <h2 className="text-2xl font-semibold">Our CommitMent</h2>
-            <p>
-              We are dedicated to continually improving the platform, ensuring
-              that students have a seamless experience while finding a home that
-              feels right.
+            <p className="text-xl font-poppins">
+              We are dedicated to continually improving the platform and adding
+              requested features to ensuring that students have a seamless
+              experience while finding a home with roommate that feels right.
             </p>
-            <h2 className="text-2xl font-semibold">Contact Us</h2>
-            <p>For inquiries, feedback or support reach out to our email</p>
           </div>
         </TabsContent>
         <TabsContent value="faq">
           <div>
-            <Accordion type="single" collapsible>
+            <Accordion className="" type="single" collapsible>
               <AccordionItem value="faq-1">
                 <AccordionTrigger>
                   What if I don't like my matched roommate?
                 </AccordionTrigger>
                 <AccordionContent>
-                  You can simply just leave the chat. Emails are not exposed so
-                  you don't have to worry about them reaching out to you by
-                  force.
+                  You can simply just leave the <b>chat</b>. Emails are not
+                  exposed so you don't have to worry about them reaching out to
+                  you without your consent.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-2">
                 <AccordionTrigger>
-                  Is my data safe with SpaceSpace
+                  Is my data safe with SpaceSpace?
                 </AccordionTrigger>
                 <AccordionContent>
                   All personal information are secure and encrypted to our
-                  database. Also, payments are handled 100% by paystack.
+                  database.{" "}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-3">
@@ -93,10 +87,7 @@ export default function About() {
                 </AccordionTrigger>
                 <AccordionContent>
                   User are verified by Email first, before they can proceed to
-                  use our service. And when payment is madefor the purchase of
-                  token, user's real name on their card are used to confirm the
-                  actual name they submit if it does not match their account is
-                  immediate locked out.
+                  use our service.{" "}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-4">
@@ -104,7 +95,7 @@ export default function About() {
                   What should I do if I suspect fraudulent activity?{" "}
                 </AccordionTrigger>
                 <AccordionContent>
-                  Reach out to our support and report the user!
+                  Reach out to our support or report the user!
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-5">
@@ -112,7 +103,7 @@ export default function About() {
                   Do I pay rent through ShareSpace?{" "}
                 </AccordionTrigger>
                 <AccordionContent>
-                  No, ShareSpace serves primarily as a connection platform. Rent
+                  No, ShareSpace serves primarily as a connection platform. rent
                   payments handled directly between roomates or landlords.
                 </AccordionContent>
               </AccordionItem>
@@ -128,7 +119,8 @@ export default function About() {
               <AccordionItem value="faq-7">
                 <AccordionTrigger>Who can use ShareSpace?</AccordionTrigger>
                 <AccordionContent>
-                  ShareSpace is for uni students looking for potential roommate.
+                  ShareSpace is for university students looking for potential
+                  roommate.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-8">
@@ -138,7 +130,7 @@ export default function About() {
                 <AccordionContent>
                   No, ShareSpace make use of credit token system. You make
                   payment through Paystack in exchange of credit, which you can
-                  use to find, explore, create a roomate post etc
+                  use to find, explore, create a roomate post etc.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-9">
@@ -146,10 +138,10 @@ export default function About() {
                   How do I contact potential roommates?
                 </AccordionTrigger>
                 <AccordionContent>
-                  ShareSpace offers a chat section so you can ask personal
+                  ShareSpace offers a chat session, so you can ask personal
                   questions amongst each other before deciding to live together.
-                  This can only happen if your potential roommate accept you
-                  request
+                  This can only happen if your potential roommate accepts your
+                  request.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-10">
@@ -157,10 +149,10 @@ export default function About() {
                   Can I block or report someone on the platform?
                 </AccordionTrigger>
                 <AccordionContent>
-                  Yes, if someone violating any our terms or posting irrelevant
-                  content to have our permission to report. when you are
-                  chatting the person is trying to scam you, you can block,
-                  leave or report the person
+                  Yes, if someone is violating any our terms or posting
+                  irrelevant contents. While chatting, if the other person is
+                  trying to scam you, you can leave the chat or report the
+                  person.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="faq-11">
@@ -171,9 +163,15 @@ export default function About() {
                   The use our amazing service we collect credit tokens which
                   availabale at:
                   <ul>
-                    <li>10Credits - NGN500</li>
-                    <li>150Credits - NGN4800(most popular)</li>
-                    <li>Free for life - NGN10,000</li>
+                    <li>
+                      <p>60 Credits | NGN100</p>
+                    </li>
+                    <li>
+                      <p>500 Credits | NGN400</p>
+                    </li>
+                    <li>
+                      <p>1000 Credits | NGN700</p>
+                    </li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -181,6 +179,18 @@ export default function About() {
           </div>
         </TabsContent>
       </Tabs>
+      <p className="my-5 italic">
+        Feel Free to reach out to
+        <a
+          className="mx-1 font-bold text-primary underline"
+          href="mailto:contact@danielamos.com"
+          target="_blank"
+          rel="noreferrer"
+        >
+          me
+        </a>{" "}
+        for any questions
+      </p>
     </main>
   );
 }

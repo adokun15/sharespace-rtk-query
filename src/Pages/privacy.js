@@ -6,6 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
+import { lIVE_CLIENT_WEB_URL } from "../lib/utils";
 
 export default function Privacy() {
   return (
@@ -23,13 +24,13 @@ export default function Privacy() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
+      <h1 className="md:text-4xl text-3xl my-6 md:text-center font-semibold font-sans_serif">
         Privacy and Policy
       </h1>
 
-      <article className="pl-4">
-        <div className="my-2 font-logo space-y-5">
-          <h2 className="text-[1.3rem]">Effective Date: 30 / 12 / 24</h2>
+      <article className="pl-4 font-poppins">
+        <div className="my-2">
+          <p className="text-xl font-medium">Effective Date : 30/12/24</p>
           <p>
             ShareSpace (the “Platform”) values your privacy and is committed to
             protecting your personal information. This Privacy Policy outlines
@@ -37,7 +38,7 @@ export default function Privacy() {
             our website{" "}
             <a
               className="text-purple-600 underline"
-              href="https://sharespace.com.ng"
+              href={lIVE_CLIENT_WEB_URL}
               target="_blank"
               rel="noreferrer"
             >
@@ -138,9 +139,10 @@ export default function Privacy() {
             </h2>
             <p>
               We retain your data as long as necessary to fulfill the purposes
-              outlined in this Privacy Policy or as required by law. If you wish
-              to delete your account, your data will be removed, subject to any
-              legal retention requirements.
+              outlined in this Privacy Policy or as required by law. After ten
+              months of inactiveness, an email will week be sent before your
+              account is deleted. If you wish to delete your account, your data
+              will be removed, subject to any legal retention requirements.
             </p>
           </section>
 
@@ -223,7 +225,7 @@ export default function Privacy() {
           If you have any questions about our Privacy Policy, please contact us
           on our{" "}
           <a
-            className="text-purple-600 underline"
+            className="text-primary underline"
             href="mailto:contact@danielamos.com"
             target="_blank"
             rel="noreferrer"

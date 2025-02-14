@@ -1,24 +1,29 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
 export default function DataError({ error, refetch = null }) {
   return (
-    <Alert>
+    <Alert
+      className="md:w-3/5 md:px-10 px-3"
+      variant={error?.statusCode === 401 && "destructive"}
+    >
       <AlertCircle />
       <AlertTitle>{error?.status || "Error"}</AlertTitle>
       <AlertDescription>
         <p>{error?.message || "Something went wrong"}</p>
         <>
           {error?.statusCode === 500 ? (
-            <Button onClick={refetch}>Reload</Button>
+            <Button variant="secondary" onClick={refetch}>
+              Reload
+            </Button>
           ) : error?.statusCode === 503 ? (
             ""
           ) : (
-            <Button asChild>
+            <Button variant="destructive" asChild>
               <Link className="text-center" to="/auth">
-                Login
+                Login <ArrowRight />
               </Link>
             </Button>
           )}

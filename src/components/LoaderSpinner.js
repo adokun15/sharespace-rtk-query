@@ -7,7 +7,7 @@ export default function LoaderSpinner({ message = "" }) {
       <p className="mt-[10vh] text-center animate-spin text-2xl">
         <FontAwesomeIcon icon={faSpinner} />
       </p>
-      <p>{message}</p>
+      <p className="text-center">{message}</p>
     </>
   );
 }

@@ -6,6 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "../components/ui/breadcrumb";
+import { lIVE_CLIENT_WEB_URL } from "../lib/utils";
 //
 // ♾️
 export default function Term() {
@@ -24,40 +25,38 @@ export default function Term() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
+      <h1 className="md:text-4xl text-3xl my-6 md:text-center font-semibold font-sans_serif">
         Terms of Service
       </h1>
-      <article className="pl-4">
+      <article className="pl-4 font-poppins">
         <div className="my-2">
-          <p className="text-[1.3rem]">
-            <b>Effective Date : </b>
-            30/12/24
-          </p>
+          <p className="text-xl font-medium">Effective Date : 30/12/24</p>
         </div>
-        <div className="my-2 font-logo space-y-6">
+        <div className="my-2 space-y-6">
           <p>
             Welcome to ShareSpace (the “Platform”). By accessing or using our
             website{" "}
             <a
-              className="text-purple-600 underline"
-              href="https://sharespace.com.ng"
+              className="text-primary underline"
+              href={lIVE_CLIENT_WEB_URL}
               target="_blank"
               rel="noreferrer"
             >
               sharespace.com.ng
-            </a>
+            </a>{" "}
             (the “Site”), you agree to comply with and be bound by the following
             Terms and Conditions (the “Terms”). If you do not agree to these
             Terms, please do not use the Platform.
           </p>
 
           <section>
-            <h2 className="text-2xl tracking-wide">
-              1. <b>Acceptance of Terms</b>
+            <h2 className="text-2xl font-semibold tracking-wide">
+              1. Acceptance of Terms
             </h2>
             <p className="pl-2">
-              By using this Platform, you confirm that you are at least 16 years
-              old and legally capable of entering into binding agreements.
+              By using this Platform, you confirm that you are at least{" "}
+              <b>16 years</b> old and legally capable of entering into binding
+              agreements.
             </p>
           </section>
           <section>
@@ -66,7 +65,7 @@ export default function Term() {
             </h2>
             <p className="pl-2">
               ShareSpace connects individuals seeking roommates or shared
-              accommodations. The Platform is a marketplace and does not own or
+              accommodations. This is a connection Platform and does not own or
               manage any property or guarantee compatibility between roommates.
             </p>
           </section>
@@ -114,6 +113,10 @@ export default function Term() {
                 Attempt to hack, disrupt, or harm the Platform in any way.
               </li>
             </ul>
+            <p className="pl-2">
+              Violation of the above rule leads to an immediate termination of
+              your account.
+            </p>
           </section>
           <section>
             <h2 className="text-slate-800 text-2xl tracking-wide">
@@ -138,12 +141,12 @@ export default function Term() {
             </h2>
             <ul className="mt-3 pl-8 list-inside list-disc space-y-3">
               <li>
-                - Registration and basic use of the Platform may be free;
-                however, additional services may incur fees.
+                Registration and basic use of the Platform may be free; however,
+                additional services may incur fees.
               </li>
               <li>
-                - Users are responsible for managing payments directly with
-                their landlords or roommates. ShareSpace is not liable for any
+                Users are responsible for managing payments directly with their
+                landlords or roommates. ShareSpace is not liable for any
                 financial transactions between users.
               </li>
             </ul>
@@ -154,15 +157,15 @@ export default function Term() {
             </h2>
             <ul className="mt-3 pl-8 list-inside list-disc space-y-3">
               <li>
-                - ShareSpace provides its services "as is" without warranties of
+                ShareSpace provides its services "as is" without warranties of
                 any kind.
               </li>
               <li>
-                - The Platform does not guarantee the accuracy or reliability of
+                The Platform does not guarantee the accuracy or reliability of
                 user-generated content.
               </li>
               <li>
-                - ShareSpace is not responsible for disputes, damages, or losses
+                ShareSpace is not responsible for disputes, damages, or losses
                 resulting from interactions between users.
               </li>
             </ul>
@@ -183,8 +186,8 @@ export default function Term() {
             <p className="pl-2">
               Your use of the Platform is governed by our
               <a
-                className="text-purple-600 underline"
-                href="https://sharespace.com.ng/privacy"
+                className="text-primary mx-1 underline"
+                href={`${lIVE_CLIENT_WEB_URL}/privacy`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -215,14 +218,14 @@ export default function Term() {
           </section>
         </div>
         <div>
-          If you have any questions about these Terms, please contact us on our{" "}
+          If you have any questions about these Terms, please contact me{" "}
           <a
-            className="text-purple-600 underline"
+            className="text-primary underline"
             href="mailto:contact@danielamos.com"
             target="_blank"
             rel="noreferrer"
           >
-            email
+            here
           </a>
         </div>
       </article>

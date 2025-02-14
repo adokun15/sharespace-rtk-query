@@ -20,6 +20,8 @@ import Term from "./Pages/tos";
 import SingleRoommateInfo from "./components/SingleRoomieData";
 import Guide from "./components/Guides";
 import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
+import ChatList from "./components/ChatList";
+import ChatDetail from "./components/ChatDetail";
 function App() {
   const router = createBrowserRouter([
     {
@@ -51,8 +53,10 @@ function App() {
         //Chat!
         {
           path: "space",
+          element: <ChatsPage />,
           children: [
-            { index: true, element: <ChatsPage /> },
+            { index: true, element: <ChatList /> },
+            { path: ":spaceId", element: <ChatDetail /> },
             { path: "proposals", element: <RequestReceivedTable /> },
             { path: "proposals/:roomieId", element: <SingleRoommateInfo /> },
           ],

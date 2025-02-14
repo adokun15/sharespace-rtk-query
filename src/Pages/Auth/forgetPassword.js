@@ -3,11 +3,12 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useForgotPasswordMutation } from "../../store/Slices/auth";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 export default function ForgetPasswordComponent() {
   const reRoute = useNavigate();
   //Collect Email
-  const [sendEmail, { isError, error, isLoading }] =
-    useForgotPasswordMutation();
+  const [sendEmail, { isLoading }] = useForgotPasswordMutation();
 
   const email = useRef();
 
@@ -16,14 +17,22 @@ export default function ForgetPasswordComponent() {
   };
 
   const handleSendEmail = async () => {
-    if (!email) return;
+    if (!email.current.value) {
+      toast.warning("Invalid Email Format!");
+      return;
+    }
 
     await sendEmail(email.current.value)
       .unwrap()
       .then((data) => {
         console.log(data);
+        email.current.value = "";
+        toast.success(data);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error(err?.message);
+      });
   };
   return (
     <main className=" md:px-10 px-2  min-h-40 mt-30 py-[4vh] ">
@@ -31,32 +40,44 @@ export default function ForgetPasswordComponent() {
         Forgot Password?
       </h1>
       <form method="post" className="*:block leading-9 *:my-4 my-5">
-        {isError && (
-          <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-red-600 ">
+        {/*isError && (
+          <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-destructive ">
             {error.message?.split("/")[1].split("-").join(" ")}
           </p>
-        )}
+        )*/}
 
-        <p className="mb-3 text-slate-500 text-center font-[100]">
+        <p className="mb-3 text-muted text-center font-[100]">
           A reset link will be sent to your email.
         </p>
 
-        <label className="text-2xl ">Email</label>
+        <label className="text-2xl font-poppins">Email</label>
         <Input
           required
           name="email"
           type="email"
           ref={email}
-          placeholder="Enter your Email Address"
+          className="placeholder:text-muted"
+          placeholder="Enter your registered email address"
         />
-        <Button type="button" onClick={handleSendEmail}>
-          {isLoading ? "loading" : "Submit"}
+
+        <Button
+          className={`bg-secondary disabled:opacity-40 w-full py-1 px-3 hover:bg-secondary/80 rounded-xl`}
+          disabled={isLoading}
+          type="button"
+          onClick={handleSendEmail}
+        >
+          {isLoading ? (
+            <Loader2 className="mx-auto animate-spin" />
+          ) : (
+            "Send reset link"
+          )}
         </Button>
         <article>
           <Button
+            variant="link"
             type="button"
             onClick={toAuth}
-            className="block m-auto hover:text-purple-500"
+            className="block m-auto text-center underline text-secondary hover:text-primary"
           >
             Remember password? Login
           </Button>

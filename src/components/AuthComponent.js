@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthorizeMutation } from "../store/Slices/auth";
-import Button from "../UI/Button";
+import { Button } from "../components/ui/button";
 //import { useCreateCookieMutation } from "../store/Slices/user";
 import { Input } from "./ui/input";
+import { Loader2 } from "lucide-react";
 
 export default function AuthenticationComponent() {
   //Signup / Login
@@ -381,20 +382,23 @@ export default function AuthenticationComponent() {
         ShareSpace
       </p>
      */}
-      <h1 className="md:text-5xl text-center font-roboto text-3xl">
+      <h1 className=" md:text-center font-roboto md:text-4xl text-3xl">
         {mode === "login"
           ? "Login to your Account"
           : "Sign Up For a New Account"}
       </h1>
-      <form method="post" className="*:block leading-9 *:my-4 my-5">
-        <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-red-600 ">
-          {isError && error.message?.split("/")[1].split("-").join(" ")}
+      <form method="post" className="*:block leading-7 *:my-3 my-5">
+        <p className="capitalize ease-in transition-all my-2 text-xl font-oswald text-destructive ">
+          {isError && error.message}
         </p>
         {mode !== "login" && (
           <>
-            <label className="text-2xl ">First Name</label>
+            <label className="text-xl font-poppins">First Name</label>
             <Input
               required
+              className={`placeholder:text-muted font-sans_serif  ${
+                fnameInputError && "border-destructive "
+              }`}
               onBlur={handleFirstNameOnBlur}
               name="fname"
               type="text"
@@ -402,18 +406,21 @@ export default function AuthenticationComponent() {
               onChange={handleFirstNameOnChange}
               placeholder="Enter your First Name"
             />
-            <p className="mb-3 font-oswald  font-[100] text-red-400">
+            <p className="mb-3 font-oswald  font-[100] text-destructive">
               {fnameInputError}
             </p>
-            <label className="text-2xl ">Last Name</label>
+            <label className="text-xl mt-4 font-poppins ">Last Name</label>
             <Input
               required
               onBlur={handleLastNameOnBlur}
+              className={`placeholder:text-muted font-sans_serif  ${
+                lnameInputError && "border-destructive "
+              }`}
               name="fname"
               type="text"
               max={100}
               onChange={handleLastNameOnChange}
-              placeholder="Enter your First Name"
+              placeholder="Enter your Last Name"
             />
             {/*   className={`tracking-wide bg-purple-200 font-roboto focus:bg-purple-300 py-2 px-3 caret-purple-800 outline-purple-600 rounded w-full
           ${
@@ -422,15 +429,20 @@ export default function AuthenticationComponent() {
             }
             `}
             */}
-            <p className="mb-3 font-oswald  font-[100] text-red-400">
+            <p className="mb-3 font-oswald  font-[100] text-destructive">
               {lnameInputError}
             </p>
           </>
         )}
-        <label className="text-2xl ">Email</label>
+        <label className="text-xl font-poppins mt-4 tracking-wider">
+          Email
+        </label>
         <Input
           required
           onBlur={handleEmailOnBlur}
+          className={`placeholder:text-muted font-sans_serif  ${
+            emailInputError && "border-destructive "
+          }`}
           name="email"
           type="email"
           onChange={handleEmailOnChange}
@@ -443,46 +455,45 @@ export default function AuthenticationComponent() {
           }
           `}
         */}
-        <p className="mb-3 font-oswald  font-[100] text-red-400">
+        <p className="mb-3 font-oswald  font-[100] text-destructive">
           {emailInputError}
         </p>
 
-        <label className="text-2xl">Password</label>
+        <label className="text-xl mt-4 font-poppins">Password</label>
         <Input
           name="password"
           required
           onBlur={handlePasswordOnBlur}
           type="password"
+          className={`placeholder:text-muted font-sans_serif  ${
+            passwordInputError && "border-destructive "
+          }`}
           onChange={handlePasswordOnChange}
           placeholder="Enter Password"
         />
-        {/* className={`bg-purple-200 focus:bg-purple-300 py-2 px-3 caret-purple-800 outline-purple-600 rounded w-full
-          ${
-            passwordInputError &&
-            "shadow-red-400 focus:shadow outline-red-600 focus:bg-red-300 bg-red-200"
-          }
-          `}
-          */}
-
-        <p className="mb-3 font-oswald  font-[100] text-red-400">
+        <p className="mb-3 font-oswald font-[100] text-destructive">
           {passwordInputError}
         </p>
         <Button
-          name="mode"
           type="button"
-          elclass={` w-full py-1 px-3 text-white rounded-xl bg-purple-600
-        ${(emailInputError || passwordInputError) && "disabled:bg-purple-400"}`}
+          className={` w-full py-1 px-3  rounded-xl 
+        ${
+          (emailInputError ||
+            passwordInputError ||
+            !enteredValue.email ||
+            !enteredValue.password) &&
+          "disabled:opacity-40"
+        }`}
           disabled={emailInputError || passwordInputError}
-          loading={isLoading}
-          trigger={triggerSubmit}
+          onClick={triggerSubmit}
         >
-          {isLoading ? "loading" : "Submit"}
+          {isLoading ? <Loader2 className="mx-auto animate-spin" /> : "Submit"}
         </Button>
-        <article>
+        <article className="mt-4">
           {mode === "login" ? (
             <>
               <Link
-                className="block m-auto text-center underline text-blue-800 hover:text-purple-500"
+                className="block m-auto md:text-xl text-xs mb-3 text-center underline text-secondary hover:text-primary"
                 to="forgotPassword"
               >
                 I forgot my password
@@ -490,24 +501,27 @@ export default function AuthenticationComponent() {
               <button
                 type="button"
                 onClick={() => setAuthState("signup")}
-                className="block m-auto hover:text-purple-500 underline"
+                className="block m-auto md:text-xl text-xs hover:text-primary underline"
               >
-                Dont have an account...Sign up!
+                Don't have an account?...Sign up!
               </button>
             </>
           ) : (
             <button
               type="button"
               onClick={() => setAuthState("login")}
-              className="block m-auto hover:text-purple-500"
+              className="block m-auto md:text-xl text-xs hover:text-primary"
             >
               Already have an account...Login!
             </button>
           )}
           {mode !== "login" && (
-            <p className="mb-3 text-slate-500 text-center font-[100]">
+            <p className="my-3 text-xs md:text-xl text-muted text-center font-[100]">
               By signing up, you are agreeing to our{" "}
-              <Link className="border-b-2 border-dotted" to="/terms">
+              <Link
+                className="font-medium border-b-2 border-dotted text-primary"
+                to="/terms"
+              >
                 Terms of Service.
               </Link>
             </p>

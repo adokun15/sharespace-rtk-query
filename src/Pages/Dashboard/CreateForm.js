@@ -18,17 +18,25 @@ export default function CreateRoomieSpaceForm() {
 
   if (isLoading || isFetching) {
     return (
-      <Card className="space-y-8">
-        <h2>
-          <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
-          <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
-        </h2>
-        <article>
-          <div>
-            <Skeleton className="block h-4 w-12 mb-3 rounded px-3 py-2" />
-          </div>
-        </article>
-      </Card>
+      <div className="space-y-10">
+        <div className="">
+          <Skeleton className="text-center rounded mx-auto w-44 h-12 p-3 hover:bg-purple-300/15" />
+        </div>
+
+        <Skeleton className="text-3xl h-5 p-3 w-4/5 font-medium text-center font-roboto mt-4" />
+
+        <div className="mt-5 even:mx-auto odd:mx-0 space-y-3">
+          <Skeleton className="text-3xl w-1/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="text-3xl w-2/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="text-3xl w-1/5 p-3 font-medium text-center font-roboto mt-4" />
+          <Skeleton className="font-oswald w-2/5 p-3 text-slate-400 text-center my-1" />
+          <Skeleton className="font-oswald p-3 w-1/5 text-slate-600 text-center my-1" />
+          <Skeleton className="font-oswald p-3 w-2/5 text-slate-600 text-center my-1" />
+        </div>
+        <div>
+          <Skeleton className="rounded w-28 h-12 p-3 hover:bg-purple-300/15" />
+        </div>
+      </div>
     );
   }
 

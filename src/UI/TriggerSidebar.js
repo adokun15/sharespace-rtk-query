@@ -9,13 +9,10 @@ export default function TriggerSidebar() {
 
   return (
     <>
-      <div className="text-xs md:text-xl md:text-center w-full bg-purple-400 text-white text-center py-1 px-5">
+      <div className="text-xs md:text-xl md:text-center w-full bg-accent text-white text-center py-1 px-5">
         <p className="md:hidden">
-          <span className="font-bold">
-            ShareSpace
-          </span>
-          {" "}is currently in beta! We're working to improve your experience. Have
-          feedback? Let us know!
+          <span className="font-bold">ShareSpace</span> is currently in beta!
+          We're working to improve your experience. Have feedback? Let us know!
         </p>
       </div>
       {isMobile && (

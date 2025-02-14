@@ -1,39 +1,103 @@
-import { useState } from "react";
+import { useAllChatsQuery } from "../store/Slices/matches";
+import DataError from "./DataError";
+import LoaderSpinner from "./LoaderSpinner";
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-//import { Button } from "../components/ui/button";
-//import { MoreVertical } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import ChatDetail from "./ChatDetail";
-export default function ChatList({ chats }) {
-  const [id, setChatId] = useState(null);
+import { Link } from "react-router-dom";
 
+export default function ChatList() {
+  /* const {
+    data: chats,
+    isError,
+    error,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useAllChatsQuery();
+
+  if (isLoading || isFetching) {
+    return <LoaderSpinner message="loading chats" />;
+  }
+
+  if (isError) {
+    return <DataError error={error} refetch={refetch} />;
+  }
+  */
+
+  const sortByDate = (date) => {};
+  const sortByName = (date) => {};
+
+  const chats = [
+    {
+      spaceId: 12,
+      dateCreated: "12/323/23",
+      user: {
+        photo: "adada",
+        name: "Adam Reese",
+        id: "2323232",
+      },
+    },
+    {
+      spaceId: 13,
+      dateCreated: "113/343/343",
+      user: {
+        photo: "aqqqwrq",
+        name: "James Curry",
+        id: "afasasas",
+      },
+    },
+    {
+      spaceId: 14,
+      dateCreated: "12/3/23",
+      user: {
+        photo: "ada",
+        name: "Lee ChANG",
+        id: "3232",
+      },
+    },
+  ];
   return (
-    <Sheet side="bottom">
-      <div className="">
-        <ul className=" space-y-3 min-w-[25rem] mt-3">
-          {chats?.map((chat) => (
-            <SheetTrigger onClick={() => setChatId(chat.spaceId)}>
-              <div className="min-w-40 hover:text-white hover:bg-purple-400 shadow flex px-2 py-3 even:bg-slate-50 rounded justify-between">
-                <div className="flex gap-2 items-center">
-                  <Avatar>
-                    <AvatarImage src={chat?.user?.photo} />
-                    <AvatarFallback>TN</AvatarFallback>
-                  </Avatar>
-                  <article>
-                    <h3 className="text-xl font-bold">{chat?.user?.name}</h3>
-                  </article>
-                </div>
-                {/* <Button className="justify-end" variant="ghost">
-                  <MoreVertical />
-                </Button> */}
-              </div>
-            </SheetTrigger>
-          ))}
-        </ul>
+    <>
+      <div className="flex justify-between">
+        <h1 className="text-3xl text-center">Chats</h1>
+        <Popover>
+          <PopoverTrigger>
+            <Button variant="outline">All</Button>
+            <PopoverContent>
+              <ul>
+                <li>All</li>
+                <li>Name</li>
+                <li>Recent</li>
+              </ul>
+            </PopoverContent>
+          </PopoverTrigger>
+        </Popover>
       </div>
-      <SheetContent side="bottom">
-        <ChatDetail spaceId={id} />
-      </SheetContent>
-    </Sheet>
+
+      <ul className=" space-y-3 *:w-full mt-3">
+        {chats?.map((chat) => (
+          <Link
+            to={chat?.spaceId}
+            className=" hover:text-white bg-muted-foreground hover:bg-slate-600 transition-colors shadow flex px-2 py-3 even:bg-slate-50 rounded justify-between"
+          >
+            <div className="flex gap-2 items-center">
+              <Avatar>
+                <AvatarImage src={chat?.user?.photo} />
+                <AvatarFallback>
+                  {chat?.user?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <article>
+                <h3 className="text-xl font-bold">{chat?.user?.name}</h3>
+              </article>
+            </div>
+          </Link>
+        ))}
+      </ul>
+    </>
   );
 }

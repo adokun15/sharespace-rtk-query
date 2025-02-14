@@ -20,6 +20,9 @@ export async function ForgotPassword(email) {
       }/auth`,
     });
   } catch (e) {
+    if (e.code === "auth/network-request-failed") {
+      throw new Error("Poor Internet Connection");
+    }
     throw new Error(
       e?.code || e?.message || "Unable send link. An error occured!"
     );
@@ -57,6 +60,14 @@ export async function CreateUser({ name, email, password }) {
 
     return token;
   } catch (e) {
+    if (e.code === "auth/network-request-failed") {
+      throw new Error("Poor Internet Connection");
+    }
+
+    if (e?.code?.includes("auth")) {
+      throw new Error(e.code?.split("/")[1].split("-").join(" "));
+    }
+
     throw new Error(
       e?.code || e?.message || "Unable to login. An error occured!"
     );
@@ -71,6 +82,18 @@ export async function LoginUser({ email, password }) {
 
     return token;
   } catch (e) {
+    if (e.code === "auth/network-request-failed") {
+      throw new Error("Poor Internet Connection");
+    }
+
+    if (e.code === "auth/invalid-credential") {
+      throw new Error("Wrong Email or Password. Kindly check your input");
+    }
+
+    if (e?.code?.includes("auth")) {
+      throw new Error(e.code?.split("/")[1].split("-").join(" "));
+    }
+
     throw new Error(
       e?.code || e?.message || "Unable to login. An error occured!"
     );
