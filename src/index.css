@@ -11,7 +11,7 @@
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 220 13% 91%; 
     --sidebar-ring: 217.2 91.2% 59.8%;
   
            
@@ -25,26 +25,26 @@
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
     
-    --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
  
     --primary: 279 60% 55%; /* Vibrant purple */
-    --primary-foreground: 0 0% 100%; /* White text for primary elements*/
+    --primary-foreground: 0 0% 100%; 
+    /*
+    --primary-foreground: 210 40% 98%;
+    /* White text for primary elements*/
 
     --secondary: 241 30% 19%; /* Deep blue */
     --secondary-foreground: 0 0% 100%; /* White text for secondary elements*/
 
-    --accent: 31 79% 61%; /* Warm orange */
-    --accent-foreground: 0 0% 100%; /* White text for accent elements*/
+    --accent: 48 95% 72%; /* Warm orange */
+    --accent-foreground:  0 0% 98%; /* White text for accent elements*/
 
     --background: 0 0% 98%; /*Light grayish-white*/
    
-    --muted: 240 10% 40%; /* Medium gray*/
-    --muted-foreground: 0 0% 100%; /* White text for muted elements */
-  
+    --muted: 210 31% 19%;
+    --muted-foreground: 0 0% 98%;
+    
     /*
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
     
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;

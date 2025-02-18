@@ -3,7 +3,6 @@ import {
   HomeIcon,
   LogOut,
   MessageSquareCodeIcon,
-  Settings2,
   User,
 } from "lucide-react";
 import {
@@ -34,7 +33,6 @@ import {
 import { useIsLoggedInQuery } from "../store/Slices/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowRight,
   faCoins,
   faPeopleGroup,
   faPerson,
@@ -42,7 +40,6 @@ import {
   faToolbox,
 } from "@fortawesome/free-solid-svg-icons";
 import { LogoutXomponent } from "./Logout";
-import { DialogClose, Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
 
 export default function DashboardNavigator({ loadContent }) {
@@ -101,59 +98,81 @@ export default function DashboardNavigator({ loadContent }) {
           </>
         )}
 
-        <>
-          <SidebarContent
-            className={
-              !isLoading && data && !isFetching && !error
-                ? "visible"
-                : "invisible"
-            }
-          >
-            <SidebarGroup>
-              <SidebarGroupContent className="text-center space-y-4 font-poppins">
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="flex text-xl justify-center"
-                      asChild
-                    >
-                      <Link to="/">
-                        <HomeIcon className="text-purple-400" />
-                        <span>Home</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      className="flex text-xl justify-center"
-                    >
-                      <Link to="/space">
-                        <MessageSquareCodeIcon />
-                        <span>Chats</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="text-xl flex justify-center"
-                      asChild
-                    >
-                      <Link to="/guide">
-                        <Settings2 />
-                        <span>Guide</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-        </>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent className="text-center space-y-4 font-poppins">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className="flex text-xl justify-center"
+                    asChild
+                  >
+                    <Link to="/">
+                      <HomeIcon className="text-purple-400" />
+                      <span>Home</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+              <>
+                {!isLoading && data && !isFetching && !error && (
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        className="flex text-xl justify-center"
+                      >
+                        <Link to="/space">
+                          <MessageSquareCodeIcon />
+                          <span>Chats</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
+              </>
+
+              <SidebarSeparator />
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className="text-xl flex justify-center"
+                    asChild
+                  >
+                    <Link to="/guide">
+                      <span>Guide</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className="text-xl flex justify-center"
+                    asChild
+                  >
+                    <Link to="/">
+                      <span>Feedback</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className="text-xl flex justify-center"
+                    asChild
+                  >
+                    <Link to="/">
+                      <span>Our Social</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
         <SidebarFooter>
           {(isLoading || isFetching) && (
@@ -197,7 +216,11 @@ export default function DashboardNavigator({ loadContent }) {
           )}
           {!error && data && !isLoading && !isFetching && (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                variant="ghost"
+                className="hover:bg-slate-100/90 hover:text-muted"
+                asChild
+              >
                 <Button variant="outline">
                   <User />
                   Account
@@ -212,17 +235,10 @@ export default function DashboardNavigator({ loadContent }) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem>
-                    <Dialog>
-                      <DialogTrigger>
-                        <FontAwesomeIcon icon={faCoins} />
-                        <span>Buy Credit</span>
-                        <FontAwesomeIcon icon={faArrowRight} />
-                      </DialogTrigger>
-                      <DialogContent>
-                        <p>THIS IS A PAYMENT Form (Later Feature)</p>
-                        <DialogClose>Close</DialogClose>
-                      </DialogContent>
-                    </Dialog>
+                    <FontAwesomeIcon icon={faCoins} />
+                    <Link to="/profile?credit=true">
+                      <span>Buy Credit</span>
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -235,9 +251,9 @@ export default function DashboardNavigator({ loadContent }) {
 
                 <DropdownMenuGroup>
                   <Button variant="ghost" asChild onClick={toFeedbackSpace}>
-                    <DropdownMenuItem className="flex justify-between">
+                    <DropdownMenuItem className="flex px-3 justify-between">
                       <span>
-                        <FontAwesomeIcon icon={faReply} />
+                        <FontAwesomeIcon className="mr-2" icon={faReply} />
                         Feedback
                       </span>
                       <ExternalLink />
@@ -245,10 +261,10 @@ export default function DashboardNavigator({ loadContent }) {
                   </Button>
 
                   <Button variant="ghost" asChild onClick={toMyEmail}>
-                    <DropdownMenuItem className="flex justify-between">
+                    <DropdownMenuItem className="flex px-3 justify-between">
                       <span>
                         <FontAwesomeIcon
-                          className="mx-2"
+                          className="mr-2"
                           icon={faPeopleGroup}
                         />
                         Support

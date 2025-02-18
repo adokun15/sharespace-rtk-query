@@ -1,8 +1,6 @@
 import { useGetUserQuery } from "../../store/Slices/user";
 import AddPreferences from "../../components/AddPreferences";
-import Card from "../../UI/Card";
 import DataError from "../../components/DataError";
-import LoaderSpinner from "../../components/LoaderSpinner";
 import { Skeleton } from "../../components/ui/skeleton";
 
 //Add data, then Video
@@ -45,12 +43,12 @@ export default function CreateRoomieSpaceForm() {
   }
 
   return (
-    <div>
+    <div className="shadow md:w-[65%] md:mx-auto p-3  min-h-40 mt-30 rounded-[1rem] ">
       <h1 className="text-4xl text-center mb-4 text-bold font-sans_serif">
         Create Post
       </h1>
       {user?.targetType && (
-        <p className="mb-3">
+        <p className="mb-3 text-center font-poppins">
           Get more people to reach you. By posting your{" "}
           {user?.targetType === "spacer"
             ? "Your preferences"

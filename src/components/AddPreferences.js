@@ -28,6 +28,7 @@ export default function AddPreferences({ user }) {
 
   //Validate Input
   const formSchema = z.object({
+    duration: z.string().max(2),
     description: z.string().min(5, "Quote too Short"),
     location: z.string().min(2, "Invalid Location Length"),
     rent: z.number().array(),
@@ -39,6 +40,7 @@ export default function AddPreferences({ user }) {
 
   const form = useForm({
     defaultValues: {
+      duration: "",
       description: "",
       location: "",
       rent: [150],
@@ -61,12 +63,22 @@ export default function AddPreferences({ user }) {
       typeof proposal === "number" ? proposal : proposal[0];
 
     //Check Credit
-
     if (
-      !(user?.credits && proposal_limit > 10 && user?.credits >= 50)
-      //!(user?.credits && user?.credits >= 30 && proposal_limit <= 10)
+      !(user?.credits && proposal_limit > 10 && user?.credits >= 50) && //Credits >= 50, proposal_limit > 10,
+      !(user?.credits && user?.credits >= 30 && proposal_limit <= 10) // credits > 30, proposal_limit <= 10
     ) {
-      toast.error("Insufficient credits to complete process!");
+      toast.warning("Insufficient credits to complete process!", {
+        action: {
+          label: "Buy Credit",
+          onClick: () => reRoute("/profile?credit=true"),
+        },
+      });
+      return;
+    }
+
+    //Check if Quote;
+    if (data.description.split(" ").length > 200) {
+      toast.error("Quote has exceeded its limit :  200 words ");
       return;
     }
 
@@ -87,6 +99,7 @@ export default function AddPreferences({ user }) {
       photo: user?.photo,
       timePosted,
     };
+
     const BudgetRent = user?.targetType === "roomie" ? "rent" : "budget";
 
     info[BudgetRent] = typeof rent === "number" ? rent : rent[0];
@@ -94,7 +107,7 @@ export default function AddPreferences({ user }) {
     await createpost(info)
       .unwrap()
       .then((data) => {
-        toast.error(data?.message, {
+        toast.success(data?.message, {
           description: "Check under 'my post' to review post",
         });
 
@@ -103,6 +116,9 @@ export default function AddPreferences({ user }) {
       .catch((error) => {
         toast.error(error?.status || "Error", {
           description: error?.message,
+          action: {
+            // onClick: () => reRoute("/profile?credit=true")
+          },
           //Stay longer, add button to buy credit
         });
       });
@@ -118,6 +134,13 @@ export default function AddPreferences({ user }) {
       </div>
     );
   }
+  /**
+ If your Target is 'toward' student looking for a roomie, then
+your post should be a roomie, which means you have 'accomodation'
+
+If your Target is 'toward' student looking for a roommate and accomodation, then
+your post should be a spacer, which means you have no 'accomodation' 
+ */
 
   return (
     <Form {...form}>
@@ -125,29 +148,75 @@ export default function AddPreferences({ user }) {
         className="space-y-8"
         onSubmit={form.handleSubmit(createPostHandler)}
       >
+        {user?.targetType === "roomie" && (
+          <FormField
+            name="duration"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className=" text-xl font-sans_serif">
+                  Duration of Rent
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="How Long?" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="< 3months">
+                      Less than 3 months
+                    </SelectItem>
+                    <SelectItem value="< 6months">
+                      Less than 6 months
+                    </SelectItem>
+                    <SelectItem value="one semester">One Semester</SelectItem>
+                    <SelectItem value="a session">A session</SelectItem>
+                    <SelectItem value="a year">A year</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  <p>How long will the rent last for?</p>
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           name="description"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-bold text-xl font-sans_serif">
-                Quote
-              </FormLabel>
+              <FormLabel className=" text-xl font-sans_serif">Quote</FormLabel>
               <FormControl>
-                <Input
+                <textarea
                   {...field}
-                  className="min-h-4 rounded"
+                  className="resize-none font-poppins tracking-wide flex 
+                   text-base h-9 w-full rounded-md 
+        border border-input bg-transparent px-3 
+        py-1 shadow-sm transition-colors  placeholder:text-muted-foreground
+          focus-visible:outline-none focus-visible:ring-1
+           focus-visible:ring-ring md:text-sm min-h-32 "
                   placeholder="Enter descriptions..."
-                />
+                ></textarea>
               </FormControl>
 
               <FormDescription>
-                <p>0 / 200</p>
                 <p>
                   {user?.targetType === "roomie"
                     ? "Enter a brief of quote about your hostel"
                     : "Enter a brief quote about your lifestyle, budget or what you do not like."}
                 </p>
+                {field.value?.split(" ").length >= 200 ? (
+                  <p className="text-end text-destructive">Exceeded Limit!</p>
+                ) : (
+                  <p className="text-end">
+                    {field.value?.split(" ").length} / 200
+                  </p>
+                )}
               </FormDescription>
             </FormItem>
           )}
@@ -159,7 +228,7 @@ export default function AddPreferences({ user }) {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="font-bold text-xl font-sans_serif">
+                <FormLabel className=" text-xl font-sans_serif">
                   Number of Roommates
                 </FormLabel>
                 <Select
@@ -191,8 +260,8 @@ export default function AddPreferences({ user }) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-bold text-xl font-sans_serif">
-                {user?.targetType === "spacer" ? "Rent" : "Budget"}
+              <FormLabel className=" text-xl font-sans_serif">
+                {user?.targetType === "spacer" ? "Budget" : "Rent"}
               </FormLabel>
               <FormControl>
                 <Slider
@@ -201,11 +270,33 @@ export default function AddPreferences({ user }) {
                   onValueChange={field.onChange}
                   value={[...field.value]}
                   step={5}
-                  max={600}
+                  max={user?.targetType === "spacer" ? 350 : 700}
                 />
               </FormControl>
               <FormDescription>
-                Enter Your Rent: {field?.value}k
+                Enter Your {user?.targetType === "spacer" ? "budget" : "rent"}:{" "}
+                {field?.value}k
+              </FormDescription>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="location"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className=" text-xl font-sans_serif">
+                Location
+              </FormLabel>
+
+              <FormControl>
+                <Input {...field} placeholder="Your Location" />
+              </FormControl>
+              <FormDescription>
+                {user?.targetType === "spacer"
+                  ? "Where do you prefer to stay?"
+                  : "Where is your hostel located?"}{" "}
               </FormDescription>
             </FormItem>
           )}
@@ -216,7 +307,7 @@ export default function AddPreferences({ user }) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-bold text-xl font-sans_serif">
+              <FormLabel className=" text-xl font-sans_serif">
                 Proposal limit
               </FormLabel>
               <FormControl>
@@ -232,9 +323,8 @@ export default function AddPreferences({ user }) {
               <FormDescription>
                 <p>
                   {field?.value} proposals. *Number of people that can send you
-                  a message*{" "}
+                  a roommate request*{" "}
                 </p>
-                <p></p>
 
                 <p>
                   {+field?.value > 10 &&
@@ -244,25 +334,10 @@ export default function AddPreferences({ user }) {
             </FormItem>
           )}
         />
-        <FormField
-          name="location"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-bold text-xl font-sans_serif">
-                Location
-              </FormLabel>
-
-              <FormControl>
-                <Input {...field} placeholder="Your Location" />
-              </FormControl>
-              <FormDescription>Where is your hostel located? </FormDescription>
-            </FormItem>
-          )}
-        />
         <Button
+          variant="primary"
           disabled={isLoading}
-          className="rounded font-bold tracking-wide"
+          className="rounded font-bold mx-auto block tracking-wide"
         >
           {isLoading ? <Loader2 className="animate-spin" /> : "Upload Post"}
         </Button>

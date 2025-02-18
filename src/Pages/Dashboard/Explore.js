@@ -94,7 +94,7 @@ const ExplorePage = () => {
           </DialogContent>
         </Dialog>
 
-        {user && token ? (
+        {user ? (
           <Tabs className="space-y-5" defaultValue="roommates">
             <TabsList>
               <TabsTrigger value="roommates">Roomates Posts</TabsTrigger>
@@ -103,7 +103,7 @@ const ExplorePage = () => {
             </TabsList>
             <TabsContent value="roommates">
               {/* Work on Later on Roomate itSelf*/}
-              <Roomates />
+              <Roomates user={user} />
             </TabsContent>
 
             <TabsContent value="proposal">

@@ -1,6 +1,7 @@
+//My post -->
 import { Button } from "../ui/button";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { Clock, Copy, ReceiptText, Share } from "lucide-react";
+import { Clock, Copy, Loader2, ReceiptText, Share } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Link } from "react-router-dom";
 import {
@@ -26,8 +27,8 @@ export default function UserRoommateData() {
   const {
     data: user,
     isLoading: userLoading,
-    refetch: userRefetch,
-    error: userError,
+    //  refetch: userRefetch,
+    //error: userError,
     isError: isUserError,
   } = useIsLoggedInQuery();
 
@@ -40,7 +41,33 @@ export default function UserRoommateData() {
     isFetching,
   } = useSingleRoomateQuery(
     { id: user?.uid, invited: false }, //The User his trying to data
-    { skip: !user?.uid }
+    {
+      skip: !user?.uid,
+      selectFromResult: (res) => {
+        const { data, ...other } = res;
+
+        //Now, Today, Yesterday, days, {21 may, 2024}
+        const detectDate = () => {
+          const newDate = new Date();
+          const postDate = new Date(data?.timePosted);
+
+          if (newDate.getDate() === postDate.getDate()) {
+            return "Today";
+          }
+
+          if (newDate.getDate() - 1 === postDate.getDate()) {
+            return "Yesterday";
+          }
+
+          return `${postDate.toLocaleDateString("en-GB")} `;
+        };
+
+        return {
+          ...other,
+          data: { ...data, timePosted: detectDate() },
+        };
+      },
+    }
   );
 
   const [deletePost, { isLoading: deleting }] = useDeleteSingleRoomateMutation({
@@ -55,9 +82,7 @@ export default function UserRoommateData() {
   }
 
   if (isError || isUserError) {
-    return (
-      <DataError refetch={userRefetch || refetch} error={userError || error} />
-    );
+    return <DataError refetch={refetch} error={error} />;
   }
 
   async function copyLink() {
@@ -194,9 +219,9 @@ export default function UserRoommateData() {
             </span>
             people have reach out to you
           </p>
-          <p className="flex gap-2">
-            <Clock />
-            <span>2h ago</span>
+          <p className="flex items-center gap-2">
+            <Clock size={10} />
+            <span>{r?.timePosted}</span>
           </p>
         </div>
         <section className="px-10 my-2">
@@ -219,9 +244,11 @@ export default function UserRoommateData() {
             </article>
             <article>
               <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Rent
+                {r?.rent ? "Rent" : r?.budget ? "Budget" : ""}
               </h3>
-              <p className="text-2xl font-sans_serif">{r?.rent}k</p>
+              <p className="text-2xl font-sans_serif">
+                {r?.rent || r?.budget}k
+              </p>
             </article>
             <article>
               <h3 className="text-xs text-slate-500 font-poppins font-semibold">
@@ -259,11 +286,15 @@ export default function UserRoommateData() {
           </p>
         </section>
       </div>
-      <div className="flex gap-3">
-        <Button variant="destructive" onClick={DeletePostHandler}>
-          {deleting ? "deleting..." : "Delete Post"}
+      <div className="flex justify-center gap-3">
+        <Button
+          variant="destructive"
+          className="bg-red-300/80 hover:text-white text-red-600 font-sans_serif rounded"
+          onClick={DeletePostHandler}
+        >
+          {deleting ? <Loader2 className="animate-spin" /> : "Delete Post"}
         </Button>
-        <Button className="rounded" asChild>
+        <Button className="rounded" variant="primary" asChild>
           <Link to="/space/proposals">
             <ReceiptText />
             <span>View Proposals</span>
