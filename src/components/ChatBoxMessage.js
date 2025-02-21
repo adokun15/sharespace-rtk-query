@@ -1,10 +1,12 @@
+import { useEffect, useRef } from "react";
 import { useLoadMessageQuery } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
 import { NoticeDate } from "../utils/TimeHandler";
 import { Badge } from "./ui/badge";
+import LoaderSpinner from "./LoaderSpinner";
 
-export default function ChatBoxMessage({ spaceId, user, data }) {
-  /* const {
+export default function ChatBoxMessage({ spaceId }) {
+  const {
     data: user,
     error: userError,
     isError: isUserError,
@@ -16,14 +18,24 @@ export default function ChatBoxMessage({ spaceId, user, data }) {
     { skip: !spaceId || !user }
   );
 
+  const chatContainerRef = useRef(null);
+
+  //Monitor chat container for need message;
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [data?.chat]);
+
   if (isLoading || isFetching || userLoading) {
-    return <p>spinner</p>;
+    return <LoaderSpinner message="Loading chat..." />;
   }
 
   if (isError || isUserError) {
     return <p>{error?.message || userError?.message}</p>;
   }
-*/
+
   return (
     <main>
       {!data?.chat && (
@@ -31,11 +43,11 @@ export default function ChatBoxMessage({ spaceId, user, data }) {
           <Badge>Start a chat!</Badge>
         </p>
       )}
-      {/* Fix Css Styling here!!*/}
-      <ul className="overflow-y-auto max-h-[65vh]">
+
+      <div ref={chatContainerRef} className="overflow-y-auto h-[54vh]">
         {data?.chat &&
-          data?.chat.map((chat) => (
-            <div key={chat.message} className="last:my-2">
+          data?.chat.map((chat, index) => (
+            <div key={index} className="p-2 my-1">
               <article
                 className={`flex px-6  ${
                   chat?.uid === user?.uid ? "justify-end " : "justify-start"
@@ -54,14 +66,13 @@ export default function ChatBoxMessage({ spaceId, user, data }) {
                   </div>
                   <p className="text-wrap text-[20px]">{chat?.message}</p>
                   <span className="text-[14px] text-end block">
-                    {/*NoticeDate(chat.timeSent)*/}
-                    {chat.timeSent}
+                    {NoticeDate(chat.timeSent)}
                   </span>
                 </div>
               </article>
             </div>
           ))}
-      </ul>
+      </div>
     </main>
   );
 }

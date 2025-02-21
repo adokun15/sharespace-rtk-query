@@ -4,8 +4,8 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useAddMessageMutation } from "../store/Slices/Space";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-export default function ChatInputMessage({ spaceId, addToMessage }) {
-  /*  //Current User
+export default function ChatInputMessage({ spaceId }) {
+  //Current User
   const { data: user } = useIsLoggedInQuery();
 
   //Message
@@ -41,20 +41,19 @@ export default function ChatInputMessage({ spaceId, addToMessage }) {
       .unwrap()
       .catch((e) => console.error(e?.message));
   };
-  */
 
   return (
     <div className="py-2 gap-1 flex w-full relative">
       <input
-        //   onChange={handleInputState}
-        // value={messageString}
+        onChange={handleInputState}
+        value={messageString}
         className="shadow py-2 grow outline-none relative px-3 rounded-full bg-slate-200"
         placeholder="Enter message"
       />
       <Button
         type="button"
         onClick={addToMessage}
-        // disable={!messageString}
+        disable={!messageString}
         className="absolute w-[20%] left-[80%] outline-none"
       >
         <FontAwesomeIcon icon={faPaperPlane} />

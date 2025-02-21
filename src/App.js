@@ -47,7 +47,9 @@ function App() {
             },
           ],
         },
-        { path: "profile", element: <ProfilePage /> },
+        { path: "profile", element: <ProfilePage />},
+        { path: "profile/manage-credit", element: <ManageCredit />}
+       , 
         { path: "settings", element: <Settings /> },
 
         //Chat!
@@ -63,18 +65,7 @@ function App() {
         },
 
         //For Credit Purchase!
-        {
-          path: "manage-credit",
-          element: <ManageCredit />,
-          children: [
-            {
-              path: "paymentConfirmation",
-            },
-            {
-              path: ":transactionId",
-            },
-          ],
-        },
+        
         //public
         {
           path: "/auth",
@@ -93,7 +84,6 @@ function App() {
         { path: "/terms", element: <Term /> },
         { path: "/privacy", element: <Privacy /> },
         { path: "/about", element: <About /> },
-        { path: "/logout" },
       ],
     },
   ]);

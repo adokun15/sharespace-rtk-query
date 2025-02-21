@@ -51,11 +51,19 @@ export const credit_api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${
       process.env.NODE_ENV === "development"
-        ? "http://localhost:8080/credit"
+        ? "http://localhost:8080/credit/"
         : "https://sharespace-server.vercel.app/credit/"
     }`,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("sharespace_token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      headers.set("Content-Type", "application/json");
+      return headers;
+    },
   }),
-  tagTypes: ["credits"],
+  tagTypes: ["credit"],
   endpoints: () => ({}),
 });
 

@@ -101,75 +101,78 @@ export default function DashboardNavigator({ loadContent }) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent className="text-center space-y-4 font-poppins">
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="flex text-xl justify-center"
-                    asChild
-                  >
-                    <Link to="/">
-                      <HomeIcon className="text-purple-400" />
-                      <span>Home</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-              <>
-                {!isLoading && data && !isFetching && !error && (
+              {!isLoading && data && !isFetching && (
+                <>
                   <SidebarMenu>
                     <SidebarMenuItem>
                       <SidebarMenuButton
-                        asChild
                         className="flex text-xl justify-center"
+                        asChild
                       >
-                        <Link to="/space">
-                          <MessageSquareCodeIcon />
-                          <span>Chats</span>
+                        <Link to="/">
+                          <HomeIcon className="text-purple-400" />
+                          <span>Home</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
-                )}
-              </>
 
-              <SidebarSeparator />
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="text-xl flex justify-center"
-                    asChild
-                  >
-                    <Link to="/guide">
-                      <span>Guide</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
+                  {data && !error && (
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          asChild
+                          className="flex text-xl justify-center"
+                        >
+                          <Link to="/space">
+                            <MessageSquareCodeIcon />
+                            <span>Chats</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  )}
 
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="text-xl flex justify-center"
-                    asChild
-                  >
-                    <Link to="/">
-                      <span>Feedback</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="text-xl flex justify-center"
-                    asChild
-                  >
-                    <Link to="/">
-                      <span>Our Social</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
+                  <SidebarSeparator />
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="text-xl flex justify-center"
+                        asChild
+                      >
+                        <Link to="/guide">
+                          <span>Guide</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="text-xl flex justify-center"
+                        asChild
+                      >
+                        <Link to="/">
+                          <span>Feedback</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="text-xl flex justify-center"
+                        asChild
+                      >
+                        <Link to="/">
+                          <span>Our Social</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </>
+              )}
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

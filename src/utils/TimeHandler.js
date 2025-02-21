@@ -40,3 +40,21 @@ export const NoticeDate = (date) => {
 
   return `${date_} ${ChatMessageDate(date)}`;
 };
+
+export const transactionDate = (date) => {
+  const dateString = new Date(date);
+  return dateString.toLocaleDateString("en-GB", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+};
+
+export const accountCreationDate = (date) => {
+  const dateString = new Date(date);
+  return dateString.toLocaleDateString("en-GB", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+};

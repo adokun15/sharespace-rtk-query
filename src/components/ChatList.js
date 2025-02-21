@@ -1,13 +1,13 @@
 import { useAllChatsQuery } from "../store/Slices/matches";
 import DataError from "./DataError";
 import LoaderSpinner from "./LoaderSpinner";
-import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+//import { Button } from "./ui/button";
+//import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
 
 export default function ChatList() {
-  /* const {
+  const {
     data: chats,
     isError,
     error,
@@ -23,45 +23,16 @@ export default function ChatList() {
   if (isError) {
     return <DataError error={error} refetch={refetch} />;
   }
-  */
-
+  /*
   const sortByDate = (date) => {};
   const sortByName = (date) => {};
-
-  const chats = [
-    {
-      spaceId: 12,
-      dateCreated: "12/323/23",
-      user: {
-        photo: "adada",
-        name: "Adam Reese",
-        id: "2323232",
-      },
-    },
-    {
-      spaceId: 13,
-      dateCreated: "113/343/343",
-      user: {
-        photo: "aqqqwrq",
-        name: "James Curry",
-        id: "afasasas",
-      },
-    },
-    {
-      spaceId: 14,
-      dateCreated: "12/3/23",
-      user: {
-        photo: "ada",
-        name: "Lee ChANG",
-        id: "3232",
-      },
-    },
-  ];
+*/
   return (
     <>
       <div className="flex justify-between">
         <h1 className="text-3xl text-center">Chats</h1>
-        <Popover>
+        <div></div>
+        {/*<Popover>
           <PopoverTrigger>
             <Button variant="outline">All</Button>
             <PopoverContent>
@@ -72,7 +43,7 @@ export default function ChatList() {
               </ul>
             </PopoverContent>
           </PopoverTrigger>
-        </Popover>
+        </Popover>*/}
       </div>
 
       <ul className=" space-y-3 *:w-full mt-3">

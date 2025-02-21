@@ -8,7 +8,7 @@ import Roomates from "../../components/Roomates";
 import RequestSentTable from "../../components/RequestSentTable";
 import UserRoommateData from "../../components/User/Preference";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import InviteModal from "../../components/InviteModal";
@@ -24,7 +24,7 @@ const ExplorePage = () => {
     isLoading,
     isFetching,
     refetch: loadUser,
-  } = useIsLoggedInQuery();
+  } = useIsLoggedInQuery({ refetchOnMountOrArgChange: true });
 
   const token = localStorage.getItem("sharespace_token");
 
@@ -53,7 +53,7 @@ const ExplorePage = () => {
     }
 
     if (!user || error?.status === 401) {
-      toast.warning("Login or Create an account to proceed", {
+      toast.warning("Login to proceed", {
         action: {
           label: "login",
           onClick: () => reRoute("/auth"),
@@ -64,6 +64,9 @@ const ExplorePage = () => {
 
     reRoute("/create");
   };
+
+  //const profile_complete =
+  // user?.religion && user?.email_verified && user?.photo;
 
   return (
     <>
@@ -104,6 +107,23 @@ const ExplorePage = () => {
             <TabsContent value="roommates">
               {/* Work on Later on Roomate itSelf*/}
               <Roomates user={user} />
+              {/*profile_complete && <Roomates user={user} />*/}
+              {/*!profile_complete && (
+                <div className="text-center mt-4 space-y-6">
+                  <p className="text-xl font-sans_serif">
+                    Kindly complete your profile to continue
+                  </p>
+                  <Button asChild variant="outline">
+                    <Link
+                      to="/profile"
+                      className="
+                    font-poppins"
+                    >
+                      Complete Profile
+                    </Link>
+                  </Button>
+                </div>
+              )*/}
             </TabsContent>
 
             <TabsContent value="proposal">

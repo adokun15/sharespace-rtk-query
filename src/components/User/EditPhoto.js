@@ -4,7 +4,7 @@ import placeImg from "../../image/undraw/undraw_Meditation_re_gll0.png";
 import { useUploadImageMutation } from "../../store/Slices/uploads";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-export default function EditPhoto({ uid, imgUrl, closePhotoModal }) {
+export default function EditPhoto({ uid, imgUrl, onClose }) {
   //Img Preview
   const [previewImg, setPreviewImage] = useState("");
   //Img Large Error : > 50mb
@@ -20,7 +20,7 @@ export default function EditPhoto({ uid, imgUrl, closePhotoModal }) {
   const handleImgChange = (e) => {
     const imgFile = e.target.files[0];
 
-    const size = Math.round(imgFile.size / 1024);
+    const size = (imgFile.size / (1024 * 1024)).toFixed(2);
 
     setPreviewImage(URL.createObjectURL(imgFile));
 
@@ -47,7 +47,7 @@ export default function EditPhoto({ uid, imgUrl, closePhotoModal }) {
         .unwrap()
         .then((data) => {
           //Close Modal
-          closePhotoModal();
+          onClose();
           //Alert User
           toast.success("Profile pic updated", { description: data });
         })
@@ -61,36 +61,39 @@ export default function EditPhoto({ uid, imgUrl, closePhotoModal }) {
   };
 
   return (
-    <form className=" px-5 py-4  space-y-4  overflow-y-auto md:h-fit block  md:mx-auto md:mt-[2vh] ">
+    <form className="font-poppins px-5 py-4  space-y-4  overflow-y-auto md:h-fit block  md:mx-auto md:mt-[2vh] ">
       <p className="text-xs text-red-600">{imgError}</p>
-      <div className="rounded overflow-hidden">
+      <div className="rounded">
         <img
           src={previewImg || imgUrl || placeImg}
-          width={120}
-          height={120}
-          alt="product"
+          width={190}
+          height={210}
+          alt="A pIC"
         />
       </div>
 
-      <div className="*:mr-4 flex flex-wrap  justify-between">
-        <label
-          type="button"
-          className="p-2 text-[1.2rem] md:text-[1.5rem] cursor-pointer rounded text-teal-800 bg-slate-200"
-        >
-          <input
-            accept=".png,.jpeg,.jpg,image/pngm,image/jpeg,image/jpg"
-            type="file"
-            name="logo"
-            onChange={handleImgChange}
-            className="hidden"
-          />
-          {previewImg ? "Change Image" : "Upload new Photo"}
-        </label>
+      <div className="*:mr-4 flex flex-wrap items-center justify-between">
+        {!isLoading && (
+          <label
+            type="button"
+            className="hover:text-primary p-2 text-xl cursor-pointer rounded shadow hover:shadow-md "
+          >
+            <input
+              accept=".png,.jpeg,.jpg,image/pngm,image/jpeg,image/jpg"
+              type="file"
+              name="logo"
+              onChange={handleImgChange}
+              className="hidden"
+            />
+            {previewImg ? "Change Image" : "Upload new Photo"}
+          </label>
+        )}
         {previewImg && (
           <Button
             type="button"
+            variant="primary"
             onClick={handleUpload}
-            clxName="bg-teal-800 text-slate-200"
+            className="p-2 text-xl text-primary hover:text-white bg-primary/30 cursor-pointer rounded "
           >
             {isLoading ? <Loader2 className="animate-spin" /> : "Save Image"}
           </Button>

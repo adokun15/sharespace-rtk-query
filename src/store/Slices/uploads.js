@@ -22,7 +22,7 @@ const UploadImageSlice = api.injectEndpoints({
           const url = await getDownloadURL(upload.ref);
 
           await updateDoc(doc(db, "users", uid), { photo: url });
-          return { data: "success" };
+          return { data: "Successfully stored!" };
 
           // return { data: null };
         } catch (err) {
@@ -30,7 +30,7 @@ const UploadImageSlice = api.injectEndpoints({
         }
       },
     }),
-    invalidateTags: (result, err, arg) => [{ type: "user", id: arg.uid }],
+    invalidateTags: ["user"],
   }),
 });
 

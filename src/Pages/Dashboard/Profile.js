@@ -5,19 +5,12 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../../components/ui/avatar";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../../components/ui/accordion";
+
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, ArrowRight, Camera, Loader2 } from "lucide-react";
 import EmailVerificationComponent from "../../components/User/EmailVerification";
 import ProfilePic from "../../components/User/PhotoUpload";
 import Profile from "../../components/User/Profile";
-
-import { ageHandler } from "../../utils/TimeHandler";
 import {
   Tabs,
   TabsList,
@@ -30,11 +23,40 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  DialogClose,
 } from "../../components/ui/dialog";
 import EditPhoto from "../../components/User/EditPhoto";
 import EditUser from "../../components/User/EditUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "../../components/ui/skeleton";
+import { useSearchParams } from "react-router-dom";
+import {
+  useBuyCreditMutation,
+  useConfirmCreditPaymentQuery,
+} from "../../store/Slices/credit";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import {
+  Form,
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormDescription,
+} from "../../components/ui/form";
+import { Link } from "react-router-dom";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { accountCreationDate } from "../../utils/TimeHandler";
+
+const FormSchema = z.object({
+  type: z.enum(["60", "500", "1000"], {
+    required_error: "You need to select a plan!",
+  }),
+});
+
 export default function ProfilePage() {
   const {
     data: user,
@@ -45,8 +67,50 @@ export default function ProfilePage() {
     isError,
   } = useGetUserQuery();
 
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+  });
+
+  //Search Param
+  const [params] = useSearchParams();
+  const reference = params.get("reference");
+  const auto_open_credit = params.get("credit");
+
+  const [
+    pay_credit,
+    { isLoading: redirecting, isError: isPaymentError, error: paymentError },
+  ] = useBuyCreditMutation();
+
+  const {
+    data: paymentConfirmation,
+    isLoading: confirmingPayment,
+    isError: isPaymentConfirmationError,
+    error: paymentConfirmationError,
+  } = useConfirmCreditPaymentQuery(reference, { skip: !reference });
+
   const [controlledDialogModal1, setDialogToggle1] = useState(false);
   const [controlledDialogModal2, setDialogToggle2] = useState(false);
+
+  const [controlledDialogPayment, setDialogTogglePayment] = useState(false);
+
+  useEffect(() => {
+    if (reference) {
+      //Open Modal
+      setDialogTogglePayment(true);
+    }
+  }, [reference]);
+
+  const redirectToPayment = async (creditInfo) => {
+    //PASS to Paystack
+    await pay_credit({ creditSize: creditInfo?.type })
+      .unwrap()
+      .then((data) => {
+        window.location.href = data.url;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   if (isLoading || isFetching) {
     return (
@@ -82,7 +146,7 @@ export default function ProfilePage() {
     setDialogToggle2((p) => !p);
   };
   const profile_complete =
-    user?.religion && user?.email_verified && user?.photo;
+    user?.religion && user?.email_verified && user?.photo && !isError;
 
   return (
     <main className="mx-auto container">
@@ -91,6 +155,47 @@ export default function ProfilePage() {
       </h1>
 
       <div className="my-6">
+        <Dialog
+          open={controlledDialogPayment}
+          onOpenChange={() => setDialogTogglePayment((p) => !p)}
+        >
+          <DialogContent>
+            <DialogTitle className="font-sans_serif">
+              Payment status - {paymentConfirmation?.status}
+            </DialogTitle>
+            {confirmingPayment && <p>...</p>}
+            {isPaymentConfirmationError && (
+              <p className="text-destructive font-poppins">
+                {paymentConfirmationError?.message}
+              </p>
+            )}
+            {paymentConfirmation && (
+              <article>
+                {paymentConfirmation?.status === "success" && (
+                  <p className="font-poppins">
+                    {" "}
+                    Your Payment of <b>NGN{paymentConfirmation?.amount}</b> was
+                    successful. <b>{paymentConfirmation?.credit}</b> worth of
+                    credits has been added to your account
+                  </p>
+                )}
+                {paymentConfirmation?.status === "failed" && (
+                  <p className="font-poppins">
+                    {" "}
+                    Your Payment of <b>NGN{paymentConfirmation?.amount}</b>{" "}
+                    Failed.
+                  </p>
+                )}
+              </article>
+            )}
+
+            <DialogClose asChild>
+              <Button variant="primary" className="w-fit">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
         <Dialog
           open={controlledDialogModal2}
           onOpenChange={toggleDialogModalPhoto}
@@ -107,15 +212,15 @@ export default function ProfilePage() {
             </Avatar>
             <DialogTrigger asChild>
               <Button
-                className="rounded hover:bg-purple-300/15"
+                className="rounded hover:bg-purple-700/95"
                 variant="outline"
               >
-                Change Photo
+                <Camera />
               </Button>
             </DialogTrigger>
 
             <DialogContent>
-              <DialogTitle>Edit photo </DialogTitle>
+              <DialogTitle> Face Photo Upload </DialogTitle>
               <EditPhoto
                 uid={user?.userId}
                 onClose={toggleDialogModalPhoto}
@@ -134,14 +239,17 @@ export default function ProfilePage() {
         </p>
         <p className="font-oswald text-slate-600 text-center my-1">
           <span className=" font-roboto font-bold">
-            Joined : 4th July, 2024
+            Joined : {accountCreationDate(user?.dateJoined)}
           </span>
         </p>
       </div>
 
       {profile_complete && (
         <div className="w-full space-y-3 mb-4">
-          <Tabs className="space-y-5" defaultValue="profile">
+          <Tabs
+            className="space-y-5"
+            defaultValue={auto_open_credit ? "credit" : "profile"}
+          >
             <TabsList>
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="credits">Buy Credits</TabsTrigger>
@@ -174,13 +282,13 @@ export default function ProfilePage() {
                     <p>{user?.profile?.level}</p>
                   </div>
 
-                  <div className="text-[16px]">
+                  {/*         <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                       Age*
                     </p>
                     <p>{ageHandler(user?.dob)} years old</p>
                   </div>
-
+*/}
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                       Religion
@@ -208,12 +316,15 @@ export default function ProfilePage() {
             <TabsContent value="credits">
               <Dialog>
                 <article className="space-y-2  px-1 py-2 ">
-                  <h4 className="text-xl font-bold font-sans_serif">
-                    Manage Credit
-                  </h4>
                   <p>Buy Credits and find your roommate instantly!</p>
                   <div className="flex gap-3">
-                    <Button variant="outline">View History</Button>
+                    <Button
+                      variant="outline"
+                      asChild
+                      className="hover:bg-slate-200 rounded hover:text-secondary"
+                    >
+                      <Link to="manage-credit">Manage credit</Link>
+                    </Button>
                     <DialogTrigger asChild>
                       <Button>Choose Plan</Button>
                     </DialogTrigger>
@@ -221,24 +332,92 @@ export default function ProfilePage() {
                 </article>
 
                 <DialogContent>
-                  <DialogTitle>Select Plan to Continue</DialogTitle>
+                  <DialogTitle className="font-sans_serif">
+                    Select Plan to Continue
+                  </DialogTitle>
                   <>
-                    <article>
-                      <div>
-                        <p>60 Credits | NGN100</p>
-                      </div>
-                      <div>
-                        <p>500 Credits | NGN400</p>
-                      </div>
-                      <div>
-                        <p>1000 Credits | NGN700</p>
-                      </div>
-                    </article>
-                    <Button>Buy Now</Button>
+                    <Form {...form}>
+                      <form
+                        onSubmit={form.handleSubmit(redirectToPayment)}
+                        className="w-full font-poppins space-y-6"
+                      >
+                        <FormMessage>
+                          {isPaymentError && paymentError?.message}
+                        </FormMessage>
+                        <FormField
+                          control={form.control}
+                          name="type"
+                          render={({ field }) => (
+                            <FormItem className="space-y-3">
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  className="flex flex-col space-y-1"
+                                >
+                                  <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="60" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      <p className="">
+                                        60 Credits{" "}
+                                        <ArrowRight className=" inline text-primary" />{" "}
+                                        NGN250
+                                      </p>
+                                    </FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="500" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      <p className="">
+                                        500 Credits{" "}
+                                        <ArrowRight className=" inline text-primary" />{" "}
+                                        NGN1000
+                                      </p>
+                                    </FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-3 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="1000" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      <p className="">
+                                        1000 Credits{" "}
+                                        <ArrowRight className=" inline text-primary" />{" "}
+                                        NGN1800
+                                      </p>
+                                    </FormLabel>
+                                  </FormItem>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormDescription>
+                                After clicking "buy now", you are going to be
+                                redirected to PAYSTACK to complete your payment.
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          className="rounded"
+                          type="submit"
+                          variant="primary"
+                          disabled={redirecting}
+                        >
+                          {redirecting ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            "Buy Now"
+                          )}
+                        </Button>
+                      </form>
+                    </Form>
                   </>
                 </DialogContent>
               </Dialog>
-
+              {/*
               <div className="px-1 space-y-2">
                 <h2 className="text-xl font-bold">Faqs</h2>
                 <Accordion type="single" collapsible>
@@ -250,6 +429,7 @@ export default function ProfilePage() {
                   </AccordionItem>
                 </Accordion>
               </div>
+         */}
             </TabsContent>
           </Tabs>
         </div>
@@ -267,7 +447,7 @@ export default function ProfilePage() {
 
           {!user?.email_verified && <EmailVerificationComponent />}
 
-          {!user?.photo && <ProfilePic mode="create" uid={user?.userId} />}
+          {!user?.photo && <ProfilePic triggerModal={toggleDialogModalPhoto} />}
         </div>
       )}
     </main>

@@ -1,9 +1,7 @@
-import { faCircleDot } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import {
-  //useEditUserMutation,
+  useGetSchoolsQuery,
   useSetUserMutation,
 } from "../../store/Slices/user";
 import { useForm } from "react-hook-form";
@@ -23,14 +21,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ChevronRight, Loader2 } from "lucide-react";
+import { SUPPORT_EMAIL } from "../../lib/utils";
 //import { z } from "zod";
 
 export default function Profile({ mode, previousData }) {
+  //School List
+  const {
+    data: schools,
+    error,
+    isLoading: loadingSchools,
+  } = useGetSchoolsQuery();
+
   //Set up profile
   const [setUpProfile, { isLoading: loading }] = useSetUserMutation();
 
@@ -101,8 +107,6 @@ export default function Profile({ mode, previousData }) {
     //Validate Credential
     const { school, department, dob, level, ...others } = formData;
 
-    //    const age = userAgeAllowed(dob);
-
     const data = {
       profile: {
         school,
@@ -140,15 +144,23 @@ export default function Profile({ mode, previousData }) {
 
   return (
     <Sheet open={toggleModal} onOpenChange={() => setToggleModal((p) => !p)}>
-      <article className="space-y-2 shadow px-4 py-2 rounded">
-        <h4 className="text-xl font-bold font-sans">
-          <FontAwesomeIcon icon={faCircleDot} /> Add Profile Info
-        </h4>
-        <p>Submit correct information to get matches that suite you</p>
-        <Button>
-          <SheetTrigger>Add</SheetTrigger>
-        </Button>
+      <article className="space-y-2 flex shadow justify-between px-4 py-2 rounded-xl">
+        <div>
+          <h4 className="text-xl font-sans_serif font-bold">
+            Add Personal Information
+          </h4>
+          <p className="font-poppins text-slate-400">
+            Submit correct information to get matches that suite you
+          </p>
+        </div>
+
+        <SheetTrigger asChild>
+          <Button variant="link">
+            Add <ChevronRight />
+          </Button>
+        </SheetTrigger>
       </article>
+
       <SheetContent className="space-y-4 overflow-y-auto">
         <SheetTitle className="text-slate-400 font-sans_serif">
           Set Up Profile
@@ -297,6 +309,11 @@ export default function Profile({ mode, previousData }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Institute</FormLabel>
+                    {loadingSchools && (
+                      <Loader2 className="text-xs animate-spin" />
+                    )}
+                    {error && <p>{error?.message}</p>}
+
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -307,15 +324,24 @@ export default function Profile({ mode, previousData }) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="kwasu">
-                          Kwara State University
-                        </SelectItem>
-                        <SelectItem value="others">Others</SelectItem>
+                        {schools?.map((school) => (
+                          <SelectItem key={school} value={school}>
+                            {school}
+                          </SelectItem>
+                        ))}{" "}
                       </SelectContent>
                     </Select>
                     <FormDescription>
-                      Can't find your school. Reach out to <Link>me</Link> to
-                      include your school
+                      Can't find your school. Reach out to{" "}
+                      <a
+                        className="text-primary underline"
+                        href={SUPPORT_EMAIL}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Me
+                      </a>{" "}
+                      to include your school
                     </FormDescription>
                   </FormItem>
                 )}

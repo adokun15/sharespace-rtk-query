@@ -80,6 +80,22 @@ const userSlice = user_api.injectEndpoints({
       transformResponse: (res) => res?.transactions,
     }),
 
+    getSchools: builder.query({
+      query: () => ({
+        url: "schools",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.schools,
+    }),
+
     editUser: builder.mutation({
       query: (formData) => ({
         url: "",
@@ -109,6 +125,7 @@ export const {
   useSetUserMutation,
   useGetUserQuery,
   useGetUserTokenTransactionsQuery,
+  useGetSchoolsQuery,
   useDeleteUserMutation,
 } = userSlice;
 

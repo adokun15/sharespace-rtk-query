@@ -1,8 +1,7 @@
-import { faCircleDot } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { useVerifyEmailMutation } from "../../store/Slices/user";
+import { ChevronRight, Loader2 } from "lucide-react";
 
 export default function EmailVerificationComponent() {
   const [sendVerificationLink, { isLoading, isSuccess }] =
@@ -23,16 +22,24 @@ export default function EmailVerificationComponent() {
       });
   };
   return (
-    <article className="space-y-2 shadow px-4 py-2 rounded">
-      <h4 className="text-xl font-bold font-sans">
-        <FontAwesomeIcon icon={faCircleDot} /> Verify Emaill Address
-      </h4>
-      <p>Complete Email Verification by clicking on the verify now button.</p>
+    <article className="space-y-2 flex shadow justify-between px-4 py-2 rounded-xl">
+      <div>
+        <h4 className="text-xl font-bold font-sans_serif">
+          Verify your Email Address
+        </h4>
+        <p className="text-slate-400 font-poppins">
+          Complete Email Verification by clicking on the verify now button.
+        </p>
+      </div>
       {isLoading ? (
-        "..."
+        <Loader2 className="animate-spin" />
       ) : (
-        <Button disabled={isSuccess} onClick={handleEmailVerification}>
-          {isSuccess ? "Email Link sent" : "Send link"}
+        <Button
+          variant="link"
+          disabled={isSuccess}
+          onClick={handleEmailVerification}
+        >
+          {isSuccess ? "Email Link sent" : "Send link"} <ChevronRight />
         </Button>
       )}
     </article>

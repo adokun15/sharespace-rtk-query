@@ -1,6 +1,9 @@
 import { Button } from "../ui/button";
 import { Input } from "../../components/ui/input";
-import { useEditUserMutation } from "../../store/Slices/user";
+import {
+  useEditUserMutation,
+  useGetSchoolsQuery,
+} from "../../store/Slices/user";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -18,11 +21,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { SUPPORT_EMAIL } from "../../lib/utils";
+import { Loader2 } from "lucide-react";
 
 export default function EditUser({ onClose, prevData }) {
   const [editUser, { isLoading: loading }] = useEditUserMutation();
+
+  //School List
+  const {
+    data: schools,
+    error,
+    isLoading: loadingSchools,
+  } = useGetSchoolsQuery();
 
   const form = useForm({
     defaultValues: {
@@ -90,6 +101,8 @@ export default function EditUser({ onClose, prevData }) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>School</FormLabel>
+                {loadingSchools && <Loader2 className="text-xs animate-spin" />}
+                {error && <p>{error?.message}</p>}
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -100,15 +113,24 @@ export default function EditUser({ onClose, prevData }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="kwasu">
-                      Kwara State University
-                    </SelectItem>
-                    <SelectItem value="others">Others</SelectItem>
+                    {schools?.map((school) => (
+                      <SelectItem key={school} value={school}>
+                        {school}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  Can't find your school. Reach out to{" "}
-                  <Link>Add Link to My Email</Link> to include your school
+                  Can't find your school? Reach out to{" "}
+                  <a
+                    className="text-primary underline"
+                    href={SUPPORT_EMAIL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Me
+                  </a>{" "}
+                  to include your school
                 </FormDescription>
               </FormItem>
             )}
