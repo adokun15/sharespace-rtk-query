@@ -101,7 +101,7 @@ export default function DashboardNavigator({ loadContent }) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent className="text-center space-y-4 font-poppins">
-              {!isLoading && data && !isFetching && (
+              {!isLoading && !isFetching && (
                 <>
                   <SidebarMenu>
                     <SidebarMenuItem>
@@ -118,22 +118,24 @@ export default function DashboardNavigator({ loadContent }) {
                   </SidebarMenu>
 
                   {data && !error && (
-                    <SidebarMenu>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          asChild
-                          className="flex text-xl justify-center"
-                        >
-                          <Link to="/space">
-                            <MessageSquareCodeIcon />
-                            <span>Chats</span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
+                    <>
+                      <SidebarMenu>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton
+                            asChild
+                            className="flex text-xl justify-center"
+                          >
+                            <Link to="/space">
+                              <MessageSquareCodeIcon />
+                              <span>Chats</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </SidebarMenu>
+                      <SidebarSeparator />
+                    </>
                   )}
 
-                  <SidebarSeparator />
                   <SidebarMenu>
                     <SidebarMenuItem>
                       <SidebarMenuButton
@@ -153,12 +155,14 @@ export default function DashboardNavigator({ loadContent }) {
                         className="text-xl flex justify-center"
                         asChild
                       >
-                        <Link to="/">
-                          <span>Feedback</span>
+                        <Link to="/about">
+                          <span>About us</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
+
+                  {/*               
                   <SidebarMenu>
                     <SidebarMenuItem>
                       <SidebarMenuButton
@@ -171,6 +175,7 @@ export default function DashboardNavigator({ loadContent }) {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
+   */}
                 </>
               )}
             </SidebarGroupContent>
@@ -204,9 +209,9 @@ export default function DashboardNavigator({ loadContent }) {
                 )}
               </>
               <ul className="text-muted font-roboto divide-x-2 justify-center gap-2 *:px-1 flex text-xs text-center">
-                <li>
+                {/* <li>
                   <Link to="/about">About</Link>
-                </li>
+                </li>*/}
 
                 <li>
                   <Link to="/terms">Terms</Link>

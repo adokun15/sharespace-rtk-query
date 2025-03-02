@@ -1,14 +1,18 @@
-import { useRoomateSpaceQuery } from "../store/Slices/matches";
+import {
+  useReportRoommatePostMutation,
+  useRoomateSpaceQuery,
+} from "../store/Slices/matches";
 import Card from "../UI/Card";
 import { Button } from "../components/ui/button";
 import { Sheet, SheetContent } from "../components/ui/sheet";
 import RoommateDetail from "./RoommateDetail";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   BookOpen,
   CheckCheck,
   ContactRound,
   Info,
+  Loader2,
   MoreVertical,
   ReceiptText,
   Settings2Icon,
@@ -22,8 +26,11 @@ import { Link } from "react-router-dom";
 
 import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Input } from "./ui/input";
 
 const Roomates = ({ user }) => {
+  const reason = useRef();
+
   const [filterRoomate, setFilteredResult] = useState("all");
 
   const { error, roommates, isLoading, isError, refetch, isFetching } =
@@ -67,9 +74,16 @@ const Roomates = ({ user }) => {
       },
     });
 
+  console.log(roommates);
+
+  const [reportRoomatePost, { isLoading: isReporting }] =
+    useReportRoommatePostMutation();
+
   const [roommate, setRoommate] = useState(null);
 
   const [notLoggin, setLoginModal] = useState(false);
+
+  const [openReportDialog, setReportDialog] = useState(false);
 
   if (isLoading || isFetching) {
     //Skeleton
@@ -110,7 +124,17 @@ const Roomates = ({ user }) => {
     }
   };
 
-  //  const reportSinglePost = () => {};
+  const reportSinglePost = async (id) => {
+    if (reason.current.value === "") return;
+    await reportRoomatePost({
+      postId: id,
+      reason: reason.current.value,
+      email: user?.email,
+    })
+      .unwrap()
+      .then((data) => console.log(data))
+      .catch((e) => console.log(e));
+  };
 
   //  const CopySinglePostLink = () => {};
 
@@ -206,106 +230,143 @@ const Roomates = ({ user }) => {
       <ul className="md:grid grid-cols-3 block  gap-5">
         {roommates &&
           roommates?.map((roomate) => (
-            <Card elClass="px-4 py-1 mb-1 shadow-gray-400 rounded">
-              <div className=" space-y-4  items-center flex justify-between">
-                {roomate?.budget && roomate?.target === "spacer" ? (
-                  <Popover>
-                    <Badge className="h-fit rounded-full text-[12px] font-sans_serif  tracking-wide font-semibold">
-                      {/*
-                available : 10 month | second semester | one session | a year
-                <School width={20} height={20} className="mx-1" />
-                roomate?.school*/}{" "}
-                      NGN150K{" "}
-                      <PopoverTrigger asChild>
-                        <Info size={16} className="ml-2" />
-                      </PopoverTrigger>
-                    </Badge>
-                    <PopoverContent>
-                      <p>Daniel's budget is NGN150K</p>
-                    </PopoverContent>
-                  </Popover>
-                ) : (
-                  <Popover>
-                    <Badge className="rounded-full  text-[12px] font-sans_serif  tracking-wide font-semibold">
-                      {/*
+            <>
+              <Dialog
+                open={openReportDialog}
+                onOpenChange={() => setReportDialog((p) => !p)}
+              >
+                <DialogContent>
+                  <DialogTitle className="text-center font-poppins ">
+                    Report post
+                  </DialogTitle>
+                  <form>
+                    <p>Why do you want to report this post?</p>
+                    <Input ref={reason} placeholder="Seen this post before?" />
+                    <Button
+                      onClick={async () => await reportSinglePost(roomate?.id)}
+                      type="button"
+                      variant="destructive"
+                    >
+                      {isReporting ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Report"
+                      )}
+                    </Button>
+                  </form>
+                  <DialogClose asChild className="text-primary">
+                    <Button variant="link">Close</Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+
+              <Card elClass="px-4 py-1 mb-1 shadow-gray-400 rounded">
+                <div className=" space-y-4  items-center flex justify-between">
+                  {roomate?.budget && roomate?.target === "spacer" ? (
+                    <Popover>
+                      <Badge className="h-fit rounded-full text-[12px] font-sans_serif  tracking-wide font-semibold">
+                        NGN{roomate?.budget}K{" "}
+                        <PopoverTrigger asChild>
+                          <Info size={16} className="ml-2" />
+                        </PopoverTrigger>
+                      </Badge>
+                      <PopoverContent>
+                        <p>
+                          {roomate?.name?.split(" ")[0]}'s budget is NGN
+                          {roomate?.budget}K
+                        </p>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <Popover>
+                      <Badge className="rounded-full  text-[12px] font-sans_serif  tracking-wide font-semibold">
+                        {/*
                   available : 10 month | second semester | one session | a year
                   <School width={20} height={20} className="mx-1" />
                   roomate?.school*/}{" "}
-                      a year
-                      <PopoverTrigger asChild>
-                        <Info size={16} className="ml-2" />
-                      </PopoverTrigger>
-                    </Badge>
-                    <PopoverContent>
-                      <p>Hostel rent is for a year</p>
-                    </PopoverContent>
-                  </Popover>
-                )}
+                        {roomate?.duration}
+                        <PopoverTrigger asChild>
+                          <Info size={16} className="ml-2" />
+                        </PopoverTrigger>
+                      </Badge>
+                      <PopoverContent className="w-fit rounded tracking-wide font-poppins">
+                        <p>
+                          Hostel rent{" "}
+                          {roomate?.duration?.startsWith("a")
+                            ? `is for ${roomate?.duration}`
+                            : `is ${roomate?.duration}`}
+                        </p>
+                      </PopoverContent>
+                    </Popover>
+                  )}
 
-                <Avatar className="w-12 h-12 ">
-                  <AvatarFallback>...</AvatarFallback>
-                  <AvatarImage className="rounded-full" src={roomate?.photo} />
-                </Avatar>
-              </div>
-              <article className="mac-h-[60%] line-clamp-4 font-poppins px-2 tracking-wide my-3">
-                {roomate?.description}
-              </article>
-              <div className=" my-4 px-1 space-y-1 ">
-                <div className="flex-wrap flex space-y-1  mt-2 text-slate-600 font-bold items-center gap-2 ">
-                  <Badge
-                    variant="muted"
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                  >
-                    <ContactRound
-                      className="text-purple-500 mx-1"
-                      width={20}
-                      height={20}
+                  <Avatar className="w-12 h-12 ">
+                    <AvatarFallback>...</AvatarFallback>
+                    <AvatarImage
+                      className="rounded-full"
+                      src={roomate?.photo}
                     />
-                    {roomate?.budget && roomate?.target === "spacer" ? (
-                      roomate?.gender === "1" ? (
-                        "Male"
-                      ) : (
-                        "Lady"
-                      )
-                    ) : (
-                      <span className="">
-                        {roomate?.numberOfRoommates} roommate
-                        {roomate?.numberOfRoommates > 1 ? "s" : ""}{" "}
-                      </span>
-                    )}
-                  </Badge>
-                  <Badge
-                    variant="muted"
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                  >
-                    <ReceiptText
-                      className="text-purple-500 mx-1"
-                      width={20}
-                      height={20}
-                    />
-                    <span>
-                      {roomate?.budget && roomate?.target === "spacer"
-                        ? roomate?.religion
-                        : `${roomate?.rent}k`}
-                    </span>
-                  </Badge>
-                  <Badge
-                    variant="muted"
-                    className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                  >
-                    <BookOpen
-                      className="mx-1 text-purple-500"
-                      width={20}
-                      height={20}
-                    />
-                    <span>
-                      {user ? `${roomate?.level} lvl` : roomate?.school}
-                    </span>
-                  </Badge>
+                  </Avatar>
                 </div>
-              </div>
+                <article className="mac-h-[60%] line-clamp-4 font-poppins px-2 tracking-wide my-3">
+                  {roomate?.description}
+                </article>
+                <div className=" my-4 px-1 space-y-1 ">
+                  <div className="flex-wrap flex space-y-1  mt-2 text-slate-600 font-bold items-center gap-2 ">
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <ContactRound
+                        className="text-purple-500 mx-1"
+                        width={20}
+                        height={20}
+                      />
+                      {roomate?.budget && roomate?.target === "spacer" ? (
+                        roomate?.gender === "1" ? (
+                          "Male"
+                        ) : (
+                          "Lady"
+                        )
+                      ) : (
+                        <span className="">
+                          {roomate?.numberOfRoommates} roommate
+                          {roomate?.numberOfRoommates > 1 ? "s" : ""}{" "}
+                        </span>
+                      )}
+                    </Badge>
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <ReceiptText
+                        className="text-purple-500 mx-1"
+                        width={20}
+                        height={20}
+                      />
+                      <span>
+                        {roomate?.budget && roomate?.target === "spacer"
+                          ? roomate?.religion
+                          : `${roomate?.rent}k`}
+                      </span>
+                    </Badge>
+                    <Badge
+                      variant="muted"
+                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
+                    >
+                      <BookOpen
+                        className="mx-1 text-purple-500"
+                        width={20}
+                        height={20}
+                      />
+                      <span>
+                        {user ? `${roomate?.level} lvl` : roomate?.school_short}
+                      </span>
+                    </Badge>
+                  </div>
+                </div>
 
-              {/*<p>{roomate?.noOfProposals || 0} reached out</p>
+                {/*<p>{roomate?.noOfProposals || 0} reached out</p>
                 <div className="flex justify-between  rounded py-2 px-3 items-center">
                   <Button
                     className=" rounded"
@@ -317,42 +378,53 @@ const Roomates = ({ user }) => {
                     {roomate?.name?.split(" ")[0]}
                     </p>
                     </div>*/}
-              <div className="flex gap-1">
-                <Button
-                  onClick={() => oneRoomateDetail(roomate?.id)}
-                  className="grow rounded font-[300] tracking-wide bg-slate-200 text-secondary font-sans_serif"
-                  variant="ghost"
-                  disabled={roomate?.applied}
-                >
-                  {!roomate?.applied ? "Show Details" : "Applied Already"}
-                </Button>
-                <Popover>
-                  {!roomate?.applied ? (
-                    <PopoverTrigger className="" asChild>
-                      <Button
-                        disabled={!user}
-                        className="shadow"
-                        variant="muted"
-                      >
-                        <MoreVertical />
-                      </Button>
-                    </PopoverTrigger>
-                  ) : (
-                    <CheckCheck className="text-primary" />
-                  )}
-                  <PopoverContent>
-                    <ul>
-                      <li>Report</li>
-                      <li>Share Link</li>
-                    </ul>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </Card>
+                <div className="flex gap-1">
+                  <Button
+                    onClick={() => oneRoomateDetail(roomate?.id)}
+                    className="grow rounded font-[300] tracking-wide bg-slate-200 text-secondary font-sans_serif"
+                    variant="ghost"
+                    disabled={roomate?.applied}
+                  >
+                    {!roomate?.applied ? "Show Details" : "Applied Already"}
+                  </Button>
+                  <Popover>
+                    {!roomate?.applied ? (
+                      <PopoverTrigger className="" asChild>
+                        <Button
+                          disabled={!user}
+                          className="shadow"
+                          variant="muted"
+                        >
+                          <MoreVertical />
+                        </Button>
+                      </PopoverTrigger>
+                    ) : (
+                      <CheckCheck className="text-primary" />
+                    )}
+                    <PopoverContent>
+                      <ul>
+                        <li>
+                          <Button
+                            variant="ghost"
+                            onClick={() => setReportDialog(true)}
+                          >
+                            Report
+                          </Button>
+                        </li>
+                        {/*<li>Share Link</li>*/}
+                      </ul>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </Card>
+            </>
           ))}
       </ul>
       <SheetContent side="bottom" className="min-h-[40vh]">
-        <RoommateDetail roommate={roommate} />
+        <RoommateDetail
+          onClose={() => setLoginModal("do-nothing")}
+          roommate={roommate}
+        />
       </SheetContent>
     </Sheet>
   );

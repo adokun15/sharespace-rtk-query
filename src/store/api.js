@@ -42,7 +42,7 @@ export const roomate_api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["roommates", "chats", "proposals", "match"],
+  tagTypes: ["roommates", "chats", "proposals", "attempts", "roommate"],
   endpoints: () => ({}),
 });
 
@@ -70,6 +70,6 @@ export const credit_api = createApi({
 export const api = createApi({
   reducerPath: "api_reducer_path",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["auth", "space-chat"],
+  tagTypes: ["auth", "chat"],
   endpoints: () => ({}),
 });

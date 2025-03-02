@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   useAddMessageMutation,
   useLoadSpaceUserQuery,
@@ -9,6 +9,8 @@ import ChatInputMessage from "./ChatInputMessage";
 import ChatNavigator from "./ChatNavigator";
 import DataError from "./DataError";
 import LoaderSpinner from "./LoaderSpinner";
+import { useIsLoggedInQuery } from "../store/Slices/user";
+import { Button } from "./ui/button";
 
 export default function ChatDetail() {
   const { spaceId } = useParams();
@@ -21,29 +23,71 @@ export default function ChatDetail() {
     fixedCachedKey: "add-message",
   });
 
+  const userObj = useIsLoggedInQuery();
+
   const {
     data: space,
     isLoading,
     isError: userSpace_e,
+    refetch,
     error: userSpaceError,
-  } = useLoadSpaceUserQuery(spaceId, { skip: !spaceId });
+  } = useLoadSpaceUserQuery(spaceId, { skip: !spaceId || !userObj?.data });
 
-  if (isLoading) {
-    return <LoaderSpinner message="loading message" />;
+  if (isLoading || userObj?.isLoading) {
+    return <LoaderSpinner message="Loading Chat..." />;
+  }
+
+  if (userObj?.isError) {
+    return (
+      <DataError message={userObj?.error?.message} refetch={userObj?.refetch} />
+    );
   }
 
   if (userSpace_e) {
-    return <DataError error={userSpaceError} />;
+    return <DataError refetch={refetch} error={userSpaceError} />;
+  }
+
+  const isEligible = space?.users?.find((id) => id === userObj.data?.uid);
+
+  const chatHasBeenReported = space.disabled;
+
+  //making sure only if user decide to leave, they won't be able to view this chat!
+  if (space && !isEligible && !chatHasBeenReported) {
+    return (
+      <>
+        <DataError
+          refetch={refetch}
+          error={{
+            status: "Unauthorized Access!",
+            statusCode: 404,
+            message: "You don't have access to this chat",
+          }}
+        />
+        <Button asChild variant="link">
+          <Link to="/space">Go back to Chats</Link>
+        </Button>
+      </>
+    );
   }
 
   return (
     <div>
       {isAddMessageError && addMessageError?.message}
-      <ChatNavigator users={space?.users} spaceId={space?.spaceId} />
+      <ChatNavigator
+        chatDisabled={chatHasBeenReported}
+        users={space?.users}
+        spaceId={space?.spaceId}
+      />
       <div className="w-full mx-auto bg-white shadow p-4 rounded">
-        <ChatBoxMessage spaceId={space?.spaceId} />
+        <ChatBoxMessage userObj={userObj?.data} spaceId={space?.spaceId} />
       </div>
-      <ChatInputMessage spaceId={space?.spaceId} />
+      <ChatInputMessage
+        users={space?.users}
+        chatDisabled={chatHasBeenReported}
+        reportInfo={space?.report}
+        userThatLeft={space?.name}
+        spaceId={space?.spaceId}
+      />
     </div>
   );
 }

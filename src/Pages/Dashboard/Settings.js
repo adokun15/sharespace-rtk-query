@@ -36,9 +36,8 @@ export default function Settings() {
 
   const [editUser, { isLoading: loading }] = useEditUserMutation();
 
-  const [deleteUser, { isLoading: deleting, error }] = useDeleteUserMutation();
+  const [deleteUser, { isLoading: deleting }] = useDeleteUserMutation();
 
-  console.log(user);
   if (isLoading) {
     return (
       <>
@@ -57,7 +56,11 @@ export default function Settings() {
   }
 
   const deleteAccount = async () => {
-    await deleteUser()
+    await deleteUser({
+      name: user?.name,
+      email: user?.email,
+      photo: user?.photo,
+    })
       .unwrap()
       .then((d) => {
         //Clear Storage
@@ -115,12 +118,9 @@ export default function Settings() {
 
         <p className="font-oswald">Who are looking forward to live with?</p>
 
-        <Select onValueChange={roommateHandler}>
+        <Select defaultValue={user?.targetType} onValueChange={roommateHandler}>
           <SelectTrigger>
-            <SelectValue
-              placeholder="Select an option"
-              defaultValue={user?.targetType}
-            />
+            <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="roomie">

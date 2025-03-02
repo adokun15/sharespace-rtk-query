@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function RoommateDetail({ roommate }) {
+export default function RoommateDetail({ roommate, onClose }) {
   const {
     data: user,
     isLoading: userLoading,
@@ -21,11 +21,10 @@ export default function RoommateDetail({ roommate }) {
     isFetching,
   } = useGetUserQuery();
 
-  const [message, setMessage] = useState({ text: "", counter: 0 });
-
   const [createProposal, { isLoading }] = useMeetRoomateMutation({
     skip: !user,
   });
+  const [message, setMessage] = useState({ text: "", counter: 0 });
 
   const messageHandler = (e) => {
     if (message.counter >= 100) return;
@@ -54,8 +53,6 @@ export default function RoommateDetail({ roommate }) {
       message: message?.text,
     };
 
-    console.log(info);
-    console.log(roomieInfo);
     if (!user) return;
 
     await createProposal({
@@ -63,7 +60,10 @@ export default function RoommateDetail({ roommate }) {
       roomieInfo,
     })
       .unwrap()
-      .then((data) => console.log(data))
+      .then((data) => {
+        toast.success("Sent!", { description: data?.message });
+        onClose();
+      })
       .catch((e) => {
         toast.error("Unable to send", { description: e?.message });
       });
@@ -92,10 +92,14 @@ export default function RoommateDetail({ roommate }) {
             </Avatar>
             <p className="text-4xl">{roommate?.name}</p>
             <p>
-              {roommate?.rent}k. {roommate?.numberOfRoommates} Roommate (
-              {+roommate?.rent / (+roommate?.numberOfRoommates + 1)}K Each)
+              {roommate?.rent &&
+                `${roommate?.rent}k (${roommate?.rentType}). ${
+                  roommate?.numberOfRoommates
+                } Roommate (
+              ${+roommate?.rent / (+roommate?.numberOfRoommates + 1)}K Each)`}
+              {roommate?.budget && `${roommate?.budget}k.`}
             </p>
-            <p>{roommate?.description}</p>
+            <p className="mt-2 text-muted">{roommate?.description}</p>
           </div>
 
           <Tabs defaultValue="info">
@@ -107,25 +111,25 @@ export default function RoommateDetail({ roommate }) {
               {/* profile, preferences, hobbies and socials */}
               <article>
                 <h1>Profile</h1>
-                <div className="grid grid-cols-1 my-3 gap-2  md:grid-cols-2">
+                <div className="grid grid-cols-1 my-3 gap-3  gap-y-5 md:grid-cols-2">
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      School*
+                      School
                     </p>
-                    <p>{roommate?.school}</p>
+                    <p className="font-poppins">{roommate?.school}</p>
                   </div>
 
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Department*
+                      Department
                     </p>
-                    <p>{roommate?.department}</p>
+                    <p className="font-poppins">{roommate?.department}</p>
                   </div>
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Level*
+                      Level
                     </p>
-                    <p>{roommate?.level}</p>
+                    <p className="font-poppins">{roommate?.level}</p>
                   </div>
                   {/*
                   <div className="text-[16px]">
@@ -141,13 +145,13 @@ export default function RoommateDetail({ roommate }) {
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                       Religion
                     </p>
-                    <p>{roommate?.religion}</p>
+                    <p className="font-poppins">{roommate?.religion}</p>
                   </div>
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                       Preferenced Hostel Location
                     </p>
-                    <p>{roommate?.location}</p>
+                    <p className="font-poppins">{roommate?.location}</p>
                   </div>
                 </div>
               </article>
@@ -162,7 +166,14 @@ export default function RoommateDetail({ roommate }) {
                     <textarea
                       value={message.text}
                       onChange={messageHandler}
-                      className="resize-none py-1 px-2 block  outline-none min-h-[15vh] ring-2 transition-colors focus:ring-purple-400 ring-offset-1  rounded"
+                      className="
+                    
+                     resize-none font-poppins tracking-wide flex 
+                   text-base h-9 w-full rounded-md 
+                   border border-input bg-transparent px-3 
+                     py-1 shadow-sm transition-colors  placeholder:text-muted
+                     focus-visible:outline-none focus-visible:ring-1
+                    focus-visible:ring-ring md:text-sm min-h-32 "
                       placeholder="Enter a message"
                     ></textarea>
                     <p className="text-xs text-slate-400">
@@ -171,7 +182,10 @@ export default function RoommateDetail({ roommate }) {
                     <Button
                       disabled={message.counter >= 100}
                       onClick={createNewMesageProposal}
-                      className="w-full bg-purple-600 text-white rounded hover:bg-purple-300"
+                      className="
+                      w-full bg-purple-600 text-white rounded hover:bg-purple-300
+                      
+                      "
                     >
                       {isLoading ? (
                         <Loader2 className="animate-spin" />

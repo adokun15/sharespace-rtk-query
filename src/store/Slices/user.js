@@ -107,9 +107,10 @@ const userSlice = user_api.injectEndpoints({
     }),
 
     deleteUser: builder.mutation({
-      query: () => ({
+      query: ({ name, email, photo }) => ({
         url: "",
         method: "DELETE",
+        body: JSON.stringify({ name, email, photo }),
       }),
       transformResponse: (res) => res?.message,
       invalidatesTags: () => ["user"],

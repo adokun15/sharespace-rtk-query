@@ -1,4 +1,5 @@
 import { useAllChatsQuery } from "../store/Slices/matches";
+import { accountCreationDate } from "../utils/TimeHandler";
 import DataError from "./DataError";
 import LoaderSpinner from "./LoaderSpinner";
 //import { Button } from "./ui/button";
@@ -64,6 +65,7 @@ export default function ChatList() {
               </Avatar>
               <article>
                 <h3 className="text-xl font-bold">{chat?.user?.name}</h3>
+                <p> Added {accountCreationDate(chat?.dateCreated)}</p>
               </article>
             </div>
           </Link>

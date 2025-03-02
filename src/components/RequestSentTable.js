@@ -1,5 +1,13 @@
-import { ChevronRight, MoreVertical, Settings2Icon } from "lucide-react";
-import { useRequestsToListQuery } from "../store/Slices/matches";
+import {
+  ChevronRight,
+  Loader2,
+  MoreVertical,
+  Settings2Icon,
+} from "lucide-react";
+import {
+  useRequestsToListQuery,
+  useWithdrawProposalMutation,
+} from "../store/Slices/matches";
 import Card from "../UI/Card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -8,6 +16,7 @@ import LoaderSpinner from "./LoaderSpinner";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Slider } from "./ui/slider";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function RequestSentTable() {
   const {
@@ -19,6 +28,9 @@ export default function RequestSentTable() {
     isLoading,
   } = useRequestsToListQuery();
 
+  const [withdrawAttempt, { isLoading: isRemoving }] =
+    useWithdrawProposalMutation();
+
   if (isLoading || isFetching) {
     return <LoaderSpinner message="loading ;)" />;
   }
@@ -27,8 +39,17 @@ export default function RequestSentTable() {
     return <DataError refetch={refetch} error={error} />;
   }
 
-  // const WithdrawFromPost = () =>{}
-  // const DeletePostFromList = () =>{}
+  //Remobve from both place: Roomie Proposal and your attempt
+  const withdrawFromProposal = async (attemptId) => {
+    await withdrawAttempt(attemptId)
+      .unwrap()
+      .then((data) => {
+        toast.success(data);
+      })
+      .catch((e) => {
+        toast.error(e?.message);
+      });
+  };
 
   return (
     <Card elClass="font-poppins w-full overflow-x-auto relative space-y-6">
@@ -41,6 +62,7 @@ export default function RequestSentTable() {
             List of students that you sent a roommate request to!
           </p>
         </article>
+        {/*
         <Popover>
           <PopoverTrigger asChild>
             <Button>
@@ -110,7 +132,13 @@ export default function RequestSentTable() {
             </div>
           </PopoverContent>
         </Popover>
+*/}
       </div>
+      {isRemoving && (
+        <p>
+          <Loader2 className="animate-spin" />
+        </p>
+      )}
 
       <table className="overflow-x-auto  min-w-full text-gray-500  text-left">
         <thead className="text-xs text-gray-500 uppercase bg-gray-50 ">
@@ -138,40 +166,65 @@ export default function RequestSentTable() {
                   </td>
                   <td className={`px-6 py-4 font-roboto tracking-wider`}>
                     <Badge
-                      className={
-                        "capitalize bg-primary/20 text-primary rounded-full"
-                      }
+                      className={`   capitalize
+                        text-primary rounded-full
+                       hover:text-white
+                        bg-primary/20 
+                        ${
+                          roomie?.status.toLowerCase() === "declined" &&
+                          "bg-destructive/20 text-destructive hover:bg-destructive"
+                        }
+                        ${
+                          roomie?.status.toLowerCase() === "pending" &&
+                          "bg-yellow-300 text-yellow-600 hover:bg-yellow-500"
+                        }
+                        
+                        `}
                     >
                       {roomie?.status}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4  hover:underline">
+                  <td className="px-6 py-4 hover:underline">
                     <Popover>
                       <PopoverTrigger>
                         <MoreVertical />
                       </PopoverTrigger>
-                      <PopoverContent>
+                      <PopoverContent className="w-fit">
                         <>
                           {roomie?.status === "pending" && (
-                            <Button>Withdraw request</Button>
+                            <Button
+                              variant="ghost"
+                              disabled={isRemoving}
+                              onClick={async () =>
+                                await withdrawFromProposal(
+                                  roomie?.receiver?.requestId
+                                )
+                              }
+                            >
+                              Withdraw request
+                            </Button>
                           )}
 
                           {roomie?.status === "accepted" && (
-                            <article>
+                            <article className="font-poppins">
+                              <p>{roomie?.message}</p>
                               <p>Religion : {roomie?.receiver?.religion}</p>
-                              <p>You are to pay NGN{roomie?.room?.budget}K</p>
+                              <p>
+                                You will pay NGN{roomie?.room?.budget}K to
+                                complete the rent.
+                              </p>
                               <p>Location: {roomie?.room?.location}</p>
                               <p>School : {roomie?.receiver?.school}</p>
-                              <Button>
-                                <Link to="space/someID">
-                                  View chat <ChevronRight />
+                              <Button variant="link">
+                                <Link to={`/space`}>
+                                  View chats <ChevronRight className="inline" />
                                 </Link>
                               </Button>
                             </article>
                           )}
 
                           {roomie?.status === "declined" && (
-                            <Button>Delete Request</Button>
+                            <Button disabled={true}>Remove Request</Button>
                           )}
                         </>
                       </PopoverContent>

@@ -15,6 +15,7 @@ const UserSpaceSlice = api.injectEndpoints({
       async queryFn(spaceId) {
         try {
           const space = await getDocument(spaceId, "space");
+          console.log(space);
           return { data: space };
         } catch (e) {
           throw new DbError(e?.message);
@@ -41,6 +42,7 @@ const UserSpaceSlice = api.injectEndpoints({
           doc(db, "space", spaceId),
           (snapshot) => {
             if (!snapshot.data()?.messages) return;
+
             updateCachedData((draft) => {
               draft.chat = [...snapshot.data()?.messages];
             });
@@ -52,7 +54,7 @@ const UserSpaceSlice = api.injectEndpoints({
         await cacheEntryRemoved;
         unsub();
       },
-      providesTags: (result) => ["space"],
+      providesTags: (result) => ["chat"],
     }),
     //send update to  space db
     addMessage: builder.mutation({
@@ -109,6 +111,6 @@ export const {
   useLoadMessageQuery,
   useLoadSpaceUserQuery,
   useAddMessageMutation,
-  useDeleteMessageMutation,
-  useSendMediaMutation,
+  //useDeleteMessageMutation,
+  //useSendMediaMutation,
 } = UserSpaceSlice;

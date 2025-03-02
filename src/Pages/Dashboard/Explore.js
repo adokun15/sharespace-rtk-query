@@ -8,7 +8,7 @@ import Roomates from "../../components/Roomates";
 import RequestSentTable from "../../components/RequestSentTable";
 import UserRoommateData from "../../components/User/Preference";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import InviteModal from "../../components/InviteModal";
@@ -21,12 +21,14 @@ const ExplorePage = () => {
   const {
     data: user,
     error,
+    isError,
     isLoading,
+    refetch,
     isFetching,
     refetch: loadUser,
   } = useIsLoggedInQuery({ refetchOnMountOrArgChange: true });
 
-  const token = localStorage.getItem("sharespace_token");
+  //const token = localStorage.getItem("sharespace_token");
 
   const reRoute = useNavigate();
 
@@ -73,15 +75,19 @@ const ExplorePage = () => {
       <main className="mb-20 space-y-3 w-full">
         <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-          <Button className="rounded" onClick={handleReRoute}>
-            {isLoading || isFetching ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <>
-                <Plus /> <span>Create post</span>
-              </>
-            )}
-          </Button>
+          {isError ? (
+            <Button onClick={refetch}>Reload</Button>
+          ) : (
+            <Button className="rounded" onClick={handleReRoute}>
+              {isLoading || isFetching ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <>
+                  <Plus /> Create
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
         <Dialog

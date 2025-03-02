@@ -36,7 +36,11 @@ export const ChatMessageDate = (date) => {
 
 export const NoticeDate = (date) => {
   const dateString = new Date(date);
-  const date_ = `${dateString.getFullYear()}/${dateString.getMonth()}/${dateString.getDate()}`;
+  const month = `${dateString.getMonth() + 1}`;
+  const date_ = `${dateString.getFullYear()}/${month.padStart(
+    2,
+    "0"
+  )}/${dateString.getDate()}`;
 
   return `${date_} ${ChatMessageDate(date)}`;
 };

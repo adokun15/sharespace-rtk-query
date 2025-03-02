@@ -28,7 +28,11 @@ export default function AddPreferences({ user }) {
 
   //Validate Input
   const formSchema = z.object({
-    duration: z.string().max(2),
+    //New
+    duration: z.string().min(2),
+    rentType: z.string().min(2),
+    school_short: z.string().min(2, "This name is way too short!"),
+
     description: z.string().min(5, "Quote too Short"),
     location: z.string().min(2, "Invalid Location Length"),
     rent: z.number().array(),
@@ -40,7 +44,11 @@ export default function AddPreferences({ user }) {
 
   const form = useForm({
     defaultValues: {
-      duration: "",
+      //New
+      school_short: "",
+      duration: "a session",
+      rentType: "fixed",
+
       description: "",
       location: "",
       rent: [150],
@@ -77,7 +85,7 @@ export default function AddPreferences({ user }) {
     }
 
     //Check if Quote;
-    if (data.description.split(" ").length > 200) {
+    if (data?.description && data?.description?.split(" ").length > 200) {
       toast.error("Quote has exceeded its limit :  200 words ");
       return;
     }
@@ -149,42 +157,85 @@ your post should be a spacer, which means you have no 'accomodation'
         onSubmit={form.handleSubmit(createPostHandler)}
       >
         {user?.targetType === "roomie" && (
-          <FormField
-            name="duration"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className=" text-xl font-sans_serif">
-                  Duration of Rent
-                </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="How Long?" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="< 3months">
-                      Less than 3 months
-                    </SelectItem>
-                    <SelectItem value="< 6months">
-                      Less than 6 months
-                    </SelectItem>
-                    <SelectItem value="one semester">One Semester</SelectItem>
-                    <SelectItem value="a session">A session</SelectItem>
-                    <SelectItem value="a year">A year</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  <p>How long will the rent last for?</p>
-                </FormDescription>
-              </FormItem>
-            )}
-          />
+          <>
+            <FormField
+              name="duration"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className=" text-xl font-sans_serif">
+                    Duration of Rent
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="How Long?" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="less than 3 months">
+                        Less than 3 months
+                      </SelectItem>
+                      <SelectItem value="less than 6 months">
+                        Less than 6 months
+                      </SelectItem>
+                      <SelectItem value="one semester">One Semester</SelectItem>
+                      <SelectItem value="a session">A session</SelectItem>
+                      <SelectItem value="a year">A year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    <p>How long will the rent last for?</p>
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </>
         )}
+
+        <FormField
+          name="rentType"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className=" text-xl font-sans_serif">
+                Is it a fixed or negotiable price?
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="What is it going to be?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="fixed">Fixed</SelectItem>
+                  <SelectItem value="negotiable">Negotiable</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="school_short"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className=" text-xl font-sans_serif">
+                Short Name of your School : {user?.profile?.school}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="University of Lagos e.g UNILAG"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <FormField
           name="description"
           control={form.control}
@@ -196,10 +247,10 @@ your post should be a spacer, which means you have no 'accomodation'
                   {...field}
                   className="resize-none font-poppins tracking-wide flex 
                    text-base h-9 w-full rounded-md 
-        border border-input bg-transparent px-3 
-        py-1 shadow-sm transition-colors  placeholder:text-muted-foreground
-          focus-visible:outline-none focus-visible:ring-1
-           focus-visible:ring-ring md:text-sm min-h-32 "
+                   border border-input bg-transparent px-3 
+                     py-1 shadow-sm transition-colors  placeholder:text-muted-foreground
+                     focus-visible:outline-none focus-visible:ring-1
+                    focus-visible:ring-ring md:text-sm min-h-32 "
                   placeholder="Enter descriptions..."
                 ></textarea>
               </FormControl>

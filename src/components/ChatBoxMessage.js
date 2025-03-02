@@ -1,22 +1,15 @@
 import { useEffect, useRef } from "react";
 import { useLoadMessageQuery } from "../store/Slices/Space";
-import { useIsLoggedInQuery } from "../store/Slices/user";
 import { NoticeDate } from "../utils/TimeHandler";
-import { Badge } from "./ui/badge";
+
 import LoaderSpinner from "./LoaderSpinner";
+import DataError from "./DataError";
 
-export default function ChatBoxMessage({ spaceId }) {
-  const {
-    data: user,
-    error: userError,
-    isError: isUserError,
-    isLoading: userLoading,
-  } = useIsLoggedInQuery();
+export default function ChatBoxMessage({ userObj, spaceId }) {
+  const user = userObj;
 
-  const { data, error, isError, isFetching, isLoading } = useLoadMessageQuery(
-    spaceId,
-    { skip: !spaceId || !user }
-  );
+  const { refetch, data, error, isError, isFetching, isLoading } =
+    useLoadMessageQuery(spaceId, { skip: !spaceId || !user });
 
   const chatContainerRef = useRef(null);
 
@@ -28,20 +21,17 @@ export default function ChatBoxMessage({ spaceId }) {
     }
   }, [data?.chat]);
 
-  if (isLoading || isFetching || userLoading) {
-    return <LoaderSpinner message="Loading chat..." />;
+  if (isLoading || isFetching) {
+    return <LoaderSpinner message="Getting message..." />;
   }
 
-  if (isError || isUserError) {
-    return <p>{error?.message || userError?.message}</p>;
+  if (isError) {
+    return <DataError message={error?.message} refetch={refetch} />;
   }
-
   return (
     <main>
-      {!data?.chat && (
-        <p>
-          <Badge>Start a chat!</Badge>
-        </p>
+      {(!data?.chat || data?.chat.length === 0) && (
+        <p className=" font-poppins text-center">Start a Chat!</p>
       )}
 
       <div ref={chatContainerRef} className="overflow-y-auto h-[54vh]">

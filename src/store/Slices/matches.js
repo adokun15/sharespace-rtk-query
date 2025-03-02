@@ -12,7 +12,30 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
+      providesTags: (res) =>
+        res
+          ? res?.map(({ receiver }) => [
+              { type: "attempts", id: receiver?.requestId },
+              { type: "attempts", id: "ATTEMPTLIST" },
+            ])
+          : [{ type: "attempts", id: "ATTEMPTLIST" }],
+
       transformResponse: (res) => res?.attempts,
+    }),
+
+    //Withdraw : attempt
+    withdrawProposal: builder.mutation({
+      query: (roomieId) => ({
+        url: `chats/s/${roomieId}`,
+        method: "POST",
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      invalidatesTags: (res, err, id) => ["attempts"],
+      transformResponse: (res) => res?.message,
     }),
 
     //proposals
@@ -26,24 +49,31 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
+      providesTags: (res) =>
+        res
+          ? res?.map(({ requestId }) => [
+              { type: "proposals", id: requestId },
+              { type: "proposals", id: "PROPOSAL_LIST" },
+            ])
+          : [{ type: "proposals", id: "PROPOSAL_LIST" }],
       transformResponse: (res) => res?.proposals,
     }),
 
+    //React to proposal
     respondToProposal: builder.mutation({
       //info -- { reply, request }
-
       query: (info) => ({
         url: `chats/r/${info?.request?.requestId}`,
         method: "POST",
         body: JSON.stringify(info),
       }),
-
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
         status: err?.data?.status,
         message: err?.data?.message,
       }),
       transformResponse: (res) => res?.message,
+      invalidatesTags: () => ["proposals"],
     }),
 
     //user / chats subcollection
@@ -58,20 +88,47 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
+      providesTags: (res) =>
+        res
+          ? res?.map(({ spaceId }) => [
+              { type: "chats", id: spaceId },
+              { type: "chats", id: "CHATLIST" },
+            ])
+          : [{ type: "chats", id: "CHATLIST" }],
       transformResponse: (res) => res?.chats,
     }),
 
-    // Delete / Leave Single Chat
-    deleteChat: builder.query({
-      query: (chatId) => ({
-        url: `chats/${chatId}`,
-        method: "GET",
+    // Report Single Chat
+    reportChat: builder.mutation({
+      query: ({ spaceId, reason, email }) => ({
+        url: `chats/${spaceId}`,
+        method: "POST",
+        body: JSON.stringify({ spaceId, reason, email }),
       }),
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
         status: err?.data?.status,
         message: err?.data?.message,
       }),
+      invalidatesTags: () => ["chat"],
+    }),
+
+    // Delete / Leave Single Chat
+    deleteChat: builder.mutation({
+      query: ({ requestId, spaceId, name, reason }) => {
+        return {
+          url: `chats/${spaceId}`,
+          method: "DELETE",
+          body: JSON.stringify({ requestId, spaceId, name, reason }),
+        };
+      },
+
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      invalidatesTags: () => ["chat"],
     }),
 
     //add to roommate list
@@ -91,13 +148,18 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       ],
     }),
 
-    //Find Close Roomate / Space
-    findRoomieSpace: builder.mutation({
-      query: (info) => ({
-        url: "find",
-        method: "POST",
-        body: JSON.stringify(info),
-      }),
+    //Send A initial TEXT, then Email to the other user
+    meetRoomate: builder.mutation({
+      query: (info) => {
+        return {
+          url: `${info?.roomieInfo?.id}`,
+          method: "POST",
+          body: JSON.stringify(info),
+        };
+      },
+      invalidatesTags: (res, err, arg) => [
+        { type: "roommates", id: arg?.roomieInfo?.id },
+      ],
       transformErrorResponse: (err) => ({
         statusCode: err?.data?.statusCode,
         status: err?.data?.status,
@@ -105,14 +167,13 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
       }),
     }),
 
-    //Send A initial TEXT, then Email to the other user
-    meetRoomate: builder.mutation({
-      query: (info) => {
-        console.log(info.roomieInfo);
+    //Report Post!
+    reportRoommatePost: builder.mutation({
+      query: ({ postId, email, reason }) => {
         return {
-          url: `${info?.roomieInfo?.id}`,
+          url: `${postId}/report`,
           method: "POST",
-          body: JSON.stringify(info),
+          body: JSON.stringify({ postId, email, reason }),
         };
       },
       transformErrorResponse: (err) => ({
@@ -120,8 +181,9 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
-
-      //  invalidatesTags: ()=>[]
+      invalidatesTags: (res, err, arg) => [
+        { type: "roommates", id: arg?.postId },
+      ],
     }),
 
     //Get Info about USER
@@ -178,6 +240,20 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
             ])
           : [{ type: "roommates", id: "ROOMMATELIST" }],
     }),
+
+    //Find Close Roomate / Space
+    findRoomieSpace: builder.mutation({
+      query: (info) => ({
+        url: "find",
+        method: "POST",
+        body: JSON.stringify(info),
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+    }),
   }),
 });
 
@@ -192,6 +268,11 @@ export const {
   useFindRoomieSpaceMutation,
   useDeleteSingleRoomateMutation,
   useRespondToProposalMutation,
+  useDeleteChatMutation,
+  //new
+  useReportChatMutation,
+  useWithdrawProposalMutation,
+  useReportRoommatePostMutation,
 } = MatchLogicSlice;
 
 /*

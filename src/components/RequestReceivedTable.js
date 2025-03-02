@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   useRequestsFromListQuery,
   useRespondToProposalMutation,
@@ -17,8 +17,10 @@ import {
 import DataError from "./DataError";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
 
 export default function RequestReceivedTable() {
+  const reRoute = useNavigate();
   const {
     data: requests,
     isError,
@@ -100,6 +102,7 @@ export default function RequestReceivedTable() {
       </Card>
     );
   }
+
   if (isError) {
     <DataError error={error} refetch={refetch} />;
   }
@@ -117,9 +120,11 @@ export default function RequestReceivedTable() {
     })
       .unwrap()
       .then((data) => {
-        console.log(data);
+        toast.success(data);
+
+        reRoute("/space");
       })
-      .catch((e) => [console.log(e)]);
+      .catch((e) => toast.error(e?.message));
   };
 
   return (
@@ -191,6 +196,7 @@ export default function RequestReceivedTable() {
                   <tr
                     className={` border-l  
                   border-b `}
+                    key={roomie?.requestId}
                   >
                     <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <Avatar>
