@@ -80,6 +80,7 @@ export default function Settings() {
         }, 1500);
       })
       .catch(({ data }) => {
+        console.log(data);
         toast.error(data?.status || "Something WENT wrong!", {
           description: data?.message,
           action: () => reRoute("/auth"),

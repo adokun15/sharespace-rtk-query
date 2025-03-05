@@ -15,6 +15,7 @@ import LoaderSpinner from "../../components/LoaderSpinner";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 import { transactionDate } from "../../utils/TimeHandler";
+import { SUPPORT_EMAIL } from "../../lib/utils";
 
 export default function ManageCredit() {
   const { data: user } = useGetUserQuery();
@@ -56,7 +57,7 @@ export default function ManageCredit() {
   }
 
   return (
-    <>
+    <main className="overflow-hidden">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -83,49 +84,66 @@ export default function ManageCredit() {
           Available Credit Bal
         </p>
       </article>
+
       {transactions?.length >= 1 && (
-        <div className="mb-5 space-y-4">
-          <h1 className="font-sans_serif text-2xl border-b-2 font-bold  border-b-purple-500 w-fit">
-            Transactions
-          </h1>{" "}
-          <table className="w-full font-poppins text-gray-500  text-left">
-            <thead className="text-xs text-gray-500 uppercase bg-gray-50 ">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Transaction Ref
-                </th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Credit Amount</th>
-                <th className="px-6 py-3">Date Paid</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions?.map((transaction) => (
-                <tr className="odd:bg-white even:bg-gray-100 border-b hover:bg-gray-50">
-                  <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {transaction?.reference}
+        <>
+          <article>
+            <p className="text-center font-poppins  my-3">
+              Money did not reflect? Reach out to{" "}
+              <a
+                href={SUPPORT_EMAIL}
+                className="text-primary"
+                target="_blank"
+                rel="noreferrer"
+              >
+                me
+              </a>{" "}
+            </p>
+          </article>
+
+          <div className="mb-5 space-y-4 overflow-x-auto relative">
+            <h1 className="font-sans_serif text-2xl border-b-2 font-bold  border-b-purple-500 w-fit">
+              Transactions
+            </h1>{" "}
+            <table className="w-full font-poppins text-gray-500  min-w-[600px] text-left">
+              <thead className="text-xs text-gray-500 uppercase bg-gray-50 ">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Transaction Ref
                   </th>
-                  <td className="px-6 py-4">{transaction?.status}</td>
-                  <td className="px-6 py-4 ">
-                    <p>
-                      {transaction?.credit} <ArrowRight className="inline" />{" "}
-                      NGN
-                      {transaction?.amount}
-                    </p>
-                    <Badge className="rounded-full py-1 tracking-wide">
-                      {" "}
-                      {transaction?.channel}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4">
-                    {transactionDate(transaction?.paidAt)}
-                  </td>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Credit Amount</th>
+                  <th className="px-6 py-3">Date Paid</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {transactions?.map((transaction) => (
+                  <tr className="odd:bg-white even:bg-gray-100 border-b hover:bg-gray-50">
+                    <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {transaction?.reference}
+                    </th>
+                    <td className="px-6 py-4">{transaction?.status}</td>
+                    <td className="px-6 py-4 ">
+                      <p>
+                        {transaction?.credit} <ArrowRight className="inline" />{" "}
+                        NGN
+                        {transaction?.amount}
+                      </p>
+                      <Badge className="rounded-full py-1 tracking-wide">
+                        {" "}
+                        {transaction?.channel}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4">
+                      {transactionDate(transaction?.paidAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
-    </>
+    </main>
   );
 }

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -79,11 +79,15 @@ export default function SingleRoommateInfo() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink>Home</BreadcrumbLink>
+            <BreadcrumbLink>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink>Proposals</BreadcrumbLink>
+            <BreadcrumbLink>
+              <Link to="/space/proposals">Proposals</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -92,7 +96,7 @@ export default function SingleRoommateInfo() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="font-poppins">
-        <Card className="space-y-2">
+        <Card className="space-y-2 p-3">
           <h2 className="text-2xl font-sans_serif font-semibold">
             Basic Information
           </h2>
@@ -108,7 +112,7 @@ export default function SingleRoommateInfo() {
             </Avatar>
             <p className="text-xl">{singleProposal?.name}</p>
           </div>
-          <div className="mt-4 divide-y-2">
+          <div className="mt-4 divide-y-2 ">
             {/*  <article className="flex justify-between">
               <p>Age</p>
               <p className="font-sans_serif text-xl ">19</p>
@@ -122,11 +126,11 @@ export default function SingleRoommateInfo() {
             </article>
           </div>
         </Card>
-        <Card elClass=" space-3 min-h-4">
+        <Card elClass=" space-3 min-h-4 p-3">
           <h3 className="text-2xl font-sans_serif font-semibold">Message </h3>
           <p>{singleProposal?.message}</p>
         </Card>
-        <Card elClass="mt-4 ">
+        <Card elClass="mt-4 p-3">
           <h3 className="text-2xl font-sans_serif font-semibold">
             School Info
           </h3>

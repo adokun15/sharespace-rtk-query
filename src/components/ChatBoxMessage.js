@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useLoadMessageQuery } from "../store/Slices/Space";
-import { NoticeDate } from "../utils/TimeHandler";
+import { groupMessageByTime } from "../utils/TimeHandler";
 
 import LoaderSpinner from "./LoaderSpinner";
 import DataError from "./DataError";
+import dayjs from "dayjs";
 
 export default function ChatBoxMessage({ userObj, spaceId }) {
   const user = userObj;
@@ -28,6 +29,9 @@ export default function ChatBoxMessage({ userObj, spaceId }) {
   if (isError) {
     return <DataError message={error?.message} refetch={refetch} />;
   }
+
+  const groupedChat = groupMessageByTime(data?.chat);
+
   return (
     <main>
       {(!data?.chat || data?.chat.length === 0) && (
@@ -35,31 +39,36 @@ export default function ChatBoxMessage({ userObj, spaceId }) {
       )}
 
       <div ref={chatContainerRef} className="overflow-y-auto h-[54vh]">
-        {data?.chat &&
-          data?.chat.map((chat, index) => (
-            <div key={index} className="p-2 my-1">
-              <article
-                className={`flex px-6  ${
-                  chat?.uid === user?.uid ? "justify-end " : "justify-start"
-                }`}
-              >
-                <div
-                  className={`rounded-2xl  w-fit pr-2 min-w-[30%] max-w-[70%] px-4  my-4
-                  ${
-                    chat?.uid === user?.uid
-                      ? " bg-purple-500/50 "
-                      : "bg-slate-400/40"
-                  }  p-1`}
+        {groupedChat &&
+          Object.entries(groupedChat).map(([time, chats]) => (
+            <div key={time} className="p-2 my-1">
+              <p className="text-center text-sm text-muted">
+                {dayjs(time).format("YYYY-MM-DD h:mm A")}
+              </p>
+              {chats?.map((chat) => (
+                <article
+                  key={chat.message}
+                  className={`flex px-6  ${
+                    chat?.uid === user?.uid ? "justify-end " : "justify-start"
+                  }`}
                 >
-                  <div>
-                    <p className="text-xl font-[700]"></p>
-                  </div>
-                  <p className="text-wrap text-[20px]">{chat?.message}</p>
-                  <span className="text-[14px] text-end block">
+                  <div
+                    className={`rounded min-h-8 py-1 font-poppins w-fit pr-2 min-w-[35%] max-w-[92%] text-pretty md:max-w-[70%] px-4 my-2
+                    ${
+                      chat?.uid === user?.uid
+                        ? " bg-purple-500/50 "
+                        : "bg-slate-400/40"
+                    }  p-1`}
+                  >
+                    <p className="text-wrap md:text-[20px] text-[16px]">
+                      {chat?.message}
+                    </p>
+                    {/* <span className="text-[14px] text-end block">
                     {NoticeDate(chat.timeSent)}
-                  </span>
-                </div>
-              </article>
+                  </span>*/}
+                  </div>
+                </article>
+              ))}
             </div>
           ))}
       </div>

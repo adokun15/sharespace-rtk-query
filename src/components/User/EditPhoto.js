@@ -63,6 +63,9 @@ export default function EditPhoto({ uid, imgUrl, onClose }) {
   return (
     <form className="font-poppins px-5 py-4  space-y-4  overflow-y-auto md:h-fit block  md:mx-auto md:mt-[2vh] ">
       <p className="text-xs text-red-600">{imgError}</p>
+      <p className="text-xs font-poppins">
+        Add a photo showing your face to get your request accepted!
+      </p>
       <div className="rounded">
         <img
           src={previewImg || imgUrl || placeImg}

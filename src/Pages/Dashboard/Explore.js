@@ -21,12 +21,10 @@ const ExplorePage = () => {
   const {
     data: user,
     error,
-    isError,
     isLoading,
-    refetch,
     isFetching,
     refetch: loadUser,
-  } = useIsLoggedInQuery({ refetchOnMountOrArgChange: true });
+  } = useIsLoggedInQuery(null, { refetchOnMountOrArgChange: true });
 
   //const token = localStorage.getItem("sharespace_token");
 
@@ -75,19 +73,16 @@ const ExplorePage = () => {
       <main className="mb-20 space-y-3 w-full">
         <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-          {isError ? (
-            <Button onClick={refetch}>Reload</Button>
-          ) : (
-            <Button className="rounded" onClick={handleReRoute}>
-              {isLoading || isFetching ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  <Plus /> Create
-                </>
-              )}
-            </Button>
-          )}
+
+          <Button className="rounded" onClick={handleReRoute}>
+            {isLoading || isFetching ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                <Plus /> Create
+              </>
+            )}
+          </Button>
         </div>
 
         <Dialog

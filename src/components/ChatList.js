@@ -6,6 +6,13 @@ import LoaderSpinner from "./LoaderSpinner";
 //import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "./ui/breadcrumb";
 
 export default function ChatList() {
   const {
@@ -31,8 +38,19 @@ export default function ChatList() {
   return (
     <>
       <div className="flex justify-between">
-        <h1 className="text-3xl text-center">Chats</h1>
-        <div></div>
+        <Breadcrumb className="ml-5">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink>
+                <Link to="/">Home</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink>Chats</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         {/*<Popover>
           <PopoverTrigger>
             <Button variant="outline">All</Button>
@@ -51,7 +69,7 @@ export default function ChatList() {
         {chats?.map((chat) => (
           <Link
             to={chat?.spaceId}
-            className=" hover:text-white bg-muted-foreground hover:bg-slate-600 transition-colors shadow flex px-2 py-3 even:bg-slate-50 rounded justify-between"
+            className=" hover:text-muted bg-muted-foreground transition-colors shadow flex px-2 py-3 even:bg-slate-50 rounded justify-between"
           >
             <div className="flex gap-2 items-center">
               <Avatar>
@@ -65,7 +83,9 @@ export default function ChatList() {
               </Avatar>
               <article>
                 <h3 className="text-xl font-bold">{chat?.user?.name}</h3>
-                <p> Added {accountCreationDate(chat?.dateCreated)}</p>
+                <p className="text-xs font-poppins text-muted">
+                  Active since {accountCreationDate(chat?.dateCreated)}
+                </p>
               </article>
             </div>
           </Link>

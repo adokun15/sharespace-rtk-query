@@ -1,4 +1,4 @@
-import { faArrowLeft, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -10,7 +10,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, MoreVertical } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useGetUserQuery } from "../store/Slices/user";
 import { toast } from "sonner";
@@ -168,7 +168,7 @@ export default function ChatNavigator({ users, spaceId, chatDisabled }) {
               <PopoverTrigger asChild>
                 <Button variant="ghost">
                   <span>
-                    <FontAwesomeIcon icon={faBars} />
+                    <MoreVertical />
                   </span>
                 </Button>
               </PopoverTrigger>

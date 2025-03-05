@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   ExternalLink,
   HomeIcon,
   LogOut,
@@ -126,7 +127,7 @@ export default function DashboardNavigator({ loadContent }) {
                             className="flex text-xl justify-center"
                           >
                             <Link to="/space">
-                              <MessageSquareCodeIcon />
+                              <MessageSquareCodeIcon className=" text-purple-500" />
                               <span>Chats</span>
                             </Link>
                           </SidebarMenuButton>
@@ -143,6 +144,7 @@ export default function DashboardNavigator({ loadContent }) {
                         asChild
                       >
                         <Link to="/guide">
+                          <BookOpen className=" text-purple-500" />
                           <span>Guide</span>
                         </Link>
                       </SidebarMenuButton>

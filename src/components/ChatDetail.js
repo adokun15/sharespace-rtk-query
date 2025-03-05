@@ -49,7 +49,7 @@ export default function ChatDetail() {
 
   const isEligible = space?.users?.find((id) => id === userObj.data?.uid);
 
-  const chatHasBeenReported = space.disabled;
+  const chatHasBeenReported = space?.disabled;
 
   //making sure only if user decide to leave, they won't be able to view this chat!
   if (space && !isEligible && !chatHasBeenReported) {

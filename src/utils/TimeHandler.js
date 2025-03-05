@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 export const handleDashedString = (date) => {
   const [year, month, day] = date.split("-");
 
@@ -61,4 +62,15 @@ export const accountCreationDate = (date) => {
     day: "2-digit",
     year: "numeric",
   });
+};
+
+export const groupMessageByTime = (messages = []) => {
+  return messages.reduce((acc, message) => {
+    const timeKey = dayjs(message?.timeSent).format("YYYY-MM-DD HH:mm");
+    if (!acc[timeKey]) {
+      acc[timeKey] = [];
+    }
+    acc[timeKey].push(message);
+    return acc;
+  }, {});
 };

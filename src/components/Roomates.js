@@ -35,6 +35,7 @@ const Roomates = ({ user }) => {
 
   const { error, roommates, isLoading, isError, refetch, isFetching } =
     useRoomateSpaceQuery(null, {
+      refetchOnMountOrArgChange: true,
       selectFromResult: (res) => {
         const { data, ...others } = res;
         let roommates_list = data;
@@ -73,8 +74,6 @@ const Roomates = ({ user }) => {
         };
       },
     });
-
-  console.log(roommates);
 
   const [reportRoomatePost, { isLoading: isReporting }] =
     useReportRoommatePostMutation();

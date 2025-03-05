@@ -93,7 +93,7 @@ export default function ChatInputMessage({
         onClick={addToMessage}
         disable={!messageString}
         variant="primary"
-        className="absolute w-[10%]  rounded-full  left-[90%] outline-none"
+        className="absolute w-[10%] min-w-[3rem] rounded-full  left-[90%] outline-none"
       >
         <FontAwesomeIcon icon={faPaperPlane} />
       </Button>
