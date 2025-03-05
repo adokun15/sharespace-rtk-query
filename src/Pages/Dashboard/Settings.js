@@ -13,7 +13,7 @@ import {
   SelectTrigger,
 } from "../../components/ui/select";
 import { Button } from "../../components/ui/button";
-import { Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   DialogClose,
@@ -62,10 +62,10 @@ export default function Settings() {
       photo: user?.photo,
     })
       .unwrap()
-      .then((d) => {
+      .then(() => {
         //Clear Storage
         localStorage.removeItem("sharespace_token");
-        console.log(d);
+
         //alert user: "changes made"
         toast.success("Account Deleted!", {
           description: "Thank you for using our service.",
@@ -80,7 +80,6 @@ export default function Settings() {
         }, 1500);
       })
       .catch(({ data }) => {
-        console.log(data);
         toast.error(data?.status || "Something WENT wrong!", {
           description: data?.message,
           action: () => reRoute("/auth"),
@@ -108,17 +107,13 @@ export default function Settings() {
   };
 
   return (
-    <main className="mb-4">
+    <main className="mb-4 w-full md:w-[70%] mx-auto">
       <h2 className="text-2xl">Settings</h2>
-      <Card elClass="space-y-4">
-        <h2 className="capitalize text-3xl font-roboto font-bold">
-          Roommate Type
+      <Card elClass="space-y-4 min-h-6">
+        <h2 className="capitalize text-xl font-roboto font-bold">
+          Who should we display on your Timeline
         </h2>
-
         {loading && <Loader2 />}
-
-        <p className="font-oswald">Who are looking forward to live with?</p>
-
         <Select defaultValue={user?.targetType} onValueChange={roommateHandler}>
           <SelectTrigger>
             <SelectValue placeholder="Select an option" />
@@ -133,22 +128,23 @@ export default function Settings() {
           </SelectContent>
         </Select>
       </Card>
-      <Card elClass="space-y-4">
+      <Card elClass="space-y-4 h-fit min-h-3">
         <Dialog>
-          <h2 className="capitalize text-3xl font-roboto font-bold">
-            Account removal
-          </h2>
-          <p className="font-oswald">
-            Remove your account permanently from ShareSpace
-          </p>
-          <DialogTrigger asChild>
-            <Button
-              disabled={!user}
-              className="bg-red-600 text-white ring-1 ring-red-700 rounded-xl ring-offset-2 font-oswald"
-            >
-              Delete
-            </Button>
-          </DialogTrigger>
+          <div className="flex justify-between">
+            <h2 className="capitalize text-xl font-roboto font-bold">
+              Account removal
+            </h2>
+            <DialogTrigger asChild>
+              <Button
+                variant="link"
+                disabled={!user}
+                className="text-destructive rounded-xl  font-oswald"
+              >
+                <span>Delete</span>
+                <ChevronRight />
+              </Button>
+            </DialogTrigger>
+          </div>
           <DialogContent>
             <DialogTitle>Delete ShareSpace permanently</DialogTitle>
             <p>This action is irreversible and you will lose all your data</p>
