@@ -10,6 +10,7 @@ import {
   FIREBASE_PROJECT_ID,
   FIREBASE_STORAGE_BUCKET,
 } from "../lib/utils";
+import { getMessaging, isSupported } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: FIREBASE_APIKEY,
@@ -41,3 +42,6 @@ export const db = getFirestore(app);
 //storage
 export const storage = getStorage(app);
 //connectStorageEmulator(storage, "localhost", 9192);
+
+//messaging
+export const messaging = async () => (await isSupported()) && getMessaging(app);

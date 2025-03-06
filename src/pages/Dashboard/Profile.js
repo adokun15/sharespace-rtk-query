@@ -145,6 +145,7 @@ export default function ProfilePage() {
   const toggleDialogModalPhoto = () => {
     setDialogToggle2((p) => !p);
   };
+
   const profile_complete =
     user?.religion && user?.email_verified && user?.photo && !isError;
 
@@ -248,7 +249,7 @@ export default function ProfilePage() {
         <div className="w-full space-y-3 mb-4">
           <Tabs
             className="space-y-5"
-            defaultValue={auto_open_credit ? "credit" : "profile"}
+            defaultValue={auto_open_credit === "true" ? "credit" : "profile"}
           >
             <TabsList>
               <TabsTrigger value="profile">Profile</TabsTrigger>

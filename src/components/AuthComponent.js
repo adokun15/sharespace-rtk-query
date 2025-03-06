@@ -353,6 +353,12 @@ export default function AuthenticationComponent() {
 
   const navigate = useNavigate();
 
+  //Save Device Notification if they want!
+
+  //Then
+
+  //Subcribe to 'Promo and update';
+
   const triggerSubmit = async () => {
     if (
       (!enteredValue?.fname ||

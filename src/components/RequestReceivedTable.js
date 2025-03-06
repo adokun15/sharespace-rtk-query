@@ -121,10 +121,11 @@ export default function RequestReceivedTable() {
       .unwrap()
       .then((data) => {
         toast.success(data);
-
         reRoute("/space");
       })
-      .catch((e) => toast.error(e?.message));
+      .catch((e) => toast.error(e?.status, { description: e?.message }));
+    //Subcribe to 'space_28288238' and inform the other
+    //No need 'saveDevice' --- Dont wanna ask for peermission again
   };
 
   return (
@@ -235,33 +236,35 @@ export default function RequestReceivedTable() {
                           <MoreVertical />
                         </PopoverTrigger>
                         <PopoverContent>
-                          <ul className="*:block">
-                            <Button variant="ghost" asChild>
-                              <Link to={roomie?.requestId}>View Profile</Link>
-                            </Button>
+                          {!responding && (
+                            <ul className="*:block">
+                              <Button variant="ghost" asChild>
+                                <Link to={roomie?.requestId}>View Profile</Link>
+                              </Button>
 
-                            <Button
-                              variant="ghost"
-                              className="*:inline gap-3 text-secondary "
-                              onClick={async () => {
-                                // accept
-                                await respondToRequest("accept", roomie);
-                              }}
-                            >
-                              <span>Accept Request</span>
-                              <ArrowRight className="text-primary rounded-full ml-4 animate-pulse" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              className="text-destructive"
-                              onClick={async () => {
-                                // decline
-                                await respondToRequest("decline", roomie);
-                              }}
-                            >
-                              Declined Request
-                            </Button>
-                          </ul>
+                              <Button
+                                variant="ghost"
+                                className="*:inline gap-3 text-secondary "
+                                onClick={async () => {
+                                  // accept
+                                  await respondToRequest("accept", roomie);
+                                }}
+                              >
+                                <span>Accept Request</span>
+                                <ArrowRight className="text-primary rounded-full ml-4 animate-pulse" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="text-destructive"
+                                onClick={async () => {
+                                  // decline
+                                  await respondToRequest("decline", roomie);
+                                }}
+                              >
+                                Remove Request
+                              </Button>
+                            </ul>
+                          )}
                         </PopoverContent>
                       </Popover>
                     </td>

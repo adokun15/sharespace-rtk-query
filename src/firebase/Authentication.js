@@ -49,10 +49,10 @@ export async function CreateUser({ name, email, password }) {
 
     await updateProfile(res.user, { displayName: name });
 
-    //Credit -- 100 -- Beta USER!
+    //Credit -- 500 -- 100 Beta USER!
     await CreateDocumentWithUID(
       "users",
-      { credit: 100, userId: res?.user.uid },
+      { credits: 500, userId: res?.user.uid, email: res?.user?.email },
       res?.user.uid
     );
 

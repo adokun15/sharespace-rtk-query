@@ -1,4 +1,5 @@
 //import { useIsLoggedInQuery } from "../store/Slices/user"
+import { useSearchParams } from "react-router-dom";
 import { useSingleRoomateQuery } from "../store/Slices/matches";
 import DataError from "./DataError";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -6,6 +7,7 @@ import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 
 export default function InviteModal({ roomieId, onClose }) {
+  const [info] = useSearchParams();
   const { data, isLoading, isFetching, refetch, isError, error } =
     useSingleRoomateQuery({ id: roomieId, invited: true }, { skip: !roomieId }); //Public access to anyone
 
@@ -26,7 +28,9 @@ export default function InviteModal({ roomieId, onClose }) {
   }
 
   function redirectToWhatsApp() {
-    return null;
+    const phone = info.get("wn");
+
+    window.location.href = `https://wa.me/${phone}?text='I am available...'`;
   }
 
   return (
@@ -40,7 +44,7 @@ export default function InviteModal({ roomieId, onClose }) {
         a{" "}
         {data?.target === "roomie"
           ? "Roommate to live with!"
-          : "place to stay!"}
+          : "roomate with accomadation!"}
       </p>
       <section className="px-10 my-2">
         <div>
@@ -64,10 +68,21 @@ export default function InviteModal({ roomieId, onClose }) {
             <p className="text-2xl font-sans_serif">{data?.religion}</p>
           </article>
           <article>
-            <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-              Rent
-            </h3>
-            <p className="text-2xl font-sans_serif">{data?.rent}k</p>
+            {data?.target === "spacer" ? (
+              <>
+                <h3 className="text-xs text-slate-500 font-poppins font-semibold">
+                  Budget
+                </h3>
+                <p className="text-2xl font-sans_serif">{data?.budget}k</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xs text-slate-500 font-poppins font-semibold">
+                  Rent
+                </h3>
+                <p className="text-2xl font-sans_serif">{data?.rent}k</p>
+              </>
+            )}
           </article>
           <article>
             <h3 className="text-xs text-slate-500 font-poppins font-semibold">
@@ -88,20 +103,23 @@ export default function InviteModal({ roomieId, onClose }) {
             <p className="text-2xl font-sans_serif">{data?.department}</p>
           </article>
         </div>
-        <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-          How much is Rent?
-        </h2>
+        {data?.target === "roomie" && (
+          <>
+            <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
+              How much is Rent?
+            </h2>
 
-        <p className="text-slate-900 font-poppins ">
-          The payment is going to splitted into {data?.numberOfRoommates}. The
-          Rent cost {data?.rent}k. Each of us will spend(
-          {+data?.rent / +data?.numberOfRoommates}k)
-        </p>
-        <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-          Where is your hostel at?
-        </h2>
+            <p className="text-slate-900 font-poppins ">
+              The Rent cost {data?.rent}k. Each of us will pay (
+              {+data?.rent / +data?.numberOfRoommates}k)
+            </p>
+            <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
+              Where is your hostel at?
+            </h2>
 
-        <p className="text-slate-900 font-poppins ">{data?.location} </p>
+            <p className="text-slate-900 font-poppins ">{data?.location} </p>
+          </>
+        )}
       </section>
       <div className="*:block *:mx-auto space-y-5">
         <Button onClick={redirectToWhatsApp}>Connect on WhatsApp </Button>

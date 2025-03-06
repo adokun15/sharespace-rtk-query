@@ -10,6 +10,7 @@ import LoaderSpinner from "./LoaderSpinner";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+//import { saveMessagingDeviceToken } from "../firebase/Messaging";
 
 export default function RoommateDetail({ roommate, onClose }) {
   const {
@@ -63,6 +64,11 @@ export default function RoommateDetail({ roommate, onClose }) {
       .then((data) => {
         toast.success("Sent!", { description: data?.message });
         onClose();
+      })
+      .then(() => {
+        //SAVE your Device then
+        //Send notice To The owner of the post!
+        // saveMessagingDeviceToken(user?.userId)
       })
       .catch((e) => {
         toast.error("Unable to send", { description: e?.message });
@@ -184,13 +190,12 @@ export default function RoommateDetail({ roommate, onClose }) {
                       onClick={createNewMesageProposal}
                       className="
                       w-full bg-purple-600 text-white rounded hover:bg-purple-300
-                      
                       "
                     >
                       {isLoading ? (
                         <Loader2 className="animate-spin" />
                       ) : (
-                        "Send Message"
+                        "Send Message (50 credits)"
                       )}
                     </Button>
                   </form>

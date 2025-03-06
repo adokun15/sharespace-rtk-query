@@ -72,7 +72,7 @@ export default function ChatNavigator({ users, spaceId, chatDisabled }) {
         reRoute("/space");
       })
       .catch((e) => {
-        toast.success(e?.message);
+        toast.error(e?.message);
       });
   };
 
@@ -100,7 +100,7 @@ export default function ChatNavigator({ users, spaceId, chatDisabled }) {
         //alert User
         toast.success(res?.message);
       })
-      .catch((e) => toast.success(e?.message));
+      .catch((e) => toast.error(e?.message));
   };
 
   //const uploadPhotoToSpace = async()=>{}

@@ -5,6 +5,8 @@ import TriggerSidebar from "../../UI/TriggerSidebar";
 //import ExplorePage from "./Explore";
 import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
+import { FEEDBACK_URL } from "../../lib/utils";
+import { ArrowRight } from "lucide-react";
 export default function HomeRoot() {
   const location = useLocation();
   //const reRoute = useNavigate();
@@ -35,6 +37,10 @@ export default function HomeRoot() {
     }
   }, [dashboardRoute, token]);
 
+  //Link to google form
+  const toFeedbackSpace = () => {
+    window.location.href = FEEDBACK_URL;
+  };
   return (
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />
@@ -42,9 +48,11 @@ export default function HomeRoot() {
         <TriggerSidebar />
         <div>
           <div className="w-full bg-accent text-white text-xs md:text-xl md:text-center py-2 md:block hidden">
-            <p>
-              ShareSpace is currently in beta! We're working to improve your
-              experience. Have feedback? Let us know!
+            <p className="hover:cursor-pointer" onClick={toFeedbackSpace}>
+              <span className="font-bold">ShareSpace</span> is currently in
+              beta! We're working to improve your experience. Have feedback? Let
+              us know!
+              <ArrowRight className="inline mx-2 my-auto" size={24} />
             </p>
           </div>
 

@@ -27,6 +27,7 @@ import { Link } from "react-router-dom";
 import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
+import { toast } from "sonner";
 
 const Roomates = ({ user }) => {
   const reason = useRef();
@@ -68,14 +69,20 @@ const Roomates = ({ user }) => {
           );
         }
 
+        //Filter if post is disable/reported
         return {
           ...others,
-          roommates: roommates_list,
+          //Remove post that has been reported
+          roommates:
+            roommates_list &&
+            roommates_list?.filter(
+              (post) => !post?.reported || !post?.disabled
+            ),
         };
       },
     });
 
-  const [reportRoomatePost, { isLoading: isReporting }] =
+  const [reportRoomatePost, { isLoading: isReporting, error: reportEror }] =
     useReportRoommatePostMutation();
 
   const [roommate, setRoommate] = useState(null);
@@ -131,8 +138,17 @@ const Roomates = ({ user }) => {
       email: user?.email,
     })
       .unwrap()
-      .then((data) => console.log(data))
-      .catch((e) => console.log(e));
+      .then((data) => {
+        //alert User
+        toast.success(data?.message || "Report sent!");
+        //Force Refetch
+        setTimeout(() => {
+          refetch();
+        }, 1500);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   //  const CopySinglePostLink = () => {};
@@ -238,9 +254,16 @@ const Roomates = ({ user }) => {
                   <DialogTitle className="text-center font-poppins ">
                     Report post
                   </DialogTitle>
-                  <form>
+                  <form className="space-y-4 font-poppins">
                     <p>Why do you want to report this post?</p>
-                    <Input ref={reason} placeholder="Seen this post before?" />
+                    <p className="text-destructive text-xs ">
+                      {reportEror && reportError?.message}
+                    </p>
+                    <Input
+                      ref={reason}
+                      className="placeholder:text-muted"
+                      placeholder="Seen this post before?, looks suspicious?, Report the post!"
+                    />
                     <Button
                       onClick={async () => await reportSinglePost(roomate?.id)}
                       type="button"

@@ -34,6 +34,8 @@ export default function Profile({ mode, previousData }) {
   const {
     data: schools,
     error,
+    refetch,
+    isError,
     isLoading: loadingSchools,
   } = useGetSchoolsQuery();
 
@@ -117,11 +119,12 @@ export default function Profile({ mode, previousData }) {
       ...others,
     };
 
+    //Ask if they want to receiver notice on 'New Post'
+
     //console.log(data);
     await setUpProfile(data)
       .unwrap()
       .then(() => {
-        //    console.log(data);
         //Clear form
         form.reset();
 
@@ -312,7 +315,14 @@ export default function Profile({ mode, previousData }) {
                     {loadingSchools && (
                       <Loader2 className="text-xs animate-spin" />
                     )}
-                    {error && <p>{error?.message}</p>}
+                    {isError && (
+                      <>
+                        <p className="text-destructive">{error?.message}</p>
+                        <Button variant="link" onClick={refetch}>
+                          reload
+                        </Button>
+                      </>
+                    )}
 
                     <Select
                       onValueChange={field.onChange}

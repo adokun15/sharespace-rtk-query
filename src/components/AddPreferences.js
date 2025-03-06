@@ -23,6 +23,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+//import { saveMessagingDeviceToken } from "../firebase/Messaging";
 export default function AddPreferences({ user }) {
   const [createpost, { isLoading }] = useRoomieSpaceFormMutation();
 
@@ -48,7 +49,6 @@ export default function AddPreferences({ user }) {
       school_short: "",
       duration: "a session",
       rentType: "fixed",
-
       description: "",
       location: "",
       rent: [150],
@@ -70,10 +70,10 @@ export default function AddPreferences({ user }) {
     const proposal_limit =
       typeof proposal === "number" ? proposal : proposal[0];
 
-    //Check Credit
+    //Check Credit: increased
     if (
-      !(user?.credits && proposal_limit > 10 && user?.credits >= 50) && //Credits >= 50, proposal_limit > 10,
-      !(user?.credits && user?.credits >= 30 && proposal_limit <= 10) // credits > 30, proposal_limit <= 10
+      !(user?.credits && proposal_limit > 100 && user?.credits >= 120) && //Credits >= 50, proposal_limit > 10,
+      !(user?.credits && user?.credits >= 100 && proposal_limit <= 120) // credits > 30, proposal_limit <= 10
     ) {
       toast.warning("Insufficient credits to complete process!", {
         action: {
@@ -112,13 +112,19 @@ export default function AddPreferences({ user }) {
 
     info[BudgetRent] = typeof rent === "number" ? rent : rent[0];
 
+    //Request Device permission to send notification
+    //Send a Notice to all Student in the school about your post
+
+    /*await saveMessagingDeviceToken(user?.userId).catch((err) => {
+      toast.error(err?.status);
+    });
+*/
     await createpost(info)
       .unwrap()
       .then((data) => {
         toast.success(data?.message, {
           description: "Check under 'my post' to review post",
         });
-
         reRoute("/");
       })
       .catch((error) => {
@@ -390,7 +396,11 @@ your post should be a spacer, which means you have no 'accomodation'
           disabled={isLoading}
           className="rounded font-bold mx-auto block tracking-wide"
         >
-          {isLoading ? <Loader2 className="animate-spin" /> : "Upload Post"}
+          {isLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Upload Post (100 credits)"
+          )}
         </Button>
       </form>
     </Form>

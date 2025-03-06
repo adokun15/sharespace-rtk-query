@@ -32,6 +32,8 @@ export default function EditUser({ onClose, prevData }) {
   const {
     data: schools,
     error,
+    isError,
+    refetch,
     isLoading: loadingSchools,
   } = useGetSchoolsQuery();
 
@@ -102,7 +104,14 @@ export default function EditUser({ onClose, prevData }) {
               <FormItem>
                 <FormLabel>School</FormLabel>
                 {loadingSchools && <Loader2 className="text-xs animate-spin" />}
-                {error && <p>{error?.message}</p>}
+                {isError && (
+                  <>
+                    <p className="text-destructive">{error?.message}</p>
+                    <Button variant="link" onClick={refetch}>
+                      reload
+                    </Button>
+                  </>
+                )}
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

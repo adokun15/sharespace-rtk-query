@@ -92,7 +92,7 @@ export default function UserRoommateData() {
     }
 
     //const toNumber = +contact
-    if (!contact || contact.length !== 10 || isNaN(+contact)) {
+    if (!contact || contact.length !== 11 || isNaN(+contact)) {
       toast.error("Failed to copy", { description: "Invalid Input" });
       return;
     }
@@ -151,7 +151,7 @@ export default function UserRoommateData() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>
-                  <h1 className="text-xl font-serif">Share Post link</h1>
+                  <h1 className="text-xl font-sans_serif">Share Post link</h1>
                 </DialogTitle>
               </DialogHeader>
               <div className=" ">
@@ -160,12 +160,13 @@ export default function UserRoommateData() {
                     <p className="font-medium text-2xl">(+234)</p>
                     <Input
                       value={contact}
-                      maxLength={10}
+                      maxLength={11}
                       onChange={(e) => {
                         setContact(e?.target?.value);
                       }}
                       id="contact"
-                      placeholder="Enter your WhatsApp Contact"
+                      className="placeholder:text-muted"
+                      placeholder=" WhatsApp Contact eg 08123456789"
                     />
                   </div>
                   <p className="my-3 text-xs break-all">
@@ -178,7 +179,7 @@ export default function UserRoommateData() {
                   </p>
                 </div>
                 <Button
-                  disabled={contact.length !== 10}
+                  disabled={contact.length !== 11}
                   onClick={copyLink}
                   type="submit"
                   variant=""
@@ -191,7 +192,7 @@ export default function UserRoommateData() {
               </div>
               <DialogFooter className="sm:justify-start">
                 <DialogDescription>
-                  Share link to friends or group to find your roommate quicker.{" "}
+                  Share link to friends or group on find your roommate quicker.{" "}
                   {/*  <Link
                     to="#"
                     className="text-purple-500 underline tracking-wider"
