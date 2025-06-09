@@ -115,6 +115,20 @@ const userSlice = user_api.injectEndpoints({
       transformResponse: (res) => res?.message,
       invalidatesTags: () => ["user"],
     }),
+
+    //Session mgt
+    createSession: builder.mutation({
+      query: (token) => ({
+        url: "session",
+        method:"POST",
+        credientials: "include",
+        body: JSON.stringify({ token , session: 'true'}),
+      }),
+transformResponse : (res) => res.cookie,
+      //Return A Cookie
+      invalidatesTags: () => ["auth"],
+    }),
+
   }),
 });
 
@@ -128,6 +142,7 @@ export const {
   useGetUserTokenTransactionsQuery,
   useGetSchoolsQuery,
   useDeleteUserMutation,
+  useCreateSessionMutation
 } = userSlice;
 
 /*
@@ -136,7 +151,6 @@ export const {
       query: (token) => ({
         url: "cookie",
         method: "POST",
-        credientials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

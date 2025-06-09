@@ -12,6 +12,7 @@ export default function HomeRoot() {
   //const reRoute = useNavigate();
 
   const token = localStorage.getItem("sharespace_token");
+  
   const [isPrivate, setRouteIsPrivate] = useState(false);
 
   const dashboardRoute = location.pathname.split("/");
@@ -41,6 +42,7 @@ export default function HomeRoot() {
   const toFeedbackSpace = () => {
     window.location.href = FEEDBACK_URL;
   };
+
   return (
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />

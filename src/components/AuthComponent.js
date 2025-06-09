@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 //import { useCreateCookieMutation } from "../store/Slices/user";
 import { Input } from "./ui/input";
 import { Loader2 } from "lucide-react";
+import { useCreateSessionMutation } from "../store/Slices/user";
 
 export default function AuthenticationComponent() {
   //Signup / Login
@@ -17,6 +18,7 @@ export default function AuthenticationComponent() {
     fname: "",
     lname: "",
   });
+
   const [isInputLoseFocus, setInputFocus] = useState({
     email: false,
     password: false,
@@ -348,16 +350,16 @@ export default function AuthenticationComponent() {
       });
     }
   };
+  
 
+  //gENERATE iD TOKEN
   const [authorize, { isError, isLoading, error }] = useAuthorizeMutation();
-
+  
+  //gENERATE SESSION TOKEN
+  const [generateCookie] = useCreateSessionMutation()
+  
   const navigate = useNavigate();
 
-  //Save Device Notification if they want!
-
-  //Then
-
-  //Subcribe to 'Promo and update';
 
   const triggerSubmit = async () => {
     if (
@@ -366,21 +368,26 @@ export default function AuthenticationComponent() {
         !enteredValue?.password ||
         !enteredValue?.email) &&
       mode === "signup"
-    )
-      return;
-    await authorize({
-      mode,
-      name: `${enteredValue.fname} ${enteredValue.lname}`,
-      email: enteredValue.email,
-      password: enteredValue.password,
-    })
+    ){
+
+   return;
+    }
+  
+      try{
+      const token = await authorize({ mode, name: `${enteredValue.fname} ${enteredValue.lname}`, email: enteredValue.email, password: enteredValue.password,})
       .unwrap()
-      .then((token) => {
-        if (!token) return;
-        localStorage.setItem("sharespace_token", token);
-        navigate("/");
-      })
-      .catch((e) => console.error(e?.message));
+      .then(token=>token)
+
+      const longerToken = token && await generateCookie(token).unwrap()
+
+      //Save IN LocalStorage
+      localStorage.setItem('sharespace_token', longerToken)
+        
+      //Go Home
+      navigate('/')
+    }catch(e){
+     console.error(e?.message)
+    }
   };
   return (
     <>
