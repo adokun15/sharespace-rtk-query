@@ -22,7 +22,7 @@ export default function EmailVerificationComponent() {
       });
   };
   return (
-    <article className="space-y-2 flex shadow justify-between px-4 py-2 rounded-xl">
+    <article className="space-y-2  shadow  px-4 py-2 rounded-xl">
       <div>
         <h4 className="text-xl font-bold font-sans_serif">
           Verify your Email Address
@@ -35,7 +35,7 @@ export default function EmailVerificationComponent() {
         <Loader2 className="animate-spin" />
       ) : (
         <Button
-          variant="link"
+          
           disabled={isSuccess}
           onClick={handleEmailVerification}
         >

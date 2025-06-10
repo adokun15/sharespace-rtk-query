@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 export default function ProfilePic({ triggerModal }) {
   return (
-    <article className="space-y-2 flex shadow justify-between px-4 py-2 rounded-xl">
+    <article className="space-y-2 shadow  px-4 py-2 rounded-xl">
       <div>
         <h4 className="text-xl font-sans_serif font-bold">Add Photo</h4>
         <p className="font-poppins text-slate-400">
@@ -11,7 +11,7 @@ export default function ProfilePic({ triggerModal }) {
         </p>
       </div>
 
-      <Button onClick={triggerModal} variant="link">
+      <Button onClick={triggerModal} >
         Add <ChevronRight />
       </Button>
     </article>

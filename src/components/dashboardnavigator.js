@@ -1,10 +1,8 @@
 import {
   BookOpen,
-  ExternalLink,
   HomeIcon,
-  LogOut,
   MessageSquareCodeIcon,
-  User,
+  
 } from "lucide-react";
 import {
   Sidebar,
@@ -23,25 +21,8 @@ import Logo from "../image/sharespace_logo.jpg";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCoins,
-  faPeopleGroup,
-  faPerson,
-  faReply,
-  faToolbox,
-} from "@fortawesome/free-solid-svg-icons";
 import { LogoutXomponent } from "./Logout";
-import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
 
 export default function DashboardNavigator({ loadContent }) {
   const { isMobile } = useSidebar();
@@ -52,16 +33,6 @@ export default function DashboardNavigator({ loadContent }) {
       skip: !loadContent,
     }
   );
-
-  //Link to google form
-  const toFeedbackSpace = () => {
-    window.location.href = FEEDBACK_URL;
-  };
-
-  //Link to email
-  const toMyEmail = () => {
-    window.location.href = SUPPORT_EMAIL;
-  };
 
   return (
     <>
@@ -164,20 +135,6 @@ export default function DashboardNavigator({ loadContent }) {
                     </SidebarMenuItem>
                   </SidebarMenu>
 
-                  {/*               
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        className="text-xl flex justify-center"
-                        asChild
-                      >
-                        <Link to="/">
-                          <span>Our Social</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-   */}
                 </>
               )}
             </SidebarGroupContent>
@@ -185,6 +142,31 @@ export default function DashboardNavigator({ loadContent }) {
         </SidebarContent>
 
         <SidebarFooter>
+          
+           {!isLoading && !isFetching && !error &&
+            <div className="py-2 *:w-full space-y-3 my-3">
+            <Button
+            variant="ghost"
+            asChild
+            className=" bg-gray-200 rounded-[1rem] hover:bg-primary font-bold hover:text-white py-4"
+            >
+              <a href='https://sharespaceng.canny.io/feature-request' >
+              Feature Request
+              </a>
+              </Button>          
+        
+            <Button
+            variant="ghost"
+             asChild
+              className=" bg-gray-200 rounded-[1rem] hover:bg-primary font-bold hover:text-white py-4"
+              >
+              <a href='https://chat.whatsapp.com/BTbfYTcS9wX76CZSJLolUr/' >
+              Join the Community
+              </a>
+              </Button>
+          </div>
+          }
+          
           {(isLoading || isFetching) && (
             <>
               {Array.from({ length: 2 }).map((_, index) => (
@@ -211,10 +193,6 @@ export default function DashboardNavigator({ loadContent }) {
                 )}
               </>
               <ul className="text-muted font-roboto divide-x-2 justify-center gap-2 *:px-1 flex text-xs text-center">
-                {/* <li>
-                  <Link to="/about">About</Link>
-                </li>*/}
-
                 <li>
                   <Link to="/terms">Terms</Link>
                 </li>
@@ -224,73 +202,9 @@ export default function DashboardNavigator({ loadContent }) {
               </ul>
             </>
           )}
-          {!error && data && !isLoading && !isFetching && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                variant="ghost"
-                className="hover:bg-slate-100/90 hover:text-muted"
-                asChild
-              >
-                <Button variant="outline">
-                  <User />
-                  Account
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent className="min-w-[13rem]">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <FontAwesomeIcon icon={faPerson} />
-                    <Link to="/profile">Profile</Link>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem>
-                    <FontAwesomeIcon icon={faCoins} />
-                    <Link to="/profile?credit=true">
-                      <span>Buy Credit</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem>
-                  <FontAwesomeIcon icon={faToolbox} />
-                  <Link to="/settings">Settings</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuGroup>
-                  <Button variant="ghost" asChild onClick={toFeedbackSpace}>
-                    <DropdownMenuItem className="flex px-3 justify-between">
-                      <span>
-                        <FontAwesomeIcon className="mr-2" icon={faReply} />
-                        Feedback
-                      </span>
-                      <ExternalLink />
-                    </DropdownMenuItem>
-                  </Button>
-
-                  <Button variant="ghost" asChild onClick={toMyEmail}>
-                    <DropdownMenuItem className="flex px-3 justify-between">
-                      <span>
-                        <FontAwesomeIcon
-                          className="mr-2"
-                          icon={faPeopleGroup}
-                        />
-                        Support
-                      </span>
-                      <ExternalLink />
-                    </DropdownMenuItem>
-                  </Button>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
-                  <LogoutXomponent refetch={refetch} />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+       
+          {!error && data && !isLoading && !isFetching && <LogoutXomponent refetch={refetch}/>}
+       
         </SidebarFooter>
       </Sidebar>
     </>

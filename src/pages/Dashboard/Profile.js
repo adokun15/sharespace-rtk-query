@@ -50,6 +50,7 @@ import {
 import { Link } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { accountCreationDate } from "../../utils/TimeHandler";
+import AccountButton from "src/UI/AccountButton";
 
 const FormSchema = z.object({
   type: z.enum(["60", "500", "1000"], {
@@ -151,9 +152,13 @@ export default function ProfilePage() {
 
   return (
     <main className="mx-auto container">
+      <div className='flex justify-between md:px-[5%]'>
+
       <h1 className="text-2xl font-semibold text-slate-600 font-roboto tracking-wide">
         Profile Account
       </h1>
+      <AccountButton/>
+      </div>
 
       <div className="my-6">
         <Dialog
@@ -444,11 +449,14 @@ export default function ProfilePage() {
               Finish setting up your profile and start finding your roommate
             </AlertDescription>
           </Alert>
+          <div className="flex flex-row flex-wrap gap-4">
+
           {!user?.profile && <Profile mode="create" />}
 
           {!user?.email_verified && <EmailVerificationComponent />}
 
           {!user?.photo && <ProfilePic triggerModal={toggleDialogModalPhoto} />}
+          </div>
         </div>
       )}
     </main>

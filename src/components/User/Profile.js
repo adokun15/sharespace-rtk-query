@@ -27,6 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { SUPPORT_EMAIL } from "../../lib/utils";
+import Card from "src/UI/Card";
 //import { z } from "zod";
 
 export default function Profile({ mode, previousData }) {
@@ -147,34 +148,38 @@ export default function Profile({ mode, previousData }) {
 
   return (
     <Sheet open={toggleModal} onOpenChange={() => setToggleModal((p) => !p)}>
-      <article className="space-y-2 flex shadow justify-between px-4 py-2 rounded-xl">
+      <article className="space-y-2 shadow  px-4 py-2 rounded-xl">
         <div>
           <h4 className="text-xl font-sans_serif font-bold">
             Add Personal Information
           </h4>
+
           <p className="font-poppins text-slate-400">
             Submit correct information to get matches that suite you
           </p>
         </div>
 
         <SheetTrigger asChild>
-          <Button variant="link">
+          <Button >
             Add <ChevronRight />
           </Button>
         </SheetTrigger>
       </article>
 
       <SheetContent className="space-y-4 overflow-y-auto">
-        <SheetTitle className="text-slate-400 font-sans_serif">
+        <SheetTitle className="font-sans_serif">
           Set Up Profile
         </SheetTitle>
+        <p className="text-xs text-slate-400  font-poppins">Fill in the gaps😂, and enter correct info ooo, so you won't have a mismatch!</p>
+       
         <Form {...form}>
           <form
-            className="space-y-6"
+            className="space-y-10"
             onSubmit={form.handleSubmit(handleSubmit)}
           >
-            <div>
-              <h1 className="text-xl font-bold font-poppins">Roomie Type</h1>
+            <div className="space-y-1">
+              <h1 className="m-1 text-2xl font-bold font-poppins">Roomie Type</h1>
+                <Card elClass=" my-1 space-y-2 min-h-2">
               <FormField
                 name="targetType"
                 control={form.control}
@@ -183,7 +188,7 @@ export default function Profile({ mode, previousData }) {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                    >
+                      >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="What type of roomate are you looking for?" />
@@ -198,32 +203,19 @@ export default function Profile({ mode, previousData }) {
                         </SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormItem>
+                )}
+                />
+                </Card>
+                
                     <FormDescription>
                       Enter the type of roomate we should look out for you.
                     </FormDescription>
-                  </FormItem>
-                )}
-              />
             </div>
-            <div>
+            
+                  <div className="space-y-1">
               <h1 className="text-xl font-bold font-poppins">Personal Info</h1>
-              {/*<FormField
-                name="dob"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        placeholder="Enter Your Date Of birth"
-                        />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-*/}
+                <Card elClass=" my-1 space-y-2 min-h-2">
               <FormField
                 name="religion"
                 control={form.control}
@@ -270,64 +262,84 @@ export default function Profile({ mode, previousData }) {
                   </FormItem>
                 )}
               />
+           </Card>
               {/*     <FormField
                 name="habit"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Habit</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter Your Habit" />
-                    </FormControl>
-                    <FormDescription>
-                      Include space to add more Habit
-                    </FormDescription>
+                  <FormLabel>Habit</FormLabel>
+                  <FormControl>
+                  <Input {...field} placeholder="Enter Your Habit" />
+                  </FormControl>
+                  <FormDescription>
+                  Include space to add more Habit
+                  </FormDescription>
                   </FormItem>
                 )}
               />
               <FormField
-                name="hobby"
+              name="hobby"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Hobby</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter Your Date Of birth"
+                    <Input
+                    {...field}
+                    placeholder="Enter Your Date Of birth"
                       />
-                    </FormControl>
-                    <FormDescription>
+                      </FormControl>
+                      <FormDescription>
                       We collect this Information to find a match for you
-                    </FormDescription>
-                  </FormItem>
-                  )}
-              />*/}
+                      </FormDescription>
+                      </FormItem>
+                      )}
+                      />
+                      */
+                    }
+
             </div>
-            <div>
+            <div className="space-y-1">
               <h1 className="text-xl font-bold font-poppins">School Info</h1>
+             <Card elClass=" my-1 space-y-6 min-h-2">
               <FormField
                 name="school"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Institute</FormLabel>
+                    <FormDescription>
+                      You Can't find your school on the list. Reach out to {" "}
+                      <a
+                        className="text-primary underline"
+                        href={SUPPORT_EMAIL}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Me
+                      </a>{" "}
+                      to include your school
+                    </FormDescription>
+                 
                     {loadingSchools && (
                       <Loader2 className="text-xs animate-spin" />
                     )}
+
                     {isError && (
                       <>
                         <p className="text-destructive">{error?.message}</p>
-                        <Button variant="link" onClick={refetch}>
-                          reload
+                        <Button  onClick={refetch}>
+                          Reload
                         </Button>
                       </>
                     )}
 
-                    <Select
+                    {!isError && !loadingSchools &&(
+                      <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                    >
+                      >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select School Name" />
@@ -341,19 +353,8 @@ export default function Profile({ mode, previousData }) {
                         ))}{" "}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      Can't find your school. Reach out to{" "}
-                      <a
-                        className="text-primary underline"
-                        href={SUPPORT_EMAIL}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Me
-                      </a>{" "}
-                      to include your school
-                    </FormDescription>
-                  </FormItem>
+            )}
+                    </FormItem>
                 )}
               />
 
@@ -363,6 +364,7 @@ export default function Profile({ mode, previousData }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Level</FormLabel>
+                    <FormDescription>Enter Your Level</FormDescription>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -380,7 +382,6 @@ export default function Profile({ mode, previousData }) {
                         <SelectItem value="500">500</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>Enter Your Level</FormDescription>
                   </FormItem>
                 )}
               />
@@ -390,16 +391,20 @@ export default function Profile({ mode, previousData }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter Your Department" />
-                    </FormControl>
-                    <FormDescription>
+                   <FormDescription>
                       Enter In Complete Format eg Public health Science, Mass
                       communication.
                     </FormDescription>
-                  </FormItem>
+                  
+                    <FormControl>
+                   
+
+                      <Input {...field} placeholder="Enter Your Department" />
+                    </FormControl>
+                    </FormItem>
                 )}
               />
+          </Card>
             </div>
             <Button className="w-full rounded">
               {loading ? "..." : "Submit"}

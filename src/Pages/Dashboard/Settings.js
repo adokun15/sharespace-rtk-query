@@ -24,6 +24,7 @@ import {
 } from "../../components/ui/dialog";
 import { Skeleton } from "../../components/ui/skeleton";
 import DataError from "../../components/DataError";
+import AccountButton from "src/UI/AccountButton";
 export default function Settings() {
   const reRoute = useNavigate();
   const {
@@ -107,13 +108,45 @@ export default function Settings() {
   };
 
   return (
-    <main className="mb-4 w-full md:w-[70%] mx-auto">
-      <h2 className="text-2xl">Settings</h2>
-      <Card elClass="space-y-4 min-h-6">
-        <h2 className="capitalize text-xl font-roboto font-bold">
-          Who should we display on your Timeline
+    <main className="mb-4 w-full space-y-5 md:w-[70%] mx-auto">
+    
+        <div className="flex mb-8 justify-between">
+          <h2 className="text-3xl font-semibold font-sans_serif">Settings</h2>
+            <AccountButton/>
+        </div>
+    
+      <div className="space-y-1">
+      <h2 className="m-0 capitalize text-xl font-roboto font-bold">
+          Notification
         </h2>
-        {loading && <Loader2 />}
+      <Card elClass=" my-1 space-y-2 min-h-2">
+        <p className="text-muted ">Control how you receive notification</p>
+       <article>
+        <p>Chat Notification</p>
+        <p>Roommate Request Notification</p>
+       
+      </article>
+       </Card>
+      </div>
+    
+    
+      <div className="space-y-1">
+      <h2 className="m-0 capitalize text-xl font-roboto font-bold">
+          
+          Credit Tokens
+        </h2>
+      <Card elClass=" my-1 space-y-2 min-h-2">
+      <p className="text-muted ">You have 90 credits left</p>
+        <Button>+ Add More</Button>
+         </Card>
+      </div>
+    
+      <div className="space-y-1">
+      <h2 className="m-0 capitalize text-xl font-roboto font-bold">
+          Roomie Post        </h2>
+      <Card elClass=" my-1 space-y-2 min-h-2">
+        <p className="text-muted ">Who should we display on your timeline?</p>
+         {loading && <Loader2 />}
         <Select defaultValue={user?.targetType} onValueChange={roommateHandler}>
           <SelectTrigger>
             <SelectValue placeholder="Select an option" />
@@ -128,18 +161,35 @@ export default function Settings() {
           </SelectContent>
         </Select>
       </Card>
-      <Card elClass="space-y-4 h-fit min-h-3">
-        <Dialog>
-          <div className="flex justify-between">
-            <h2 className="capitalize text-xl font-roboto font-bold">
+      </div>
+     
+      <div className="space-y-1">
+      <h2 className="m-0 capitalize text-xl font-roboto font-bold">
+          Affliate and Earn
+        </h2>
+      <Card elClass=" my-1 space-y-2 min-h-2">
+        <p className="text-muted ">Bring your friends along who might need a roommate themselves and earn at the same time</p>
+        <Button>Join Affliate Program</Button>
+        </Card>
+      </div>
+
+     
+      <div className="space-y-1">
+      <h2 className="m-0 capitalize text-xl font-roboto font-bold">
               Account removal
-            </h2>
+        </h2>
+
+      <Card elClass="space-y-4 h-fit min-h-2">
+        <Dialog>
+          <div className="">
+          <p>Remove Your Account From ShareSpace Forever</p>
+            
             <DialogTrigger asChild>
               <Button
-                variant="link"
+                variant="destructive"
                 disabled={!user}
-                className="text-destructive rounded-xl  font-oswald"
-              >
+                className=" rounded-xl  font-oswald"
+                >
                 <span>Delete</span>
                 <ChevronRight />
               </Button>
@@ -155,6 +205,8 @@ export default function Settings() {
           </DialogContent>
         </Dialog>
       </Card>
+      </div>
+      
       <div className="text-center *:px-2 divide-x-2">
         <Link to="/terms" className=" text-purple-500 underline font-oswald">
           Terms

@@ -8,13 +8,15 @@ import Roomates from "../../components/Roomates";
 import RequestSentTable from "../../components/RequestSentTable";
 import UserRoommateData from "../../components/User/Preference";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "../../components/ui/dialog";
 import InviteModal from "../../components/InviteModal";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { Loader2, Plus } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AccountButton from "src/UI/AccountButton";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
@@ -70,11 +72,9 @@ const ExplorePage = () => {
 
   return (
     <>
-      <main className="mb-20 space-y-3 w-full">
-        <div className="flex justify-between">
-          <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-
-          <Button className="rounded" onClick={handleReRoute}>
+      <main className="relative mb-20 space-y-3 w-full">
+          
+          <Button variant='primary' className=" fixed py-6 animate-bounce md:bottom-10 bottom-5 md:right-10 right-5 rounded-xl text-[1.44rem] px-6 z-30 rounded" onClick={handleReRoute}>
             {isLoading || isFetching ? (
               <Loader2 className="animate-spin" />
             ) : (
@@ -83,6 +83,11 @@ const ExplorePage = () => {
               </>
             )}
           </Button>
+
+
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
+            <AccountButton/>
         </div>
 
         <Dialog
@@ -99,7 +104,7 @@ const ExplorePage = () => {
         </Dialog>
 
         {user ? (
-          <Tabs className="space-y-5" defaultValue="roommates">
+          <Tabs className="my-[2.5rem] space-y-5" defaultValue="roommates">
             <TabsList>
               <TabsTrigger value="roommates">Roomates Posts</TabsTrigger>
               <TabsTrigger value="proposal">Applied Posts</TabsTrigger>

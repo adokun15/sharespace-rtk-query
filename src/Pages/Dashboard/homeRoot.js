@@ -6,7 +6,7 @@ import TriggerSidebar from "../../UI/TriggerSidebar";
 import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import { FEEDBACK_URL } from "../../lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bell, Moon } from "lucide-react";
 export default function HomeRoot() {
   const location = useLocation();
   //const reRoute = useNavigate();
@@ -47,21 +47,10 @@ export default function HomeRoot() {
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />
       <main className="w-full bg-background relative ">
-        <TriggerSidebar />
-        <div>
-          <div className="w-full bg-accent text-white text-xs md:text-xl md:text-center py-2 md:block hidden">
-            <p className="hover:cursor-pointer" onClick={toFeedbackSpace}>
-              <span className="font-bold">ShareSpace</span> is currently in
-              beta! We're working to improve your experience. Have feedback? Let
-              us know!
-              <ArrowRight className="inline mx-2 my-auto" size={24} />
-            </p>
-          </div>
-
-          <article className="md:space-y-[4rem] md:px-[3rem] px-[1rem] md:my-[2rem]">
+        <TriggerSidebar />    
+         <article className="md:space-y-[4rem] md:px-[3rem] px-[1rem] md:my-[2rem]">
             <Outlet />
           </article>
-        </div>
       </main>
       <Toaster richColors />
     </SidebarProvider>
