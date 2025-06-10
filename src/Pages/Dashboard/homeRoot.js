@@ -53,6 +53,7 @@ export default function HomeRoot() {
           </article>
       </main>
       <Toaster richColors />
-    </SidebarProvider>
+
+v    </SidebarProvider>
   );
 }
