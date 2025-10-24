@@ -1,5 +1,4 @@
 import { AccordionContent, AccordionHeader } from "@radix-ui/react-accordion";
-import Card from "../UI/Card";
 import { Accordion, AccordionItem, AccordionTrigger } from "./ui/accordion";
 
 export default function Guide() {

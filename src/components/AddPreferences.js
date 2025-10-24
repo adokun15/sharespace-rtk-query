@@ -1,3 +1,5 @@
+//Create Post!!!
+
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -12,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { z } from "zod";
 import { useRoomieSpaceFormMutation } from "../store/Slices/matches";
-import { Slider } from "./ui/slider";
+//import { Slider } from "./ui/slider";
 import {
   Select,
   SelectContent,
@@ -31,14 +33,13 @@ export default function AddPreferences({ user }) {
   const formSchema = z.object({
     //New
     duration: z.string().min(2),
-    rentType: z.string().min(2),
+    // rentType: z.string().min(2),
     school_short: z.string().min(2, "This name is way too short!"),
-
     description: z.string().min(5, "Quote too Short"),
     location: z.string().min(2, "Invalid Location Length"),
-    rent: z.number().array(),
-    proposal: z.number().array(),
-    numberOfRoommates: z.string().max(2),
+    // rent: z.number().array(),
+    //proposal: z.number().array(),
+    //numberOfRoommates: z.string().max(2),
   });
 
   const reRoute = useNavigate();
@@ -48,12 +49,12 @@ export default function AddPreferences({ user }) {
       //New
       school_short: "",
       duration: "a session",
-      rentType: "fixed",
+      //  rentType: "fixed",
       description: "",
       location: "",
-      rent: [150],
-      proposal: [10],
-      numberOfRoommates: "1",
+      //  rent: [150],
+      // proposal: [10],
+      // numberOfRoommates: "1",
     },
     resolver: zodResolver(formSchema),
   });
@@ -148,6 +149,7 @@ export default function AddPreferences({ user }) {
       </div>
     );
   }
+
   /**
  If your Target is 'toward' student looking for a roomie, then
 your post should be a roomie, which means you have 'accomodation'
@@ -202,7 +204,7 @@ your post should be a spacer, which means you have no 'accomodation'
           </>
         )}
 
-        <FormField
+        {/*  <FormField
           name="rentType"
           control={form.control}
           render={({ field }) => (
@@ -224,7 +226,7 @@ your post should be a spacer, which means you have no 'accomodation'
             </FormItem>
           )}
         />
-
+*/}
         <FormField
           name="school_short"
           control={form.control}
@@ -242,6 +244,7 @@ your post should be a spacer, which means you have no 'accomodation'
             </FormItem>
           )}
         />
+
         <FormField
           name="description"
           control={form.control}
@@ -263,7 +266,7 @@ your post should be a spacer, which means you have no 'accomodation'
 
               <FormDescription>
                 <p>
-                  {user?.targetType === "roomie"
+                  {user?.targetType !== "roomie"
                     ? "Enter a brief of quote about your hostel"
                     : "Enter a brief quote about your lifestyle, budget or what you do not like."}
                 </p>
@@ -279,7 +282,7 @@ your post should be a spacer, which means you have no 'accomodation'
           )}
         />
 
-        {user?.targetType === "roomie" && (
+        {/*user?.targetType === "roomie" && (
           <FormField
             name="numberOfRoommates"
             control={form.control}
@@ -311,8 +314,9 @@ your post should be a spacer, which means you have no 'accomodation'
               </FormItem>
             )}
           />
-        )}
-        <FormField
+        )*/}
+
+        {/*<FormField
           name="rent"
           control={form.control}
           render={({ field }) => (
@@ -336,7 +340,7 @@ your post should be a spacer, which means you have no 'accomodation'
               </FormDescription>
             </FormItem>
           )}
-        />
+        />*/}
 
         <FormField
           name="location"
@@ -359,7 +363,7 @@ your post should be a spacer, which means you have no 'accomodation'
           )}
         />
 
-        <FormField
+        {/*     <FormField
           name="proposal"
           control={form.control}
           render={({ field }) => (
@@ -390,17 +394,13 @@ your post should be a spacer, which means you have no 'accomodation'
               </FormDescription>
             </FormItem>
           )}
-        />
+        />*/}
         <Button
           variant="primary"
           disabled={isLoading}
-          className="rounded font-bold mx-auto block tracking-wide"
+          className="rounded w-full max-w-md font-bold mx-auto block tracking-wide"
         >
-          {isLoading ? (
-            <Loader2 className="animate-spin" />
-          ) : (
-            "Upload Post (100 credits)"
-          )}
+          {isLoading ? <Loader2 className="animate-spin" /> : "Upload"}
         </Button>
       </form>
     </Form>

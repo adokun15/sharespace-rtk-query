@@ -4,24 +4,24 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import LandingPage from "./Pages/landingPage";
 import AuthenticationPage from "./Pages/Auth/Auth";
 import ProfilePage from "./Pages/Dashboard/Profile";
-import FindRoommatePage from "./Pages/Dashboard/FindRoomie";
-import ChatsPage from "./Pages/Dashboard/Chats";
+//import FindRoommatePage from "./Pages/Dashboard/FindRoomie";
+//import ChatsPage from "./Pages/Dashboard/Chats";
 import AuthenticationComponent from "./components/AuthComponent";
 import ErrorPage from "./Pages/Error";
 import ExplorePage from "./Pages/Dashboard/Explore";
 import HomeRoot from "./Pages/Dashboard/homeRoot";
-import ManageCredit from "./Pages/Dashboard/Credit";
+//import ManageCredit from "./Pages/Dashboard/Credit";
 import CreateRoomieSpaceForm from "./Pages/Dashboard/CreateForm";
-import Settings from "./Pages/Dashboard/Settings";
-import RequestReceivedTable from "./components/RequestReceivedTable";
+//import Settings from "./Pages/Dashboard/Settings";
+//import RequestReceivedTable from "./components/RequestReceivedTable";
 import About from "./Pages/about";
 import Privacy from "./Pages/privacy";
 import Term from "./Pages/tos";
-import SingleRoommateInfo from "./components/SingleRoomieData";
-import Guide from "./components/Guides";
-import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
-import ChatList from "./components/ChatList";
-import ChatDetail from "./components/ChatDetail";
+//import SingleRoommateInfo from "./components/SingleRoomieData";
+//import Guide from "./components/Guides";
+//import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
+//import ChatList from "./components/ChatList";
+//import ChatDetail from "./components/ChatDetail";
 function App() {
   const router = createBrowserRouter([
     {
@@ -34,10 +34,9 @@ function App() {
       children: [
         //public
         { index: true, element: <ExplorePage /> },
-        { path: "guide", element: <Guide /> },
-
+        //    { path: "guide", element: <Guide /> },
         //private
-        { path: "find", element: <FindRoommatePage /> },
+        //      { path: "find", element: <FindRoommatePage /> },
         {
           path: "create",
           children: [
@@ -47,13 +46,13 @@ function App() {
             },
           ],
         },
-        { path: "profile", element: <ProfilePage />},
-        { path: "profile/manage-credit", element: <ManageCredit />}
-       , 
-        { path: "settings", element: <Settings /> },
+        { path: "profile", element: <ProfilePage /> },
+        //{ path: "profile/manage-credit", element: <ManageCredit />}
+
+        //{ path: "settings", element: <Settings /> },
 
         //Chat!
-        {
+        /*       {
           path: "space",
           element: <ChatsPage />,
           children: [
@@ -63,9 +62,8 @@ function App() {
             { path: "proposals/:roomieId", element: <SingleRoommateInfo /> },
           ],
         },
+*/
 
-        //For Credit Purchase!
-        
         //public
         {
           path: "/auth",
@@ -75,10 +73,10 @@ function App() {
               index: true,
               element: <AuthenticationComponent />,
             },
-            {
+            /*{
               path: "forgotPassword",
               element: <ForgetPasswordComponent />,
-            },
+            },*/
           ],
         },
         { path: "/terms", element: <Term /> },

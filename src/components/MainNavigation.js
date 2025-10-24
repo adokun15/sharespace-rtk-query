@@ -21,7 +21,7 @@ export default function MainNavigation() {
           variant="outline"
           className="text-xl hover:bg-purple-500 hover:text-white rounded py-2"
         >
-          Sign In
+          Login
         </Button>
       </div>
     </motion.nav>

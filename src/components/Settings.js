@@ -1,19 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
-import Card from "../../UI/Card";
+import Card from "../UI/Card";
 import {
   useDeleteUserMutation,
   useEditUserMutation,
   useGetUserQuery,
-} from "../../store/Slices/user";
-import {
+} from "../store/Slices/user";
+/*import {
   Select,
   SelectValue,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "../../components/ui/select";
-import { Button } from "../../components/ui/button";
-import { ChevronRight, Loader2 } from "lucide-react";
+} from "../components/ui/select";
+*/ import { Button } from "../components/ui/button";
+import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   DialogClose,
@@ -21,10 +21,10 @@ import {
   Dialog,
   DialogTitle,
   DialogTrigger,
-} from "../../components/ui/dialog";
-import { Skeleton } from "../../components/ui/skeleton";
-import DataError from "../../components/DataError";
-export default function Settings() {
+} from "../components/ui/dialog";
+import { Skeleton } from "../components/ui/skeleton";
+import DataError from "../components/DataError";
+export default function SettingsComponent() {
   const reRoute = useNavigate();
   const {
     data: user,
@@ -88,6 +88,7 @@ export default function Settings() {
       });
   };
 
+  /*
   const roommateHandler = async (value) => {
     await editUser({ targetType: value })
       .unwrap()
@@ -105,11 +106,11 @@ export default function Settings() {
         });
       });
   };
-
+*/
   return (
     <main className="mb-4 w-full md:w-[70%] mx-auto">
       <h2 className="text-2xl">Settings</h2>
-      <Card elClass="space-y-4 min-h-6">
+      {/* <Card elClass="space-y-4 min-h-6">
         <h2 className="capitalize text-xl font-roboto font-bold">
           Who should we display on your Timeline
         </h2>
@@ -128,6 +129,15 @@ export default function Settings() {
           </SelectContent>
         </Select>
       </Card>
+      */}
+
+      <Card>
+        Account: UPGRADE TO PRO NGN1300(ADD MORE THAN 1 POST),UP TO TWODELETE
+        ACCOUNT;
+      </Card>
+      <Card>sUPPPORT </Card>
+      <Card>fEEDBACK</Card>
+      <Card>lOGOUT</Card>
       <Card elClass="space-y-4 h-fit min-h-3">
         <Dialog>
           <div className="flex justify-between">

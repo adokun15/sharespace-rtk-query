@@ -9,8 +9,7 @@ export const lIVE_CLIENT_WEB_URL = "https://sharespace.com.ng";
 export const LOCAL_CLIENT_WEB_URL = "http://localhost:3000";
 
 export const FEEDBACK_URL = "https://forms.gle/2QnuRvNrDYG6aogm7";
-export const SUPPORT_EMAIL =
-  "mailto:contactdanielamos@gmail.com?subject=HELP NEEDED";
+export const SUPPORT_EMAIL = "mailto:contactdanielamos@gmail.com";
 
 export const FIREBASE_APIKEY = "AIzaSyDsU2heMX_fy89fl1WjvjHel6O1lFyeuAk";
 export const FIREBASE_AUTH_DOMAIN = "sharespace.com.ng";

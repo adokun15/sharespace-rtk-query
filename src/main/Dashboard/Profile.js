@@ -8,7 +8,7 @@ import {
 
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { AlertCircleIcon, ArrowRight, Camera, Loader2 } from "lucide-react";
-import EmailVerificationComponent from "../../components/User/EmailVerification";
+//import EmailVerificationComponent from "../../components/User/EmailVerification";
 import ProfilePic from "../../components/User/PhotoUpload";
 import Profile from "../../components/User/Profile";
 import {
@@ -37,7 +37,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+/*
 import {
   Form,
   FormControl,
@@ -49,7 +49,9 @@ import {
 } from "../../components/ui/form";
 import { Link } from "react-router-dom";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+*/
 import { accountCreationDate } from "../../utils/TimeHandler";
+import Settings from "src/components/Settings";
 
 const FormSchema = z.object({
   type: z.enum(["60", "500", "1000"], {
@@ -235,7 +237,8 @@ export default function ProfilePage() {
         </h3>
         <p className="font-oswald text-slate-400 text-center my-1">
           <span className="font-roboto font-bold">
-            {user?.credits || 0} Credits
+            {/*user?.credits || 0} Credits*/}
+            Verified
           </span>
         </p>
         <p className="font-oswald text-slate-600 text-center my-1">
@@ -248,12 +251,12 @@ export default function ProfilePage() {
       {profile_complete && (
         <div className="w-full space-y-3 mb-4">
           <Tabs
-            defaultValue={auto_open_credit ? "credits" : "profile"}
             className="space-y-5"
+            defaultValue={auto_open_credit === "true" ? "credit" : "profile"}
           >
             <TabsList>
               <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="credits">Buy Credits</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="profile">
@@ -271,14 +274,14 @@ export default function ProfilePage() {
 
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Department*
+                      Department
                     </p>
                     <p>{user?.profile?.department}</p>
                   </div>
 
                   <div className="text-[16px]">
                     <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Level*
+                      Level
                     </p>
                     <p>{user?.profile?.level}</p>
                   </div>
@@ -314,8 +317,9 @@ export default function ProfilePage() {
                 </DialogContent>
               </Dialog>
             </TabsContent>
-            <TabsContent value="credits">
-              <Dialog>
+            <TabsContent value="settings">
+              <Settings />
+              {/* <Dialog>
                 <article className="space-y-2  px-1 py-2 ">
                   <p>Buy Credits and find your roommate instantly!</p>
                   <div className="flex gap-3">
@@ -417,20 +421,7 @@ export default function ProfilePage() {
                     </Form>
                   </>
                 </DialogContent>
-              </Dialog>
-              {/*
-              <div className="px-1 space-y-2">
-                <h2 className="text-xl font-bold">Faqs</h2>
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="faq-1">
-                    <AccordionTrigger>What is a credit?</AccordionTrigger>
-                    <AccordionContent>
-                      Credits are purchase tokens used for exchange of service.
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-         */}
+              </Dialog>*/}
             </TabsContent>
           </Tabs>
         </div>
@@ -445,71 +436,10 @@ export default function ProfilePage() {
             </AlertDescription>
           </Alert>
           {!user?.profile && <Profile mode="create" />}
-
-          {!user?.email_verified && <EmailVerificationComponent />}
-
+          {/*!user?.email_verified && <EmailVerificationComponent />*/}
           {!user?.photo && <ProfilePic triggerModal={toggleDialogModalPhoto} />}
         </div>
       )}
     </main>
   );
-  /*   return (
-      <motion.div>
-        <Container elClass="text-main_color">
-          <h1 className="text-4xl text-center my-8"> Your Profile</h1>
-          <Card elClass="hover:-translate-y-1 transition-all duration-700 ease-in-out">
-            <article className="px-[10%] md:flex *:block my-4 items-center">
-              <div className=" max-w-[40%] flex justify-center">
-                <Image imgSrc={profile?.photourl ? profile?.photourl : ""} />
-              </div>
-              <div className="space-y-1 w-full py-2 ">
-                <p className="text-4xl ml-3  col-span-3">{profile?.fullname}</p>
-                <p className="text-xl italic my-4 ml-3 text-slate-400 col-span-3">
-                  @{profile?.username}
-                </p>
-                <div className="flex flex-wrap items-center">
-                  <p className="cursor-pointer  w-fit p-2 rounded ml-3 bg-slate-200  text-[15px] hover:bg-purple-500/90 hover:text-white transition-all">
-                    {profile?.gender}
-                  </p>
-
-                  <p className="w-fit p-1 rounded ml-3 bg-slate-200  text-[15px] hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                    {ageHandler(profile?.dob)} years old
-                  </p>
-                </div>
-
-                <p className=" w-fit p-1 my-1 rounded ml-3  bg-slate-200  text-[15px]  hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                  {profile?.email}
-                </p>
-                <p className=" w-fit text-nowrap  p-1 rounded ml-3 bg-slate-200  text-[15px]  hover:bg-purple-500/90 hover:text-white transition-all cursor-pointer ">
-                  {profile?.school}
-                </p>
-              </div>
-            </article>
-            <Button
-              trigger={() => {
-                dispatch(
-                  ModalAction.toggleEditProfilePopOver({ mode: "Edit" })
-                );
-              }}
-            >
-              Edit
-            </Button>
-          </Card>
-        </Container>
-        <AnimatePresence
-          initial={{ scale: 0 }}
-          animate={{ scale: 100 }}
-          exit={{ scale: 0 }}
-        >
-          {EditProfilePopOver.isOpened && (
-            <>
-              <Modal cls="top-[5%] absolute z-[1200] md:left-[20%] left-0 md:w-[60%] w-full">
-                <ProfileUpdate mode={EditProfilePopOver.mode?.toLowerCase()} />
-              </Modal>
-            </>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    );
-    */
 }
