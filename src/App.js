@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import RootPage from "./Pages/RootPage";
 //import ErrorElement from "./Pages/Error";
 //import LandingPage from "./Pages/landingPage";
-import AuthenticationPage from "./Pages/Auth/Auth";
+import AuthenticationPage from "./main/Auth/Auth";
 import ProfilePage from "./main/Dashboard/Profile";
 //import FindRoommatePage from "./main/Dashboard/FindRoomie";
 //import ChatsPage from "./main/Dashboard/Chats";
