@@ -108,63 +108,64 @@ export default function SettingsComponent() {
   };
 */
   return (
-    <main className="mb-4 w-full md:w-[70%] mx-auto">
-      <h2 className="text-2xl">Settings</h2>
-      {/* <Card elClass="space-y-4 min-h-6">
-        <h2 className="capitalize text-xl font-roboto font-bold">
-          Who should we display on your Timeline
-        </h2>
-        {loading && <Loader2 />}
-        <Select defaultValue={user?.targetType} onValueChange={roommateHandler}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select an option" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="roomie">
-              <span>Someone who already has a hostel</span>
-            </SelectItem>
-            <SelectItem value="spacer">
-              <span>Someone who looking for accomodation</span>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </Card>
-      */}
+    <main className="mb-4 space-y-4 font-poppins w-full ">
+      <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+        <h3 className="font-[600] text-[18px]">Upgrade to Pro</h3>
+        <p className="text-muted">
+          Get more by getting a pro account. No subscription. Just pay once.
+        </p>
+        <p className="italic">_Perks_</p>
+        <ul className="list-disc pl-4">
+          <li>Video Upload of Hostel</li>
+          <li>Longer post time (Up to 2weeks)</li>
+          <li>Advanced Filter to find roommate</li>
+        </ul>
+        <Button variant="primary" className="rounded">
+          Pay NGN1200
+        </Button>
+      </div>
 
-      <Card>
-        Account: UPGRADE TO PRO NGN1300(ADD MORE THAN 1 POST),UP TO TWODELETE
-        ACCOUNT;
-      </Card>
-      <Card>sUPPPORT </Card>
-      <Card>fEEDBACK</Card>
-      <Card>lOGOUT</Card>
-      <Card elClass="space-y-4 h-fit min-h-3">
-        <Dialog>
-          <div className="flex justify-between">
-            <h2 className="capitalize text-xl font-roboto font-bold">
-              Account removal
-            </h2>
-            <DialogTrigger asChild>
-              <Button
-                variant="link"
-                disabled={!user}
-                className="text-destructive rounded-xl  font-oswald"
-              >
-                <span>Delete</span>
-                <ChevronRight />
-              </Button>
-            </DialogTrigger>
-          </div>
-          <DialogContent>
-            <DialogTitle>Delete ShareSpace permanently</DialogTitle>
-            <p>This action is irreversible and you will lose all your data</p>
-            <Button variant="destructive" onClick={deleteAccount}>
-              {deleting ? "deleting..." : "Delete Account"}
+      <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+        <h3 className="font-[600] text-[18px]">Support</h3>
+        <p className="text-muted">Reach out to us, we are always available.</p>
+        <Button variant="primary" className="rounded">
+          Talk to Us
+        </Button>
+      </div>
+
+      <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+        <h3 className="font-[600] text-[18px]">Feedback</h3>
+        <p className="text-muted">Let us know where to improve...</p>
+        <Button variant="primary" className="rounded">
+          Give thought
+        </Button>
+      </div>
+
+      <Dialog>
+        <div className=" border-4 space-y-3 py-4 px-2 rounded-xl">
+          <h3>Delete Your Account permanent</h3>
+
+          <DialogTrigger asChild>
+            <Button
+              variant="destructive"
+              disabled={!user}
+              className=" rounded-xl font-oswald"
+            >
+              <span>Delete</span>
             </Button>
-            <DialogClose>Close</DialogClose>
-          </DialogContent>
-        </Dialog>
-      </Card>
+          </DialogTrigger>
+        </div>
+
+        <DialogContent>
+          <DialogTitle>Delete Account permanently</DialogTitle>
+          <p>This action is irreversible and you will lose all your data</p>
+          <Button variant="destructive" onClick={deleteAccount}>
+            {deleting ? "deleting..." : "Delete Account"}
+          </Button>
+          <DialogClose>Close</DialogClose>
+        </DialogContent>
+      </Dialog>
+
       <div className="text-center *:px-2 divide-x-2">
         <Link to="/terms" className=" text-purple-500 underline font-oswald">
           Terms

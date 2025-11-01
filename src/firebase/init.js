@@ -22,7 +22,7 @@ const firebaseConfig = {
 };
 
 async function setup_Auth_Emulator(auth) {
-  const url = "http://localhost:9090";
+  const url = "http://localhost:9092";
   await fetch(url);
   connectAuthEmulator(auth, url);
 }
@@ -32,7 +32,7 @@ const app_initialized = () => {
     const app = getApp();
     if (process.env.NODE_ENV === "development") {
       setup_Auth_Emulator(getAuth(app));
-      connectFirestoreEmulator(getFirestore(app), "localhost", 8080);
+      connectFirestoreEmulator(getFirestore(app), "localhost", 8082);
       //connectStorageEmulator(getStorage(app), "localhost", 9190);
     }
   } else {
@@ -40,7 +40,7 @@ const app_initialized = () => {
 
     if (process.env.NODE_ENV === "development") {
       setup_Auth_Emulator(getAuth(app));
-      connectFirestoreEmulator(getFirestore(app), "localhost", 8080);
+      connectFirestoreEmulator(getFirestore(app), "localhost", 8082);
       // connectStorageEmulator(getStorage(app), "localhost", 9190);
     }
   }
