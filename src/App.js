@@ -17,6 +17,8 @@ import CreateRoomieSpaceForm from "./main/Dashboard/CreateForm";
 import About from "./main/about";
 import Privacy from "./main/privacy";
 import Term from "./main/tos";
+import GoogleLogin from "./components/googleLogin";
+import OnBoardingPage from "./main/Onboarding/page";
 //import SingleRoommateInfo from "./components/SingleRoomieData";
 //import Guide from "./components/Guides";
 //import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
@@ -32,51 +34,25 @@ function App() {
       element: <HomeRoot />,
       errorElement: <ErrorPage />,
       children: [
-        //public
-        { index: true, element: <ExplorePage /> },
-        //    { path: "guide", element: <Guide /> },
         //private
-        //      { path: "find", element: <FindRoommatePage /> },
+        { path: "onboarding", element: <OnBoardingPage /> },
         {
           path: "create",
-          children: [
-            { index: true, element: <CreateRoomieSpaceForm /> },
-            {
-              /*path: "add-video", element: <AddVideo />*/
-            },
-          ],
+          children: [{ index: true, element: <CreateRoomieSpaceForm /> }],
         },
         { path: "profile", element: <ProfilePage /> },
-        //{ path: "profile/manage-credit", element: <ManageCredit />}
-
-        //{ path: "settings", element: <Settings /> },
-
-        //Chat!
-        /*       {
-          path: "space",
-          element: <ChatsPage />,
-          children: [
-            { index: true, element: <ChatList /> },
-            { path: ":spaceId", element: <ChatDetail /> },
-            { path: "proposals", element: <RequestReceivedTable /> },
-            { path: "proposals/:roomieId", element: <SingleRoommateInfo /> },
-          ],
-        },
-*/
 
         //public
+        { index: true, element: <ExplorePage /> },
         {
           path: "/auth",
           element: <AuthenticationPage />,
           children: [
             {
               index: true,
-              element: <AuthenticationComponent />,
+              // element: <AuthenticationComponent />,
+              element: <GoogleLogin />,
             },
-            /*{
-              path: "forgotPassword",
-              element: <ForgetPasswordComponent />,
-            },*/
           ],
         },
         { path: "/terms", element: <Term /> },

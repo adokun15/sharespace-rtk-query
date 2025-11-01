@@ -22,36 +22,32 @@ const firebaseConfig = {
 };
 
 async function setup_Auth_Emulator(auth) {
-  const url = "http://localhost:9092";
+  const url = "http://localhost:9090";
   await fetch(url);
   connectAuthEmulator(auth, url);
 }
 
-const app_initialized = () =>{
-  if(getApps().length > 0){
+const app_initialized = () => {
+  if (getApps().length > 0) {
     const app = getApp();
-    if(process.env.NODE_ENV === 'development'){
-      setup_Auth_Emulator(getAuth(app))
-      connectFirestoreEmulator(getFirestore(app), "localhost", 8082);
-      //connectStorageEmulator(getStorage(app), "localhost", 9192);
-    }   
-  }else{
+    if (process.env.NODE_ENV === "development") {
+      setup_Auth_Emulator(getAuth(app));
+      connectFirestoreEmulator(getFirestore(app), "localhost", 8080);
+      //connectStorageEmulator(getStorage(app), "localhost", 9190);
+    }
+  } else {
     const app = initializeApp(firebaseConfig);
-    
-    if(
-      process.env.NODE_ENV === 'development' 
-  
-    ){
-        setup_Auth_Emulator(getAuth(app))
-        connectFirestoreEmulator(getFirestore(app), "localhost", 8082);
-       // connectStorageEmulator(getStorage(app), "localhost", 9192);
-      }
-  }
-}
 
+    if (process.env.NODE_ENV === "development") {
+      setup_Auth_Emulator(getAuth(app));
+      connectFirestoreEmulator(getFirestore(app), "localhost", 8080);
+      // connectStorageEmulator(getStorage(app), "localhost", 9190);
+    }
+  }
+};
 
 //Initialize Firebase
-export const app = app_initialized()
+export const app = app_initialized();
 
 //authentication;
 export const auth = getAuth(app);
