@@ -24,6 +24,7 @@ import {
 } from "../components/ui/dialog";
 import { Skeleton } from "../components/ui/skeleton";
 import DataError from "../components/DataError";
+import { LogoutXomponent } from "./Logout";
 export default function SettingsComponent() {
   const reRoute = useNavigate();
   const {
@@ -116,6 +117,7 @@ export default function SettingsComponent() {
         </p>
         <p className="italic">_Perks_</p>
         <ul className="list-disc pl-4">
+          <li>View Student Profile</li>
           <li>Video Upload of Hostel</li>
           <li>Longer post time (Up to 2weeks)</li>
           <li>Advanced Filter to find roommate</li>
@@ -165,6 +167,10 @@ export default function SettingsComponent() {
           <DialogClose>Close</DialogClose>
         </DialogContent>
       </Dialog>
+
+      <div>
+        <LogoutXomponent />
+      </div>
 
       <div className="text-center *:px-2 divide-x-2">
         <Link to="/terms" className=" text-purple-500 underline font-oswald">

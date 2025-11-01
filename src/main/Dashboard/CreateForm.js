@@ -43,18 +43,14 @@ export default function CreateRoomieSpaceForm() {
   }
 
   return (
-    <div className="shadow md:w-[65%] md:mx-auto p-3  min-h-40 mt-30 rounded-[1rem] ">
-      <h1 className="text-4xl text-center mb-4 text-bold font-sans_serif">
+    <div className=" max-w-2xl mx-auto p-3  min-h-40 mt-30  ">
+      <h1 className="text-3xl border-b-primary border-b-2 w-fit  text-bold font-sans_serif">
         Create Post
       </h1>
-      {user?.targetType && (
-        <p className="mb-3 text-center font-poppins">
-          Get more people to reach you. By posting your{" "}
-          {user?.targetType === "spacer"
-            ? "Your preferences"
-            : "about your hostel"}
-        </p>
-      )}
+      <p className="mb-8 text-slate-500">
+        Get more visitor in your contacts asap, this will take less than a
+        minute
+      </p>
       <AddPreferences user={user} />
     </div>
   );

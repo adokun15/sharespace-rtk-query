@@ -2,13 +2,8 @@
 
 import { Button } from "../../components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "../../components/ui/sheet";
-import {
   useGetSchoolsQuery,
+  useGetUserQuery,
   useSetUserMutation,
 } from "../../store/Slices/user";
 import { useForm } from "react-hook-form";
@@ -28,13 +23,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
-import { useState } from "react";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { SUPPORT_EMAIL } from "../../lib/utils";
 import { useNavigate } from "react-router-dom";
+import DataError from "../../components/DataError";
 
 export default function OnBoardingPage({ mode, previousData }) {
   //School List
@@ -45,6 +40,15 @@ export default function OnBoardingPage({ mode, previousData }) {
     isError,
     isLoading: loadingSchools,
   } = useGetSchoolsQuery();
+
+  //Get User: Login and is not complete
+  const {
+    isError: user_isError,
+    error: user_error,
+    isLoading: user_loading,
+    data: user,
+    refetch: user_refetch,
+  } = useGetUserQuery();
 
   //Set up profile::
   const [
@@ -62,7 +66,7 @@ export default function OnBoardingPage({ mode, previousData }) {
     gender: z.string().min(1),
     name: z
       .string()
-      .regex(/^[a-zA-Z]+$/, "Invalid Character, Use Your Actual name..")
+      .regex(/^[a-zA-Z\s-]+$/, "Invalid Character, Use Your Actual name..")
       .max(24, "Your name is way too long, Shorten it.")
       .min(3),
     religion: z.string().min(1),
@@ -83,6 +87,20 @@ export default function OnBoardingPage({ mode, previousData }) {
       //targetType: "",
     },
   });
+
+  if (user_loading) {
+    return (
+      <p className="my-[10vh] font-poppins text-center">Preparing form...</p>
+    );
+  }
+
+  if (user_isError) {
+    return <DataError error={user_error} refetch={user_refetch} />;
+  }
+
+  if (user?.onboarding_complete) {
+    router("/profile");
+  }
 
   const handleSubmit = async (formData) => {
     //Validate Credential
