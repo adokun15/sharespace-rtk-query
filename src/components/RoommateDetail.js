@@ -97,7 +97,11 @@ export default function RoommateDetail({ roommate, onClose }) {
               <AvatarImage src={roommate?.photo} />
               <AvatarFallback>...</AvatarFallback>
             </Avatar>
-            <p className="text-4xl">{roommate?.name}</p>
+            <p className="text-4xl">
+              {roommate?.userId === "admin"
+                ? "Posted by Admin"
+                : roommate?.name}
+            </p>
             <p className="mt-2 text-muted">{roommate?.description}</p>
           </div>
 
@@ -108,7 +112,7 @@ export default function RoommateDetail({ roommate, onClose }) {
                 <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                   Department
                 </p>
-                {user?.isPro ? (
+                {user?.isPro || user?.role === "admin" ? (
                   <p className="font-poppins">{roommate?.department}</p>
                 ) : (
                   <span>****</span>
@@ -118,7 +122,7 @@ export default function RoommateDetail({ roommate, onClose }) {
                 <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                   Level
                 </p>
-                {user?.isPro ? (
+                {user?.isPro || user?.role === "admin" ? (
                   <p className="font-poppins">{roommate?.level}</p>
                 ) : (
                   <span>****</span>
@@ -128,15 +132,17 @@ export default function RoommateDetail({ roommate, onClose }) {
                 <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
                   Religion
                 </p>
-                {user?.isPro ? (
+                {user?.isPro || user?.role === "admin" ? (
                   <p className="font-poppins">{roommate?.religion}</p>
                 ) : (
                   <span>****</span>
                 )}
               </div>
             </div>
-            {!user?.isPro && (
-              <Button variant="primary">Upgrade to pro to reveal</Button>
+            {!user?.isPro && user?.role !== "admin" && (
+              <Button variant="primary">
+                <Link to="/profile">Upgrade to pro to reveal</Link>
+              </Button>
             )}
           </article>
         </article>

@@ -279,19 +279,23 @@ const Roomates = ({ user }) => {
                     </PopoverContent>
                   </Popover>
 
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <MoreVertical />
-                    </PopoverTrigger>
-                    <PopoverContent className="w-fit rounded tracking-wide font-poppins">
-                      <Button
-                        onClick={() => setReportDialog((p) => !p)}
-                        variant="ghost"
-                      >
-                        Report
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
+                  {roomate?.userId !== "admin" ? (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <MoreVertical />
+                      </PopoverTrigger>
+                      <PopoverContent className="w-fit rounded tracking-wide font-poppins">
+                        <Button
+                          onClick={() => setReportDialog((p) => !p)}
+                          variant="ghost"
+                        >
+                          Report
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <p></p>
+                  )}
                 </div>
 
                 <article className="h-[98px] bg-slate-50  line-clamp-4 font-poppins px-2 tracking-wide my-3">

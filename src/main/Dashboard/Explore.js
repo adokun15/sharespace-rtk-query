@@ -112,7 +112,7 @@ const ExplorePage = () => {
             </TabsContent>
           </Tabs>
         ) : (
-          <Roomates />
+          <Roomates user={user} />
         )}
       </main>
     </>

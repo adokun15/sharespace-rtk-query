@@ -88,6 +88,9 @@ export default function ProfilePage() {
     router("/onboarding");
   }
 
+  if (user?.role !== "user") {
+    router("/admin");
+  }
   return (
     <main className="mx-auto container">
       <h1 className="text-2xl font-semibold text-slate-600 font-roboto tracking-wide">

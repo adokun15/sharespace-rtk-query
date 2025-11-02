@@ -19,6 +19,7 @@ import Privacy from "./main/privacy";
 import Term from "./main/tos";
 import GoogleLogin from "./components/googleLogin";
 import OnBoardingPage from "./main/Onboarding/page";
+import AdminPage from "./main/Admin/AdminPage";
 //import SingleRoommateInfo from "./components/SingleRoomieData";
 //import Guide from "./components/Guides";
 //import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
@@ -35,6 +36,7 @@ function App() {
       errorElement: <ErrorPage />,
       children: [
         //private
+        { path: "admin", element: <AdminPage /> },
         { path: "onboarding", element: <OnBoardingPage /> },
         {
           path: "create",
