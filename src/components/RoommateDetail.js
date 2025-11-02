@@ -10,6 +10,7 @@ import LoaderSpinner from "./LoaderSpinner";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Skeleton } from "./ui/skeleton";
 //import { saveMessagingDeviceToken } from "../firebase/Messaging";
 
 export default function RoommateDetail({ roommate, onClose }) {
@@ -97,119 +98,47 @@ export default function RoommateDetail({ roommate, onClose }) {
               <AvatarFallback>...</AvatarFallback>
             </Avatar>
             <p className="text-4xl">{roommate?.name}</p>
-            <p>
-              {roommate?.rent &&
-                `${roommate?.rent}k (${roommate?.rentType}). ${
-                  roommate?.numberOfRoommates
-                } Roommate (
-              ${+roommate?.rent / (+roommate?.numberOfRoommates + 1)}K Each)`}
-              {roommate?.budget && `${roommate?.budget}k.`}
-            </p>
             <p className="mt-2 text-muted">{roommate?.description}</p>
           </div>
 
-          <Tabs defaultValue="info">
-            <TabsList>
-              <TabsTrigger value="info">Who is this?</TabsTrigger>
-              <TabsTrigger value="proposal">Chat Up</TabsTrigger>
-            </TabsList>
-            <TabsContent value="info">
-              {/* profile, preferences, hobbies and socials */}
-              <article>
-                <h1>Profile</h1>
-                <div className="grid grid-cols-1 my-3 gap-3  gap-y-5 md:grid-cols-2">
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      School
-                    </p>
-                    <p className="font-poppins">{roommate?.school}</p>
-                  </div>
-
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Department
-                    </p>
-                    <p className="font-poppins">{roommate?.department}</p>
-                  </div>
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Level
-                    </p>
-                    <p className="font-poppins">{roommate?.level}</p>
-                  </div>
-                  {/*
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Age*
-                    </p>
-                    <p>
-                    ageHandler(roommate?.age)} years old
-                    </p>
-                  </div>
-                    */}
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Religion
-                    </p>
-                    <p className="font-poppins">{roommate?.religion}</p>
-                  </div>
-                  <div className="text-[16px]">
-                    <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
-                      Preferenced Hostel Location
-                    </p>
-                    <p className="font-poppins">{roommate?.location}</p>
-                  </div>
-                </div>
-              </article>
-            </TabsContent>
-
-            <TabsContent value="proposal">
-              {user?.targetType && user?.gender ? (
-                <div className="space-y-3">
-                  <h2 className="text-xl">Send Daniel A message</h2>
-
-                  <form className="space-y-1">
-                    <textarea
-                      value={message.text}
-                      onChange={messageHandler}
-                      className="
-                    
-                     resize-none font-poppins tracking-wide flex 
-                   text-base h-9 w-full rounded-md 
-                   border border-input bg-transparent px-3 
-                     py-1 shadow-sm transition-colors  placeholder:text-muted
-                     focus-visible:outline-none focus-visible:ring-1
-                    focus-visible:ring-ring md:text-sm min-h-32 "
-                      placeholder="Enter a message"
-                    ></textarea>
-                    <p className="text-xs text-slate-400">
-                      Less than 100 word: {message.counter} / 100
-                    </p>
-                    <Button
-                      disabled={message.counter >= 100}
-                      onClick={createNewMesageProposal}
-                      className="
-                      w-full bg-purple-600 text-white rounded hover:bg-purple-300
-                      "
-                    >
-                      {isLoading ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        "Send Message (50 credits)"
-                      )}
-                    </Button>
-                  </form>
-                </div>
-              ) : (
-                <div className="text-center space-y-6">
-                  <p>Kindly complete your profile to continue</p>
-                  <Button asChild variant="outline">
-                    <Link to="/profile">Complete Profile</Link>
-                  </Button>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+          <article>
+            <h1 className="font-medium font-poppins">Profile</h1>
+            <div className="grid grid-cols-1 my-3 gap-3  gap-y-5 md:grid-cols-2">
+              <div className="text-[16px]">
+                <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
+                  Department
+                </p>
+                {user?.isPro ? (
+                  <p className="font-poppins">{roommate?.department}</p>
+                ) : (
+                  <span>****</span>
+                )}
+              </div>
+              <div className="text-[16px]">
+                <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
+                  Level
+                </p>
+                {user?.isPro ? (
+                  <p className="font-poppins">{roommate?.level}</p>
+                ) : (
+                  <span>****</span>
+                )}
+              </div>
+              <div className=" space-y-4 text-[16px]">
+                <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
+                  Religion
+                </p>
+                {user?.isPro ? (
+                  <p className="font-poppins">{roommate?.religion}</p>
+                ) : (
+                  <span>****</span>
+                )}
+              </div>
+            </div>
+            {!user?.isPro && (
+              <Button variant="primary">Upgrade to pro to reveal</Button>
+            )}
+          </article>
         </article>
       </div>
     </>

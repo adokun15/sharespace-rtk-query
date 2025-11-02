@@ -1,11 +1,4 @@
-import {
-  BookOpen,
-  ExternalLink,
-  HomeIcon,
-  LogOut,
-  MessageSquareCodeIcon,
-  User,
-} from "lucide-react";
+import { HomeIcon, User } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -23,25 +16,8 @@ import Logo from "../image/sharespace_logo.jpg";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import { useIsLoggedInQuery } from "../store/Slices/user";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCoins,
-  faPeopleGroup,
-  faPerson,
-  faReply,
-  faToolbox,
-} from "@fortawesome/free-solid-svg-icons";
-import { LogoutXomponent } from "./Logout";
-import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
+//import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
 
 export default function DashboardNavigator({ loadContent }) {
   const { isMobile } = useSidebar();
@@ -54,14 +30,14 @@ export default function DashboardNavigator({ loadContent }) {
   );
 
   //Link to google form
-  const toFeedbackSpace = () => {
-    window.location.href = FEEDBACK_URL;
-  };
+  //  const toFeedbackSpace = () => {
+  //  window.location.href = FEEDBACK_URL;
+  // };
 
   //Link to email
-  const toMyEmail = () => {
-    window.location.href = SUPPORT_EMAIL;
-  };
+  //const toMyEmail = () => {
+  // window.location.href = SUPPORT_EMAIL;
+  //};
 
   return (
     <>
@@ -118,7 +94,7 @@ export default function DashboardNavigator({ loadContent }) {
                     </SidebarMenuItem>
                   </SidebarMenu>
 
-                  {data && !error && (
+                  {/*data && !error && (
                     <>
                       <SidebarMenu>
                         <SidebarMenuItem>
@@ -135,7 +111,7 @@ export default function DashboardNavigator({ loadContent }) {
                       </SidebarMenu>
                       <SidebarSeparator />
                     </>
-                  )}
+                  )
 
                   <SidebarMenu>
                     <SidebarMenuItem>
@@ -150,6 +126,7 @@ export default function DashboardNavigator({ loadContent }) {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
+                  */}
 
                   <SidebarMenu>
                     <SidebarMenuItem>
@@ -210,6 +187,7 @@ export default function DashboardNavigator({ loadContent }) {
                   </Button>
                 )}
               </>
+
               <ul className="text-muted font-roboto divide-x-2 justify-center gap-2 *:px-1 flex text-xs text-center">
                 {/* <li>
                   <Link to="/about">About</Link>
@@ -225,7 +203,14 @@ export default function DashboardNavigator({ loadContent }) {
             </>
           )}
           {!error && data && !isLoading && !isFetching && (
-            <DropdownMenu>
+            <>
+              <Button variant="outline">
+                <User />
+                <Link to="/profile">My profile</Link>
+              </Button>
+
+              {/*
+              <DropdownMenu>
               <DropdownMenuTrigger
                 variant="ghost"
                 className="hover:bg-slate-100/90 hover:text-muted"
@@ -289,7 +274,9 @@ export default function DashboardNavigator({ loadContent }) {
                   <LogoutXomponent refetch={refetch} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+              </DropdownMenu>
+              */}
+            </>
           )}
         </SidebarFooter>
       </Sidebar>

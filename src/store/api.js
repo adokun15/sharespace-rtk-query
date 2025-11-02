@@ -46,13 +46,13 @@ export const roomate_api = createApi({
   endpoints: () => ({}),
 });
 
-export const credit_api = createApi({
-  reducerPath: "credit_api",
+export const pro_api = createApi({
+  reducerPath: "pro_api",
   baseQuery: fetchBaseQuery({
     baseUrl: `${
       process.env.NODE_ENV === "development"
-        ? "http://localhost:8080/credit/"
-        : "https://sharespace-server.vercel.app/credit/"
+        ? "http://localhost:8080/pro/"
+        : "https://sharespace-server.vercel.app/pro/"
     }`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("sharespace_token");
@@ -63,7 +63,7 @@ export const credit_api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["credit"],
+  tagTypes: ["pro"],
   endpoints: () => ({}),
 });
 

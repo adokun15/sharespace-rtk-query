@@ -5,7 +5,7 @@ import {
   TabsTrigger,
 } from "../../components/ui/tabs";
 import Roomates from "../../components/Roomates";
-import RequestSentTable from "../../components/RequestSentTable";
+//import RequestSentTable from "../../components/RequestSentTable";
 import UserRoommateData from "../../components/User/Preference";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -73,8 +73,7 @@ const ExplorePage = () => {
       <main className="mb-20 space-y-3 w-full">
         <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-
-          <Button className="rounded" onClick={handleReRoute}>
+          <Button className=" rounded" onClick={handleReRoute}>
             {isLoading || isFetching ? (
               <Loader2 className="animate-spin" />
             ) : (
@@ -99,36 +98,13 @@ const ExplorePage = () => {
         </Dialog>
 
         {user ? (
-          <Tabs className="space-y-5" defaultValue="roommates">
+          <Tabs className="space-y-5 w-full" defaultValue="roommates">
             <TabsList>
-              <TabsTrigger value="roommates">Roomates Posts</TabsTrigger>
-              <TabsTrigger value="proposal">Applied Posts</TabsTrigger>
+              <TabsTrigger value="roommates">All Post</TabsTrigger>
               <TabsTrigger value="mypost">My post</TabsTrigger>
             </TabsList>
             <TabsContent value="roommates">
-              {/* Work on Later on Roomate itSelf*/}
               <Roomates user={user} />
-              {/*profile_complete && <Roomates user={user} />*/}
-              {/*!profile_complete && (
-                <div className="text-center mt-4 space-y-6">
-                  <p className="text-xl font-sans_serif">
-                    Kindly complete your profile to continue
-                  </p>
-                  <Button asChild variant="outline">
-                    <Link
-                      to="/profile"
-                      className="
-                    font-poppins"
-                    >
-                      Complete Profile
-                    </Link>
-                  </Button>
-                </div>
-              )*/}
-            </TabsContent>
-
-            <TabsContent value="proposal">
-              <RequestSentTable />
             </TabsContent>
 
             <TabsContent value="mypost">

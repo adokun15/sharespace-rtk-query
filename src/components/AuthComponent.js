@@ -350,16 +350,14 @@ export default function AuthenticationComponent() {
       });
     }
   };
-  
 
   //gENERATE iD TOKEN
   const [authorize, { isError, isLoading, error }] = useAuthorizeMutation();
-  
-  //gENERATE SESSION TOKEN
-  const [generateCookie] = useCreateSessionMutation()
-  
-  const navigate = useNavigate();
 
+  //gENERATE SESSION TOKEN
+  const [generateCookie] = useCreateSessionMutation();
+
+  const navigate = useNavigate();
 
   const triggerSubmit = async () => {
     if (
@@ -368,25 +366,29 @@ export default function AuthenticationComponent() {
         !enteredValue?.password ||
         !enteredValue?.email) &&
       mode === "signup"
-    ){
-
-   return;
+    ) {
+      return;
     }
-  
-      try{
-      const token = await authorize({ mode, name: `${enteredValue.fname} ${enteredValue.lname}`, email: enteredValue.email, password: enteredValue.password,})
-      .unwrap()
-      .then(token=>token)
 
-      const longerToken = token && await generateCookie(token).unwrap()
+    try {
+      const token = await authorize({
+        mode,
+        name: `${enteredValue.fname} ${enteredValue.lname}`,
+        email: enteredValue.email,
+        password: enteredValue.password,
+      })
+        .unwrap()
+        .then((token) => token);
+
+      const longerToken = token && (await generateCookie(token).unwrap());
 
       //Save IN LocalStorage
-      localStorage.setItem('sharespace_token', longerToken)
-        
+      localStorage.setItem("sharespace_token", longerToken);
+
       //Go Home
-      navigate('/')
-    }catch(e){
-     console.error(e?.message)
+      navigate("/");
+    } catch (e) {
+      console.error(e?.message);
     }
   };
   return (

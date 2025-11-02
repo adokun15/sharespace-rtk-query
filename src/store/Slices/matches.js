@@ -216,7 +216,7 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
         status: err?.data?.status,
         message: err?.data?.message,
       }),
-      invalidatesTags: (result, err, id) => [{ id, type: "roommate" }],
+      invalidatesTags: (result, err, id) => [{ id, type: "user_roommate" }],
     }),
 
     //Get ALL ROOMMATE / space
@@ -241,6 +241,27 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
           : [{ type: "roommates", id: "ROOMMATELIST" }],
     }),
 
+    userRoomateSpace: builder.query({
+      keepUnusedDataFor: 120,
+      query: () => ({
+        url: "user",
+        method: "GET",
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+
+      providesTags: (res) =>
+        res
+          ? res?.map(({ id }) => [
+              { type: "user_roommate", id: id },
+              { type: "user_roommate", id: "USER_ROOMMATELIST" },
+            ])
+          : [{ type: "user_roommate", id: "USER_ROOMMATELIST" }],
+    }),
+
     //Find Close Roomate / Space
     findRoomieSpace: builder.mutation({
       query: (info) => ({
@@ -258,6 +279,7 @@ const MatchLogicSlice = roomate_api.injectEndpoints({
 });
 
 export const {
+  useUserRoomateSpaceQuery,
   useRoomateSpaceQuery,
   useSingleRoomateQuery,
   useMeetRoomateMutation,

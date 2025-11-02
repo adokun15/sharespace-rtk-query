@@ -120,15 +120,14 @@ const userSlice = user_api.injectEndpoints({
     createSession: builder.mutation({
       query: (token) => ({
         url: "session",
-        method:"POST",
+        method: "POST",
         credientials: "include",
-        body: JSON.stringify({ token , session: 'true'}),
+        body: JSON.stringify({ token, session: "true" }),
       }),
-transformResponse : (res) => res.cookie,
+      transformResponse: (res) => res.cookie,
       //Return A Cookie
       invalidatesTags: () => ["auth"],
     }),
-
   }),
 });
 
@@ -142,7 +141,7 @@ export const {
   useGetUserTokenTransactionsQuery,
   useGetSchoolsQuery,
   useDeleteUserMutation,
-  useCreateSessionMutation
+  useCreateSessionMutation,
 } = userSlice;
 
 /*

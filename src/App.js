@@ -2,26 +2,28 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import RootPage from "./Pages/RootPage";
 //import ErrorElement from "./Pages/Error";
 //import LandingPage from "./Pages/landingPage";
-import AuthenticationPage from "./Pages/Auth/Auth";
-import ProfilePage from "./Pages/Dashboard/Profile";
-import FindRoommatePage from "./Pages/Dashboard/FindRoomie";
-import ChatsPage from "./Pages/Dashboard/Chats";
+import AuthenticationPage from "./main/Auth/Auth";
+import ProfilePage from "./main/Dashboard/Profile";
+//import FindRoommatePage from "./main/Dashboard/FindRoomie";
+//import ChatsPage from "./main/Dashboard/Chats";
 import AuthenticationComponent from "./components/AuthComponent";
-import ErrorPage from "./Pages/Error";
-import ExplorePage from "./Pages/Dashboard/Explore";
-import HomeRoot from "./Pages/Dashboard/homeRoot";
-import ManageCredit from "./Pages/Dashboard/Credit";
-import CreateRoomieSpaceForm from "./Pages/Dashboard/CreateForm";
-import Settings from "./Pages/Dashboard/Settings";
-import RequestReceivedTable from "./components/RequestReceivedTable";
-import About from "./Pages/about";
-import Privacy from "./Pages/privacy";
-import Term from "./Pages/tos";
-import SingleRoommateInfo from "./components/SingleRoomieData";
-import Guide from "./components/Guides";
-import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
-import ChatList from "./components/ChatList";
-import ChatDetail from "./components/ChatDetail";
+import ErrorPage from "./main/Error";
+import ExplorePage from "./main/Dashboard/Explore";
+import HomeRoot from "./main/Dashboard/homeRoot";
+//import ManageCredit from "./main/Dashboard/Credit";
+import CreateRoomieSpaceForm from "./main/Dashboard/CreateForm";
+//import Settings from "./main/Dashboard/Settings";
+//import RequestReceivedTable from "./components/RequestReceivedTable";
+import About from "./main/about";
+import Privacy from "./main/privacy";
+import Term from "./main/tos";
+import GoogleLogin from "./components/googleLogin";
+import OnBoardingPage from "./main/Onboarding/page";
+//import SingleRoommateInfo from "./components/SingleRoomieData";
+//import Guide from "./components/Guides";
+//import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
+//import ChatList from "./components/ChatList";
+//import ChatDetail from "./components/ChatDetail";
 function App() {
   const router = createBrowserRouter([
     {
@@ -32,52 +34,24 @@ function App() {
       element: <HomeRoot />,
       errorElement: <ErrorPage />,
       children: [
-        //public
-        { index: true, element: <ExplorePage /> },
-        { path: "guide", element: <Guide /> },
-
         //private
-        { path: "find", element: <FindRoommatePage /> },
+        { path: "onboarding", element: <OnBoardingPage /> },
         {
           path: "create",
-          children: [
-            { index: true, element: <CreateRoomieSpaceForm /> },
-            {
-              /*path: "add-video", element: <AddVideo />*/
-            },
-          ],
+          children: [{ index: true, element: <CreateRoomieSpaceForm /> }],
         },
-        { path: "profile", element: <ProfilePage />},
-        { path: "profile/manage-credit", element: <ManageCredit />}
-       , 
-        { path: "settings", element: <Settings /> },
+        { path: "profile", element: <ProfilePage /> },
 
-        //Chat!
-        {
-          path: "space",
-          element: <ChatsPage />,
-          children: [
-            { index: true, element: <ChatList /> },
-            { path: ":spaceId", element: <ChatDetail /> },
-            { path: "proposals", element: <RequestReceivedTable /> },
-            { path: "proposals/:roomieId", element: <SingleRoommateInfo /> },
-          ],
-        },
-
-        //For Credit Purchase!
-        
         //public
+        { index: true, element: <ExplorePage /> },
         {
           path: "/auth",
           element: <AuthenticationPage />,
           children: [
             {
               index: true,
-              element: <AuthenticationComponent />,
-            },
-            {
-              path: "forgotPassword",
-              element: <ForgetPasswordComponent />,
+              // element: <AuthenticationComponent />,
+              element: <GoogleLogin />,
             },
           ],
         },

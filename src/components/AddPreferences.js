@@ -1,3 +1,5 @@
+//Create Post!!!
+
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -12,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import { z } from "zod";
 import { useRoomieSpaceFormMutation } from "../store/Slices/matches";
-import { Slider } from "./ui/slider";
+//import { Slider } from "./ui/slider";
 import {
   Select,
   SelectContent,
@@ -24,106 +26,105 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 //import { saveMessagingDeviceToken } from "../firebase/Messaging";
+
+//Validate Input
+const formSchema = z.object({
+  contact: z.string().min(2).includes("https://wa.link/", "Invalid wa.link"),
+  room_video: z.string().default("free"),
+  school_short: z.string().regex(/^[a-zA-Z]+$/, "Invalid school name"),
+  description: z.string().min(5, "Quote too Short"),
+  numberOfRoommates: z.string().max(2),
+});
+
 export default function AddPreferences({ user }) {
   const [createpost, { isLoading }] = useRoomieSpaceFormMutation();
-
-  //Validate Input
-  const formSchema = z.object({
-    //New
-    duration: z.string().min(2),
-    rentType: z.string().min(2),
-    school_short: z.string().min(2, "This name is way too short!"),
-
-    description: z.string().min(5, "Quote too Short"),
-    location: z.string().min(2, "Invalid Location Length"),
-    rent: z.number().array(),
-    proposal: z.number().array(),
-    numberOfRoommates: z.string().max(2),
-  });
 
   const reRoute = useNavigate();
 
   const form = useForm({
     defaultValues: {
-      //New
+      contact: "",
       school_short: "",
-      duration: "a session",
-      rentType: "fixed",
       description: "",
-      location: "",
-      rent: [150],
-      proposal: [10],
       numberOfRoommates: "1",
+      room_video: "",
     },
     resolver: zodResolver(formSchema),
   });
 
   const createPostHandler = async (data) => {
     //Validate create here first
-    if (!user || !user?.targetType) {
+    if (!user || !user?.role) {
       toast.warning("You seemed to be logged out!");
-      return;
-    }
-
-    const { numberOfRoommates, rent, proposal, ...others } = data;
-
-    const proposal_limit =
-      typeof proposal === "number" ? proposal : proposal[0];
-
-    //Check Credit: increased
-    if (
-      !(user?.credits && proposal_limit > 100 && user?.credits >= 120) && //Credits >= 50, proposal_limit > 10,
-      !(user?.credits && user?.credits >= 100 && proposal_limit <= 120) // credits > 30, proposal_limit <= 10
-    ) {
-      toast.warning("Insufficient credits to complete process!", {
-        action: {
-          label: "Buy Credit",
-          onClick: () => reRoute("/profile?credit=true"),
-        },
-      });
       return;
     }
 
     //Check if Quote;
     if (data?.description && data?.description?.split(" ").length > 200) {
       toast.error("Quote has exceeded its limit :  200 words ");
+
+      return;
+    }
+
+    if (data?.school_short?.length > 24) {
+      toast.error("School abbreviation is way too long!");
+      return;
+    }
+
+    if (
+      (data?.room_video?.length > 1 &&
+        !data?.room_video?.includes("catbox.moe")) ||
+      data?.room_video === "free" ||
+      !isNaN(data?.room_video)
+    ) {
+      toast.warning("Invalid Video Link", {
+        description: (
+          <>
+            Visit{" "}
+            <a
+              className="underline"
+              href="https://catbox.moe/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Catbox.moe
+            </a>
+            , upload your video, paste link here, We will take care of the rest!
+          </>
+        ),
+      });
       return;
     }
 
     const timePosted = new Date().toISOString();
 
     const info = {
-      ...others,
-      numberOfRoommates: +numberOfRoommates,
-      target: user?.targetType,
-      proposal: proposal_limit,
+      //Content&Tags
+      numberOfRoommates: data?.numberOfRoommates,
+      description: data?.description,
+      school_short: data?.school_short,
+      contact: data?.contact,
+      room_video: data?.room_video || null,
+
+      //Primary
       name: user?.name,
+      photo: user?.photo,
+      userId: user?.userId,
+      timePosted,
+
+      //Filters
       department: user?.profile?.department,
       level: user?.profile?.level,
       school: user?.profile?.school,
       religion: user?.religion,
       gender: user?.gender,
-      id: user?.userId,
-      photo: user?.photo,
-      timePosted,
     };
 
-    const BudgetRent = user?.targetType === "roomie" ? "rent" : "budget";
-
-    info[BudgetRent] = typeof rent === "number" ? rent : rent[0];
-
-    //Request Device permission to send notification
-    //Send a Notice to all Student in the school about your post
-
-    /*await saveMessagingDeviceToken(user?.userId).catch((err) => {
-      toast.error(err?.status);
-    });
-*/
     await createpost(info)
       .unwrap()
       .then((data) => {
         toast.success(data?.message, {
-          description: "Check under 'my post' to review post",
+          description: "Check under 'my posts' to review post",
         });
         reRoute("/");
       })
@@ -133,21 +134,21 @@ export default function AddPreferences({ user }) {
           action: {
             // onClick: () => reRoute("/profile?credit=true")
           },
-          //Stay longer, add button to buy credit
         });
       });
   };
 
-  if (!user?.targetType) {
+  if (!user?.role) {
     return (
       <div className="text-center space-y-6">
         <p>Kindly complete your profile to continue</p>
         <Button asChild variant="outline">
-          <Link to="/profile">Complete Profile</Link>
+          <Link to="/onboarding">Complete Profile</Link>
         </Button>
       </div>
     );
   }
+
   /**
  If your Target is 'toward' student looking for a roomie, then
 your post should be a roomie, which means you have 'accomodation'
@@ -159,95 +160,17 @@ your post should be a spacer, which means you have no 'accomodation'
   return (
     <Form {...form}>
       <form
-        className="space-y-8"
+        className="font-poppins space-y-8"
         onSubmit={form.handleSubmit(createPostHandler)}
       >
-        {user?.targetType === "roomie" && (
-          <>
-            <FormField
-              name="duration"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className=" text-xl font-sans_serif">
-                    Duration of Rent
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="How Long?" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="less than 3 months">
-                        Less than 3 months
-                      </SelectItem>
-                      <SelectItem value="less than 6 months">
-                        Less than 6 months
-                      </SelectItem>
-                      <SelectItem value="one semester">One Semester</SelectItem>
-                      <SelectItem value="a session">A session</SelectItem>
-                      <SelectItem value="a year">A year</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    <p>How long will the rent last for?</p>
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-          </>
-        )}
-
-        <FormField
-          name="rentType"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">
-                Is it a fixed or negotiable price?
-              </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="What is it going to be?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="fixed">Fixed</SelectItem>
-                  <SelectItem value="negotiable">Negotiable</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="school_short"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">
-                Short Name of your School : {user?.profile?.school}
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="University of Lagos e.g UNILAG"
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
         <FormField
           name="description"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">Quote</FormLabel>
+              <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                Quote
+              </FormLabel>
               <FormControl>
                 <textarea
                   {...field}
@@ -257,36 +180,55 @@ your post should be a spacer, which means you have no 'accomodation'
                      py-1 shadow-sm transition-colors  placeholder:text-muted-foreground
                      focus-visible:outline-none focus-visible:ring-1
                     focus-visible:ring-ring md:text-sm min-h-32 "
-                  placeholder="Enter descriptions..."
+                  placeholder="Enter a brief quote"
                 ></textarea>
               </FormControl>
 
               <FormDescription>
-                <p>
-                  {user?.targetType === "roomie"
-                    ? "Enter a brief of quote about your hostel"
-                    : "Enter a brief quote about your lifestyle, budget or what you do not like."}
-                </p>
+                <span className="block">
+                  Enter a brief of quote about your hostel or if you are looking
+                  for shared accomodation just add your budget, level etc
+                </span>
                 {field.value?.split(" ").length >= 200 ? (
-                  <p className="text-end text-destructive">Exceeded Limit!</p>
+                  <span className="text-end block text-destructive">
+                    Exceeded Limit!
+                  </span>
                 ) : (
-                  <p className="text-end">
+                  <span className="block text-end">
                     {field.value?.split(" ").length} / 200
-                  </p>
+                  </span>
                 )}
               </FormDescription>
             </FormItem>
           )}
         />
 
-        {user?.targetType === "roomie" && (
+        <div className="flex *:grow gap-x-2">
+          <FormField
+            name="school_short"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                  Your School abbreviation (?)
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="University of Lagos e.g UNILAG"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
           <FormField
             name="numberOfRoommates"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className=" text-xl font-sans_serif">
-                  Number of Roommates
+                <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                  Max Roommates (?)
                 </FormLabel>
                 <Select
                   onValueChange={field.onChange}
@@ -311,82 +253,43 @@ your post should be a spacer, which means you have no 'accomodation'
               </FormItem>
             )}
           />
-        )}
+        </div>
+
         <FormField
-          name="rent"
+          name="contact"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">
-                {user?.targetType === "spacer" ? "Budget" : "Rent"}
+              <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                Whatsapp Phone via wa.link (?)
               </FormLabel>
               <FormControl>
-                <Slider
-                  defaultValue={[100]}
-                  min={100}
-                  onValueChange={field.onChange}
-                  value={[...field.value]}
-                  step={5}
-                  max={user?.targetType === "spacer" ? 350 : 700}
-                />
+                <Input {...field} placeholder="https://wa.link/your_phone" />
               </FormControl>
               <FormDescription>
-                Enter Your {user?.targetType === "spacer" ? "budget" : "rent"}:{" "}
-                {field?.value}k
+                Once you generate your code, simply paste it here
               </FormDescription>
             </FormItem>
           )}
         />
 
         <FormField
-          name="location"
+          name="room_video"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">
-                Location
-              </FormLabel>
-
-              <FormControl>
-                <Input {...field} placeholder="Your Location" />
-              </FormControl>
-              <FormDescription>
-                {user?.targetType === "spacer"
-                  ? "Where do you prefer to stay?"
-                  : "Where is your hostel located?"}{" "}
-              </FormDescription>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="proposal"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className=" text-xl font-sans_serif">
-                Proposal limit
+              <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                Add Your Room video{" "}
+                <span className="text-[16px] font-bold underline text-primary">
+                  pro
+                </span>
               </FormLabel>
               <FormControl>
-                <Slider
-                  defaultValue={[10]}
-                  min={1}
-                  onValueChange={field.onChange}
-                  value={[...field.value]}
-                  step={1}
-                  max={50}
-                />
+                <Input {...field} placeholder="Upload Room Video" />
               </FormControl>
               <FormDescription>
-                <p>
-                  {field?.value} proposals. *Number of people that can send you
-                  a roommate request*{" "}
-                </p>
-
-                <p>
-                  {+field?.value > 10 &&
-                    "Limit is 10. If you want more an additional 20 credits will be charged."}
-                </p>
+                Visit catbox.moe upload your video on their cloud and paste the
+                link here, we will display for others(logged in users) to see.
               </FormDescription>
             </FormItem>
           )}
@@ -394,13 +297,9 @@ your post should be a spacer, which means you have no 'accomodation'
         <Button
           variant="primary"
           disabled={isLoading}
-          className="rounded font-bold mx-auto block tracking-wide"
+          className="rounded w-full max-w-md font-bold mx-auto block tracking-wide"
         >
-          {isLoading ? (
-            <Loader2 className="animate-spin" />
-          ) : (
-            "Upload Post (100 credits)"
-          )}
+          {isLoading ? <Loader2 className="animate-spin" /> : "Upload"}
         </Button>
       </form>
     </Form>

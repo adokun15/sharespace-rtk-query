@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="min-h-[10rem] md:flex space-y-4  justify-center gap-10 bg-blue-950 text-slate-600  text-center py-1 ">
       <article>
         <h3 className="font-bold text-xl font-sans_serif">ShareSpace</h3>
-        <p>CopyRight &copy; 2024 - All Rights reserved</p>
+        <p>CopyRight &copy; 2025 - All Rights reserved</p>
         <p>
           Made by{" "}
           <Link className="border-dotted border-b-2 border-b-purple-900" to="#">

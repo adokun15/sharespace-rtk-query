@@ -42,19 +42,19 @@ export async function LogoutUser() {
     );
   }
 }
+
 export async function CreateUser({ name, email, password }) {
   try {
     //Create a user Entity
     const res = await createUserWithEmailAndPassword(auth, email, password);
-
-    await updateProfile(res.user, { displayName: name });
+    //await updateProfile(res.user, { displayName: name });
 
     //Credit -- 500 -- 100 Beta USER!
-    await CreateDocumentWithUID(
-      "users",
-      { credits: 500, userId: res?.user.uid, email: res?.user?.email },
-      res?.user.uid
-    );
+    // await CreateDocumentWithUID(
+    //   "users",
+    //  { credits: 500, userId: res?.user.uid, email: res?.user?.email },
+    //  res?.user.uid
+    //);
 
     const token = await res.user.getIdToken();
 

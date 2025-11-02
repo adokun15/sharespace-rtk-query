@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { ModalSlice } from "./Slices/modal";
-import { api, credit_api, roomate_api, user_api } from "./api";
+import { api, pro_api, roomate_api, user_api } from "./api";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 //Reducers
@@ -10,13 +10,13 @@ const store = configureStore({
     [api.reducerPath]: api.reducer,
     [user_api.reducerPath]: user_api.reducer,
     [roomate_api.reducerPath]: roomate_api.reducer,
-    [credit_api.reducerPath]: credit_api.reducer,
+    [pro_api.reducerPath]: pro_api.reducer,
   },
   middleware: (gDm) =>
     gDm().concat(
       api.middleware,
       user_api.middleware,
-      credit_api.middleware,
+      pro_api.middleware,
       roomate_api.middleware
     ),
 });
