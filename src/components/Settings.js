@@ -1,8 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Card from "../UI/Card";
 import {
   useDeleteUserMutation,
-  useEditUserMutation,
+  //useEditUserMutation,
   useGetUserQuery,
 } from "../store/Slices/user";
 /*import {
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
 } from "../components/ui/select";
 */ import { Button } from "../components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   DialogClose,
@@ -25,6 +25,10 @@ import {
 import { Skeleton } from "../components/ui/skeleton";
 import DataError from "../components/DataError";
 import { LogoutXomponent } from "./Logout";
+import { useGoProMutation, useConfirmPaymentQuery } from "../store/Slices/pro";
+import { useState } from "react";
+import { useEffect } from "react";
+
 export default function SettingsComponent() {
   const reRoute = useNavigate();
   const {
@@ -35,9 +39,31 @@ export default function SettingsComponent() {
     error: userError,
   } = useGetUserQuery();
 
-  const [editUser, { isLoading: loading }] = useEditUserMutation();
+  //const [editUser, { isLoading: loading }] = useEditUserMutation();
 
   const [deleteUser, { isLoading: deleting }] = useDeleteUserMutation();
+  const [controlledDialogPayment, setDialogTogglePayment] = useState(false);
+
+  //Search Param
+  const [params] = useSearchParams();
+  const reference = params.get("reference");
+  //const auto_open = params.get("credit");
+
+  const {
+    data: paymentConfirmation,
+    isLoading: confirmingPayment,
+    isError: isPaymentConfirmationError,
+    error: paymentConfirmationError,
+  } = useConfirmPaymentQuery(reference, { skip: !reference });
+
+  const [upgrade, { isLoading: redirecting }] = useGoProMutation();
+
+  useEffect(() => {
+    if (reference) {
+      //Open Modal
+      setDialogTogglePayment(true);
+    }
+  }, [reference]);
 
   if (isLoading) {
     return (
@@ -89,44 +115,103 @@ export default function SettingsComponent() {
       });
   };
 
-  /*
-  const roommateHandler = async (value) => {
-    await editUser({ targetType: value })
+  const redirectToPayment = async () => {
+    await upgrade()
       .unwrap()
-      .then((d) => {
-        console.log(d);
-        //alert user: "changes made"
-        toast.success("Roommate Type Changed!", {
-          description: "Change will be applied in few minutes",
-        });
+      .then((data) => {
+        window.location.href = data.url;
       })
-      .catch(({ data }) => {
-        toast.error(data?.status || "Something WENT wrong!", {
-          description: data?.message,
-          //Add a button to login if (401)
-        });
+      .catch((e) => {
+        console.log(e);
       });
   };
-*/
+
   return (
     <main className="mb-4 space-y-4 font-poppins w-full ">
-      <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
-        <h3 className="font-[600] text-[18px]">Upgrade to Pro</h3>
-        <p className="text-muted">
-          Get more by getting a pro account. No subscription. Just pay once.
-        </p>
-        <p className="italic">_Perks_</p>
-        <ul className="list-disc pl-4">
-          <li>View Student Profile</li>
-          <li>Video Upload of Hostel</li>
-          <li>Longer post time (Up to 2weeks)</li>
-          <li>Advanced Filter to find roommate</li>
-        </ul>
-        <Button variant="primary" className="rounded">
-          Pay NGN1200
-        </Button>
-      </div>
+      <Dialog
+        open={controlledDialogPayment}
+        onOpenChange={() => setDialogTogglePayment((p) => !p)}
+      >
+        <DialogContent>
+          <DialogTitle className="font-sans_serif">
+            Payment status - {paymentConfirmation?.status}
+          </DialogTitle>
+          {confirmingPayment && <p>...</p>}
+          {isPaymentConfirmationError && (
+            <p className="text-destructive font-poppins">
+              {paymentConfirmationError?.message}
+            </p>
+          )}
+          {paymentConfirmation && (
+            <article>
+              {paymentConfirmation?.status === "success" && (
+                <p className="font-poppins">
+                  {" "}
+                  Your Payment of <b>NGN{paymentConfirmation?.amount}</b> was
+                  successful. Account has been upgraded to pro.
+                </p>
+              )}
 
+              {paymentConfirmation?.status === "failed" && (
+                <p className="font-poppins">
+                  Your Payment of <b>NGN{paymentConfirmation?.amount}</b>{" "}
+                  Failed.
+                </p>
+              )}
+            </article>
+          )}
+
+          <DialogClose asChild>
+            <Button variant="primary" className="w-fit">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+
+      <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+        <h3 className="font-[600] text-[18px]">Email (Google Login)</h3>
+        <p>{user?.email}</p>
+      </div>
+      {!user?.isPro && (
+        <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+          <h3 className="font-[600] text-[18px]">Upgrade to Pro</h3>
+          <p className="text-muted">
+            Get more by getting a pro account. No subscription. Just pay once.
+          </p>
+          <p className="italic">_Perks_</p>
+          <ul className="list-disc pl-4">
+            <li>Unlimited posts upload</li>
+            <li>View Student Profile</li>
+            <li>Longer post time (Up to 2weeks)</li>
+            <li>Advanced filter to find specific roommate</li>
+          </ul>
+          <Button
+            disabled={redirecting}
+            onClick={redirectToPayment}
+            variant="primary"
+            className="rounded"
+          >
+            {redirecting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Pay NGN 1700"
+            )}
+          </Button>
+        </div>
+      )}
+      {user?.isPro && (
+        <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
+          <h3 className="font-[600] text-[18px]">Current Plan (PRO)</h3>
+          <p className="text-muted">Now you can:</p>
+          <ul className="list-disc pl-4">
+            <li>Upload Unlimited posts</li>
+            <li>View any Student Profile(department, religion, level)</li>
+            <li>Your post stay on Explore page for atleast 14days</li>
+            <li>Advanced filter to find specific roommate</li>
+          </ul>
+        </div>
+      )}
       <div className="border-4 space-y-3 py-4 px-2 rounded-xl">
         <h3 className="font-[600] text-[18px]">Support</h3>
         <p className="text-muted">Reach out to us, we are always available.</p>

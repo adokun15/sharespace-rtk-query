@@ -33,7 +33,7 @@ import { useSearchParams } from "react-router-dom";
 import {
   useBuyCreditMutation,
   useConfirmCreditPaymentQuery,
-} from "../../store/Slices/credit";
+} from "../../store/Slices/pro";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

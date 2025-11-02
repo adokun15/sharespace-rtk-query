@@ -1,12 +1,21 @@
 //My post -->
 import { Button } from "../ui/button";
 import { useIsLoggedInQuery } from "../../store/Slices/user";
-import { Clock, Copy, Loader2, ReceiptText, Share } from "lucide-react";
+import {
+  Clock,
+  Copy,
+  Info,
+  Loader2,
+  MoreVertical,
+  ReceiptText,
+  Share,
+} from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Link } from "react-router-dom";
 import {
   useDeleteSingleRoomateMutation,
   useSingleRoomateQuery,
+  useUserRoomateSpaceQuery,
 } from "../../store/Slices/matches";
 import DataError from "../DataError";
 import {
@@ -22,13 +31,14 @@ import { Input } from "../ui/input";
 import { toast } from "sonner";
 import LoaderSpinner from "../LoaderSpinner";
 import { useState } from "react";
+import Card from "../../UI/Card";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Badge } from "../ui/badge";
 
 export default function UserRoommateData() {
   const {
     data: user,
     isLoading: userLoading,
-    //  refetch: userRefetch,
-    //error: userError,
     isError: isUserError,
   } = useIsLoggedInQuery();
 
@@ -39,11 +49,11 @@ export default function UserRoommateData() {
     refetch,
     isLoading,
     isFetching,
-  } = useSingleRoomateQuery(
+  } = useUserRoomateSpaceQuery(
     { id: user?.uid, invited: false }, //The User his trying to data
     {
       skip: !user?.uid,
-      selectFromResult: (res) => {
+      /*    selectFromResult: (res) => {
         const { data, ...other } = res;
 
         //Now, Today, Yesterday, days, {21 may, 2024}
@@ -66,16 +76,17 @@ export default function UserRoommateData() {
           ...other,
           data: { ...data, timePosted: detectDate() },
         };
-      },
+      },*/
     }
   );
 
+  //console.log(r);
   const [deletePost, { isLoading: deleting }] = useDeleteSingleRoomateMutation({
     skip: !user?.uid,
   });
 
-  const [contact, setContact] = useState("");
-  const [controlledModal, setControlModal] = useState(false);
+  //const [contact, setContact] = useState("");
+  //const [controlledModal, setControlModal] = useState(false);
 
   if (isLoading || isFetching || userLoading) {
     return <LoaderSpinner message="Getting your post.." />;
@@ -85,12 +96,14 @@ export default function UserRoommateData() {
     return <DataError refetch={refetch} error={error} />;
   }
 
+  async function ShareToWhatsapp() {}
+  //fetch wa.link and change preview message
+  /*
   async function copyLink() {
     if (!r?.id) {
       toast.error("Failed to copy", { description: "Something went wrong!" });
       return;
     }
-
     //const toNumber = +contact
     if (!contact || contact.length !== 11 || isNaN(+contact)) {
       toast.error("Failed to copy", { description: "Invalid Input" });
@@ -99,7 +112,7 @@ export default function UserRoommateData() {
 
     try {
       await navigator.clipboard.writeText(
-        `https://sharespace.com.ng?roomie=${r?.id}&wn=${contact}`
+        `https://sharespace.com.ng?roomie=${r?.id}`
       );
       //Alert User
       toast.success("Copied to Clipboard");
@@ -110,198 +123,78 @@ export default function UserRoommateData() {
       toast.error("Failed to copy", { description: err });
     }
   }
-
-  async function DeletePostHandler() {
+*/
+  async function DeletePostHandler(id) {
     if (!user?.uid) {
       toast.error("Something went wrong");
     }
-    await deletePost(user?.uid)
-      .unwrap()
 
+    await deletePost(id)
+      .unwrap()
       .then((data) => toast.success(data?.message))
       .catch((err) =>
         toast.error("Failed To Delete", { description: err?.message })
       );
   }
+
   return (
-    <main className="md:min-w-[450px] space-y-6">
-      <div className="flex flex-wrap px-3 items-center justify-between">
-        <article>
-          <h1 className="text-2xl font-semibold font-sans_serif">Your Post</h1>
-          <p className="text-slate-400 text-[16px] font-sans_serif">
-            {r?.target === "roomie"
-              ? "Roommate"
-              : r?.target === "spacer"
-              ? "Accomodation"
-              : ""}{" "}
-            Post
-          </p>
-        </article>
-        <div className="gap-3">
-          <Dialog
-            open={controlledModal}
-            onOpenChange={() => setControlModal((p) => !p)}
-          >
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Share />
-                Share
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>
-                  <h1 className="text-xl font-sans_serif">Share Post link</h1>
-                </DialogTitle>
-              </DialogHeader>
-              <div className=" ">
-                <div className="grid flex-1 gap-2">
-                  <div className="flex gap-2 items-center">
-                    <p className="font-medium text-2xl">(+234)</p>
-                    <Input
-                      value={contact}
-                      maxLength={11}
-                      onChange={(e) => {
-                        setContact(e?.target?.value);
-                      }}
-                      id="contact"
-                      className="placeholder:text-muted"
-                      placeholder=" WhatsApp Contact eg 08123456789"
-                    />
-                  </div>
-                  <p className="my-3 text-xs break-all">
-                    {`https://sharespace.com.ng?roomie=${r?.id}`}
-                    <span
-                      className={`transition duration-500 ease-in-out ${
-                        contact ? "visible" : "invisible"
-                      }`}
-                    >{`&wn=${contact}`}</span>
-                  </p>
-                </div>
-                <Button
-                  disabled={contact.length !== 11}
-                  onClick={copyLink}
-                  type="submit"
-                  variant=""
-                  size="sm"
-                  className="w-full px-3"
-                >
-                  <span className="">Copy Link</span>
-                  <Copy />
-                </Button>
-              </div>
-              <DialogFooter className="sm:justify-start">
-                <DialogDescription>
-                  Share link to friends or group on find your roommate quicker.{" "}
-                  {/*  <Link
-                    to="#"
-                    className="text-purple-500 underline tracking-wider"
+    <main className="w-full space-y-6">
+      <ul className="grid md:grid-cols-3 grid-cols-1  gap-5">
+        {r &&
+          r?.map((roomate, i) => (
+            <Card
+              key={i}
+              elClass="px-4 py-1 mb-1 
+              shadow-gray-400 w-full md:max-w-1/3 rounded"
+            >
+              <div className=" items-center flex justify-between">
+                <Popover>
+                  <Badge
+                    className="rounded-full text-xs capitalize 
+                                    font-sans_serif bg-transparent  
+                                    hover:bg-transparent
+                                    text-primary tracking-wide font-semibold"
                   >
-                    Share to WhatApp
-                  </Link>
-                */}
-                </DialogDescription>
+                    {roomate?.school_short}
+                    <PopoverTrigger asChild>
+                      <Info size={16} className="ml-2" />
+                    </PopoverTrigger>
+                  </Badge>
+                  <PopoverContent className="w-fit text-xs rounded tracking-wide font-poppins">
+                    <p>{roomate?.school}</p>
+                  </PopoverContent>
+                </Popover>
 
-                {/*<DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    Close
-                  </Button>
-                </DialogClose>*/}
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-      <div className="mx-auto max-w-[680px]">
-        <div className="flex justify-between border-b-2 ">
-          <p>
-            <span className="font-sans_serif font-semibold ">
-              {r?.noOfProposals} / {r?.proposal}{" "}
-            </span>
-            people have reach out to you
-          </p>
-          <p className="flex items-center gap-2">
-            <Clock size={10} />
-            <span>{r?.timePosted}</span>
-          </p>
-        </div>
-        <section className="px-10 my-2">
-          <div>
-            <Avatar className="h-[120px] block md:mx-auto rounded-full w-[120px]">
-              <AvatarImage src={r?.photo} />
-              <AvatarFallback>...</AvatarFallback>
-            </Avatar>
-          </div>
-          <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-            Personal
-          </h2>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <MoreVertical />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-fit rounded tracking-wide font-poppins">
+                    <Button
+                      variant="destructive"
+                      className="bg-red-300/80 hover:text-white text-red-600 font-sans_serif rounded"
+                      onClick={() => DeletePostHandler(roomate.id)}
+                    >
+                      {deleting ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Delete Post"
+                      )}
+                    </Button>
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-          <div className="md:grid grid-col-3 space-y-4 md:space-y-0 md:ml-10 py-2 justify-between">
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Religion
-              </h3>
-              <p className="text-2xl font-sans_serif">{r?.religion}</p>
-            </article>
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                {r?.rent ? "Rent" : r?.budget ? "Budget" : ""}
-              </h3>
-              <p className="text-2xl font-sans_serif">
-                {r?.rent || r?.budget}k
-              </p>
-            </article>
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Location
-              </h3>
-              <p className="text-2xl font-sans_serif">{r?.location}</p>
-            </article>
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Institution
-              </h3>
-              <p className="text-2xl font-sans_serif">{r?.school}</p>
-            </article>
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Department
-              </h3>
-              <p className="text-2xl font-sans_serif">{r?.department}</p>
-            </article>
-            <article>
-              <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                Level
-              </h3>
-              <p className="text-2xl font-sans_serif">{r?.level}</p>
-            </article>
-          </div>
-        </section>
+              <article className="h-[98px] bg-slate-50  line-clamp-4 font-poppins px-2 tracking-wide my-3">
+                {roomate?.description}
+              </article>
 
-        <section className="px-10 my-1">
-          <h2 className="text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-            Quote
-          </h2>
-          <p className="italic px-4 w-full text-slate-500 text-wrap ">
-            {r?.description}{" "}
-          </p>
-        </section>
-      </div>
-      <div className="flex justify-center gap-3">
-        <Button
-          variant="destructive"
-          className="bg-red-300/80 hover:text-white text-red-600 font-sans_serif rounded"
-          onClick={DeletePostHandler}
-        >
-          {deleting ? <Loader2 className="animate-spin" /> : "Delete Post"}
-        </Button>
-        <Button className="rounded" variant="primary" asChild>
-          <Link to="/space/proposals">
-            <ReceiptText />
-            <span>View Proposals</span>
-          </Link>
-        </Button>
-      </div>
+              <Button className="rounded font-poppins" variant="primary">
+                Active
+              </Button>
+            </Card>
+          ))}
+      </ul>
     </main>
   );
 }

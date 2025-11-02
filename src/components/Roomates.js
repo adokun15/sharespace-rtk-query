@@ -130,9 +130,9 @@ const Roomates = ({ user }) => {
     }
   };
 
-  const reportSinglePost = async (id) => {
+  const reportSinglePost = (id) => {
     if (reason.current.value === "") return;
-    await reportRoomatePost({
+    reportRoomatePost({
       postId: id,
       reason: reason.current.value,
       email: user?.email,
@@ -147,7 +147,9 @@ const Roomates = ({ user }) => {
         }, 1500);
       })
       .catch((e) => {
-        console.log(e);
+        toast.success("Not Sent!", {
+          description: <p>Reach out to us directly </p>,
+        });
       });
   };
 
@@ -168,30 +170,6 @@ const Roomates = ({ user }) => {
               </Button>
             </PopoverTrigger>
             <PopoverContent>
-              <h2>Your type</h2>
-              <ul>
-                <Button
-                  variant="ghost"
-                  className={`${filterRoomate === "all" && "text-primary"}`}
-                  onClick={() => setFilteredResult("all")}
-                >
-                  All
-                </Button>
-                <Button
-                  variant="ghost"
-                  className={`${filterRoomate === "roomie" && "text-primary"}`}
-                  onClick={() => setFilteredResult("roomie")}
-                >
-                  Just a roommate
-                </Button>
-                <Button
-                  variant="ghost"
-                  className={`${filterRoomate === "spacer" && "text-primary"}`}
-                  onClick={() => setFilteredResult("spacer")}
-                >
-                  Roommate with accomadation
-                </Button>
-              </ul>
               <h2>Gender</h2>
               <ul>
                 <Button
@@ -239,7 +217,7 @@ const Roomates = ({ user }) => {
         </DialogContent>
       </Dialog>
       {(!roommates || roommates?.length === 0) && (
-        <p className="text-center font-poppins text-2xl">Result not Found!</p>
+        <p className="text-center font-poppins text-2xl">Roomates not Found!</p>
       )}
 
       <ul className="md:grid grid-cols-3 block  gap-5">
@@ -262,10 +240,10 @@ const Roomates = ({ user }) => {
                     <Input
                       ref={reason}
                       className="placeholder:text-muted"
-                      placeholder="Seen this post before?, looks suspicious?, Report the post!"
+                      placeholder="Seen this post before or does it is looks suspicious? Report the post!"
                     />
                     <Button
-                      onClick={async () => await reportSinglePost(roomate?.id)}
+                      onClick={() => reportSinglePost(roomate.id)}
                       type="button"
                       variant="destructive"
                     >
@@ -283,56 +261,43 @@ const Roomates = ({ user }) => {
               </Dialog>
 
               <Card elClass="px-4 py-1 mb-1 shadow-gray-400 rounded">
-                <div className=" space-y-4  items-center flex justify-between">
-                  {roomate?.budget && roomate?.target === "spacer" ? (
-                    <Popover>
-                      <Badge className="h-fit rounded-full text-[12px] font-sans_serif  tracking-wide font-semibold">
-                        NGN{roomate?.budget}K{" "}
-                        <PopoverTrigger asChild>
-                          <Info size={16} className="ml-2" />
-                        </PopoverTrigger>
-                      </Badge>
-                      <PopoverContent>
-                        <p>
-                          {roomate?.name?.split(" ")[0]}'s budget is NGN
-                          {roomate?.budget}K
-                        </p>
-                      </PopoverContent>
-                    </Popover>
-                  ) : (
-                    <Popover>
-                      <Badge className="rounded-full  text-[12px] font-sans_serif  tracking-wide font-semibold">
-                        {/*
-                  available : 10 month | second semester | one session | a year
-                  <School width={20} height={20} className="mx-1" />
-                  roomate?.school*/}{" "}
-                        {roomate?.duration}
-                        <PopoverTrigger asChild>
-                          <Info size={16} className="ml-2" />
-                        </PopoverTrigger>
-                      </Badge>
-                      <PopoverContent className="w-fit rounded tracking-wide font-poppins">
-                        <p>
-                          Hostel rent{" "}
-                          {roomate?.duration?.startsWith("a")
-                            ? `is for ${roomate?.duration}`
-                            : `is ${roomate?.duration}`}
-                        </p>
-                      </PopoverContent>
-                    </Popover>
-                  )}
+                <div className=" items-center flex justify-between">
+                  <Popover>
+                    <Badge
+                      className="rounded-full text-xs capitalize 
+                    font-sans_serif bg-transparent  
+                    hover:bg-transparent
+                    text-primary tracking-wide font-semibold"
+                    >
+                      {roomate?.school_short}
+                      <PopoverTrigger asChild>
+                        <Info size={16} className="ml-2" />
+                      </PopoverTrigger>
+                    </Badge>
+                    <PopoverContent className="w-fit text-xs rounded tracking-wide font-poppins">
+                      <p>{roomate?.school}</p>
+                    </PopoverContent>
+                  </Popover>
 
-                  <Avatar className="w-12 h-12 ">
-                    <AvatarFallback>...</AvatarFallback>
-                    <AvatarImage
-                      className="rounded-full"
-                      src={roomate?.photo}
-                    />
-                  </Avatar>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <MoreVertical />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-fit rounded tracking-wide font-poppins">
+                      <Button
+                        onClick={() => setReportDialog((p) => !p)}
+                        variant="ghost"
+                      >
+                        Report
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-                <article className="mac-h-[60%] line-clamp-4 font-poppins px-2 tracking-wide my-3">
+
+                <article className="h-[98px] bg-slate-50  line-clamp-4 font-poppins px-2 tracking-wide my-3">
                   {roomate?.description}
                 </article>
+
                 <div className=" my-4 px-1 space-y-1 ">
                   <div className="flex-wrap flex space-y-1  mt-2 text-slate-600 font-bold items-center gap-2 ">
                     <Badge
@@ -344,7 +309,7 @@ const Roomates = ({ user }) => {
                         width={20}
                         height={20}
                       />
-                      {roomate?.budget && roomate?.target === "spacer" ? (
+                      {user?.userId ? (
                         roomate?.gender === "1" ? (
                           "Male"
                         ) : (
@@ -356,34 +321,6 @@ const Roomates = ({ user }) => {
                           {roomate?.numberOfRoommates > 1 ? "s" : ""}{" "}
                         </span>
                       )}
-                    </Badge>
-                    <Badge
-                      variant="muted"
-                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                    >
-                      <ReceiptText
-                        className="text-purple-500 mx-1"
-                        width={20}
-                        height={20}
-                      />
-                      <span>
-                        {roomate?.budget && roomate?.target === "spacer"
-                          ? roomate?.religion
-                          : `${roomate?.rent}k`}
-                      </span>
-                    </Badge>
-                    <Badge
-                      variant="muted"
-                      className="rounded-full text-[12px] font-sans_serif tracking-wide font-semibold"
-                    >
-                      <BookOpen
-                        className="mx-1 text-purple-500"
-                        width={20}
-                        height={20}
-                      />
-                      <span>
-                        {user ? `${roomate?.level} lvl` : roomate?.school_short}
-                      </span>
                     </Badge>
                   </div>
                 </div>
@@ -400,29 +337,27 @@ const Roomates = ({ user }) => {
                     {roomate?.name?.split(" ")[0]}
                     </p>
                     </div>*/}
-                <div className="flex gap-1">
+                <div className="flex justify-between gap-1">
                   <Button
-                    onClick={() => oneRoomateDetail(roomate?.id)}
-                    className="grow rounded font-[300] tracking-wide bg-slate-200 text-secondary font-sans_serif"
-                    variant="ghost"
-                    disabled={roomate?.applied}
+                    className="w-fit px-4 text-[16px]  rounded font-[300]
+                     tracking-wide flex  font-sans_serif"
+                    variant="primary"
                   >
-                    {!roomate?.applied ? "Show Details" : "Applied Already"}
+                    <Link to={roomate?.contact} target="_blank">
+                      Chat
+                    </Link>
+                    <ReceiptText />
                   </Button>
                   <Popover>
-                    {!roomate?.applied ? (
-                      <PopoverTrigger className="" asChild>
-                        <Button
-                          disabled={!user}
-                          className="shadow"
-                          variant="muted"
-                        >
-                          <MoreVertical />
-                        </Button>
-                      </PopoverTrigger>
-                    ) : (
-                      <CheckCheck className="text-primary" />
-                    )}
+                    <PopoverTrigger className="" asChild>
+                      <Button
+                        onClick={() => oneRoomateDetail(roomate?.id)}
+                        className="line-clamp-4 font-roboto text-slate-600 text-xs tracking-wide"
+                        variant="muted"
+                      >
+                        {roomate?.name}
+                      </Button>
+                    </PopoverTrigger>
                     <PopoverContent>
                       <ul>
                         <li>

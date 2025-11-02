@@ -6,10 +6,9 @@ import {
   AvatarImage,
 } from "../../components/ui/avatar";
 
-import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
-import { AlertCircleIcon, ArrowRight, Camera, Loader2 } from "lucide-react";
+import { Camera, Dot, Infinity } from "lucide-react";
 //import EmailVerificationComponent from "../../components/User/EmailVerification";
-import ProfilePic from "../../components/User/PhotoUpload";
+//import ProfilePic from "../../components/User/PhotoUpload";
 //import Profile from "../../components/User/Profile";
 import {
   Tabs,
@@ -23,42 +22,16 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  DialogClose,
+  //DialogClose,
 } from "../../components/ui/dialog";
 import EditPhoto from "../../components/User/EditPhoto";
 import EditUser from "../../components/User/EditUser";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Skeleton } from "../../components/ui/skeleton";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  useBuyCreditMutation,
-  useConfirmCreditPaymentQuery,
-} from "../../store/Slices/credit";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-/*
-import {
-  Form,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormField,
-  FormMessage,
-  FormDescription,
-} from "../../components/ui/form";
-import { Link } from "react-router-dom";
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
-*/
+import { useNavigate } from "react-router-dom";
+
 import { accountCreationDate } from "../../utils/TimeHandler";
 import Settings from "src/components/Settings";
-/*
-const FormSchema = z.object({
-  type: z.enum(["60", "500", "1000"], {
-    required_error: "You need to select a plan!",
-  }),
-});
-*/
 
 export default function ProfilePage() {
   const {
@@ -70,55 +43,10 @@ export default function ProfilePage() {
     isError,
   } = useGetUserQuery();
 
-  /*
-  const form = useForm({
-    resolver: zodResolver(FormSchema),
-  });
-*/
-  //Search Param
-  //const [params] = useSearchParams();
-  //const reference = params.get("reference");
-  //  const auto_open_credit = params.get("credit");
-
-  /*const {
-    data: paymentConfirmation,
-    isLoading: confirmingPayment,
-    isError: isPaymentConfirmationError,
-    error: paymentConfirmationError,
-  } = useConfirmCreditPaymentQuery(reference, { skip: !reference });
-*/
   const [controlledDialogModal1, setDialogToggle1] = useState(false);
   const [controlledDialogModal2, setDialogToggle2] = useState(false);
 
   const router = useNavigate();
-  //const [controlledDialogPayment, setDialogTogglePayment] = useState(false);
-
-  //Change to premium once people are plenty
-  /*
-  const [
-    pay_credit,
-    { isLoading: redirecting, isError: isPaymentError, error: paymentError },
-  ] = useBuyCreditMutation();
-
-  useEffect(() => {
-    if (reference) {
-      //Open Modal
-      setDialogTogglePayment(true);
-    }
-  }, [reference]);
-
-  const redirectToPayment = async (creditInfo) => {
-    //PASS to Paystack
-    await pay_credit({ creditSize: creditInfo?.type })
-      .unwrap()
-      .then((data) => {
-        window.location.href = data.url;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-        */
 
   if (isLoading || isFetching) {
     return (
@@ -167,49 +95,6 @@ export default function ProfilePage() {
       </h1>
 
       <div className="my-6">
-        {/*  <Dialog
-          open={controlledDialogPayment}
-          onOpenChange={() => setDialogTogglePayment((p) => !p)}
-        >
-          <DialogContent>
-            <DialogTitle className="font-sans_serif">
-              Payment status - {paymentConfirmation?.status}
-            </DialogTitle>
-            {confirmingPayment && <p>...</p>}
-            {isPaymentConfirmationError && (
-              <p className="text-destructive font-poppins">
-                {paymentConfirmationError?.message}
-              </p>
-            )}
-            {paymentConfirmation && (
-              <article>
-                {paymentConfirmation?.status === "success" && (
-                  <p className="font-poppins">
-                    {" "}
-                    Your Payment of <b>NGN{paymentConfirmation?.amount}</b> was
-                    successful. <b>{paymentConfirmation?.credit}</b> worth of
-                    credits has been added to your account
-                  </p>
-                )}
-                {paymentConfirmation?.status === "failed" && (
-                  <p className="font-poppins">
-                    {" "}
-                    Your Payment of <b>NGN{paymentConfirmation?.amount}</b>{" "}
-                    Failed.
-                  </p>
-                )}
-              </article>
-            )}
-
-            <DialogClose asChild>
-              <Button variant="primary" className="w-fit">
-                Close
-              </Button>
-            </DialogClose>
-          </DialogContent>
-        </Dialog>
-*/}
-
         <Dialog
           open={controlledDialogModal2}
           onOpenChange={toggleDialogModalPhoto}
@@ -247,9 +132,19 @@ export default function ProfilePage() {
           <p className="text-3xl  font-medium text-center font-roboto mt-4">
             {user?.name}
           </p>
-          <p className="my-4 font-oswald text-slate-400 text-center ">
-            <span className="font-roboto font-bold">
+          <p className="my-4 flex gap-2 justify-center font-roboto text-slate-400 text-center ">
+            <span
+              className="
+             font-medium"
+            >
               {user?.role === "user" && "Student"}
+            </span>
+            <Dot className="text-primary text-xl" />
+            <span className="text-slate-400 font-medium">
+              posts limit :{" "}
+              <span className="font-bold text-primary">
+                {user?.isPro ? <Infinity className="inline" /> : user?.limit}
+              </span>
             </span>
           </p>
           <p className="font-oswald text-slate-600 text-center my-1">
@@ -321,127 +216,10 @@ export default function ProfilePage() {
             </TabsContent>
             <TabsContent value="settings">
               <Settings />
-              {/* <Dialog>
-                <article className="space-y-2  px-1 py-2 ">
-                  <p>Buy Credits and find your roommate instantly!</p>
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      asChild
-                      className="hover:bg-slate-200 rounded hover:text-secondary"
-                    >
-                      <Link to="manage-credit">Manage credit</Link>
-                    </Button>
-                    <DialogTrigger asChild>
-                      <Button>Choose Plan</Button>
-                    </DialogTrigger>
-                  </div>
-                </article>
-
-                <DialogContent>
-                  <DialogTitle className="font-sans_serif">
-                    Select Plan to Continue
-                  </DialogTitle>
-                  <>
-                    <Form {...form}>
-                      <form
-                        onSubmit={form.handleSubmit(redirectToPayment)}
-                        className="w-full font-poppins space-y-6"
-                      >
-                        <FormMessage>
-                          {isPaymentError && paymentError?.message}
-                        </FormMessage>
-                        <FormField
-                          control={form.control}
-                          name="type"
-                          render={({ field }) => (
-                            <FormItem className="space-y-3">
-                              <FormControl>
-                                <RadioGroup
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                  className="flex flex-col space-y-1"
-                                >
-                                  <FormItem className="flex items-center space-x-3 space-y-0">
-                                    <FormControl>
-                                      <RadioGroupItem value="60" />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      <p className="">
-                                        60 Credits{" "}
-                                        <ArrowRight className=" inline text-primary" />{" "}
-                                        NGN250
-                                      </p>
-                                    </FormLabel>
-                                  </FormItem>
-                                  <FormItem className="flex items-center space-x-3 space-y-0">
-                                    <FormControl>
-                                      <RadioGroupItem value="500" />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      <p className="">
-                                        500 Credits{" "}
-                                        <ArrowRight className=" inline text-primary" />{" "}
-                                        NGN1000
-                                      </p>
-                                    </FormLabel>
-                                  </FormItem>
-                                  <FormItem className="flex items-center space-x-3 space-y-0">
-                                    <FormControl>
-                                      <RadioGroupItem value="1000" />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      <p className="">
-                                        1000 Credits{" "}
-                                        <ArrowRight className=" inline text-primary" />{" "}
-                                        NGN1800
-                                      </p>
-                                    </FormLabel>
-                                  </FormItem>
-                                </RadioGroup>
-                              </FormControl>
-                              <FormDescription>
-                                After clicking "buy now", you are going to be
-                                redirected to PAYSTACK to complete your payment.
-                              </FormDescription>
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          className="rounded"
-                          type="submit"
-                          variant="primary"
-                          disabled={redirecting}
-                        >
-                          {redirecting ? (
-                            <Loader2 className="animate-spin" />
-                          ) : (
-                            "Buy Now"
-                          )}
-                        </Button>
-                      </form>
-                    </Form>
-                  </>
-                </DialogContent>
-              </Dialog>*/}
             </TabsContent>
           </Tabs>
         </div>
       )}
-      {/*!profile_complete && (
-        <div className="w-full space-y-3 mb-4">
-          <Alert>
-            <AlertCircleIcon />
-            <AlertTitle>Complete your Profile</AlertTitle>
-            <AlertDescription>
-              Finish setting up your profile and start finding your roommate
-            </AlertDescription>
-          </Alert>
-          {//!user?.profile && <Profile mode="create" />}
-          {//!user?.email_verified && <EmailVerificationComponent />}
-         </main> {!user?.photo && <ProfilePic triggerModal={toggleDialogModalPhoto} />}
-        </div>
-      )*/}
     </main>
   );
 }
