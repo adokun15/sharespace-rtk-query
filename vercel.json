@@ -1,5 +1,9 @@
 {
   "rewrites": [
-    { "source": "/__/auth/:path*", "destination": "/index.html" }
+    {
+     "source": "/__/auth/:path*",
+      "destination": "https://sharespaceng.firebaseapp.com/__/auth/:path*"
+    }
+
   ]
 }
