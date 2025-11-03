@@ -28,6 +28,7 @@ import { LogoutXomponent } from "./Logout";
 import { useGoProMutation, useConfirmPaymentQuery } from "../store/Slices/pro";
 import { useState } from "react";
 import { useEffect } from "react";
+import { FEEDBACK_URL, SUPPORT_PHONE } from "../lib/utils";
 
 export default function SettingsComponent() {
   const reRoute = useNavigate();
@@ -192,11 +193,7 @@ export default function SettingsComponent() {
             variant="primary"
             className="rounded"
           >
-            {redirecting ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Pay NGN 1700"
-            )}
+            {redirecting ? <Loader2 className="animate-spin" /> : "Pay NGN 900"}
           </Button>
         </div>
       )}
@@ -216,7 +213,7 @@ export default function SettingsComponent() {
         <h3 className="font-[600] text-[18px]">Support</h3>
         <p className="text-muted">Reach out to us, we are always available.</p>
         <Button variant="primary" className="rounded">
-          Talk to Us
+          <Link to={SUPPORT_PHONE}>Talk to Us</Link>
         </Button>
       </div>
 
@@ -224,7 +221,7 @@ export default function SettingsComponent() {
         <h3 className="font-[600] text-[18px]">Feedback</h3>
         <p className="text-muted">Let us know where to improve...</p>
         <Button variant="primary" className="rounded">
-          Give thought
+          <Link to={FEEDBACK_URL}>Give thought</Link>
         </Button>
       </div>
 

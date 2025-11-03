@@ -40,21 +40,22 @@ const Roomates = ({ user }) => {
       selectFromResult: (res) => {
         const { data, ...others } = res;
         let roommates_list = data;
-
-        if (filterRoomate === "all") {
-          roommates_list = data;
+        if (filterRoomate === "urgent") {
+          const expires = roommates_list?.map((r) => {
+            const d = new Date(r?.timePosted).getTime();
+            return { ...r, exp: d };
+          });
+          //oldest
+          roommates_list = expires?.sort((a, b) => a?.exp - b?.exp);
         }
 
-        if (filterRoomate === "roomie") {
-          roommates_list = roommates_list?.filter(
-            (post) => post?.target === "roomie"
-          );
-        }
+        if (filterRoomate === "recent") {
+          const expires = roommates_list?.map((r) => {
+            const d = new Date(r?.timePosted).getTime();
+            return { ...r, exp: d };
+          });
 
-        if (filterRoomate === "spacer") {
-          roommates_list = roommates_list?.filter(
-            (post) => post?.target === "spacer"
-          );
+          roommates_list = expires?.sort((a, b) => b?.exp - a?.exp);
         }
 
         if (filterRoomate === "1") {
@@ -160,48 +161,70 @@ const Roomates = ({ user }) => {
       open={notLoggin === "open_sheet"}
       onOpenChange={() => setLoginModal("do-nothing")}
     >
-      {!user && (
-        <article className="flex gap-10">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button className="font-mono">
-                Filter
-                <Settings2Icon />{" "}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <h2>Gender</h2>
+      <article className="flex gap-10">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" className="font-mono">
+              Filter
+              <Settings2Icon />{" "}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            {!user && (
+              <div>
+                <h2>Gender</h2>
+                <ul>
+                  <Button
+                    variant="ghost"
+                    className={`${filterRoomate === "all" && "text-primary"}`}
+                    onClick={() => setFilteredResult("all")}
+                  >
+                    Any
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={`${filterRoomate === "1" && "text-primary"}`}
+                    onClick={() => setFilteredResult("1")}
+                  >
+                    Guy
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={`${filterRoomate === "0" && "text-primary"}`}
+                    onClick={() => setFilteredResult("0")}
+                  >
+                    Lady
+                  </Button>
+                </ul>
+              </div>
+            )}
+            <div>
+              <h2>Base on Time</h2>
               <ul>
                 <Button
                   variant="ghost"
-                  className={`${filterRoomate === "all" && "text-primary"}`}
-                  onClick={() => setFilteredResult("all")}
+                  className={`${filterRoomate === "urgent" && "text-primary"}`}
+                  onClick={() => setFilteredResult("urgent")}
                 >
-                  Any
+                  Urgent
                 </Button>
                 <Button
                   variant="ghost"
-                  className={`${filterRoomate === "1" && "text-primary"}`}
-                  onClick={() => setFilteredResult("1")}
+                  className={`${filterRoomate === "recent" && "text-primary"}`}
+                  onClick={() => setFilteredResult("recent")}
                 >
-                  Guy
-                </Button>
-                <Button
-                  variant="ghost"
-                  className={`${filterRoomate === "0" && "text-primary"}`}
-                  onClick={() => setFilteredResult("0")}
-                >
-                  Lady
+                  Recently added
                 </Button>
               </ul>
-            </PopoverContent>
-          </Popover>
+            </div>
+          </PopoverContent>
+        </Popover>
 
-          {/* <div className="grow">
+        {/* <div className="grow">
           <Input placeholder="Search by School Name" />
         </div>*/}
-        </article>
-      )}
+      </article>
+
       <Dialog
         open={notLoggin === "open_dialog"}
         onOpenChange={() => setLoginModal("do-nothing")}

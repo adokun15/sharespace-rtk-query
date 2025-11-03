@@ -10,14 +10,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../components/ui/accordion";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 
 export default function About() {
   return (
-    <main className="mb-6 w-full px-4 mx-auto shadoww">
-      <h1 className="md:text-[3.2rem] text-[2.7rem] font-semibold font-sans_serif">
-        About Us
-      </h1>
-
+    <main className="mb-6 space-y-6 w-full px-4 mx-auto shadoww">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/about">About Us</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <Tabs defaultValue="about">
         <TabsList>
           <TabsTrigger value="about">About</TabsTrigger>

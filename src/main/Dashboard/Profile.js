@@ -32,6 +32,13 @@ import { useNavigate } from "react-router-dom";
 
 import { accountCreationDate } from "../../utils/TimeHandler";
 import Settings from "src/components/Settings";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/src/components/ui/breadcrumb";
 
 export default function ProfilePage() {
   const {
@@ -92,10 +99,18 @@ export default function ProfilePage() {
     router("/admin");
   }
   return (
-    <main className="mx-auto container">
-      <h1 className="text-2xl font-semibold text-slate-600 font-roboto tracking-wide">
-        Profile Account
-      </h1>
+    <main className="mx-auto space-y-4 container">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/about">About Us</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
       <div className="my-6">
         <Dialog

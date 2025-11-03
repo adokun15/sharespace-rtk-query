@@ -7,12 +7,14 @@ import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
 import { FEEDBACK_URL } from "../../lib/utils";
 import { ArrowRight } from "lucide-react";
+import MobileNavDrawer from "../../components/MobileNavigation";
+import MainNavigation from "../../components/MainNavigation";
 export default function HomeRoot() {
   const location = useLocation();
   //const reRoute = useNavigate();
 
   const token = localStorage.getItem("sharespace_token");
-  
+
   const [isPrivate, setRouteIsPrivate] = useState(false);
 
   const dashboardRoute = location.pathname.split("/");
@@ -47,8 +49,9 @@ export default function HomeRoot() {
     <SidebarProvider>
       <DashboardNavigator loadContent={isPrivate} />
       <main className="w-full bg-background relative ">
-        <TriggerSidebar />
-        <div>
+        {/*<TriggerSidebar />*/}
+        <MainNavigation />
+        <div className="min-h-[100dvh]">
           <div className="w-full bg-accent text-white text-xs md:text-xl md:text-center py-2 md:block hidden">
             <p className="hover:cursor-pointer" onClick={toFeedbackSpace}>
               <span className="font-bold">ShareSpace</span> is currently in
@@ -62,6 +65,7 @@ export default function HomeRoot() {
             <Outlet />
           </article>
         </div>
+        <MobileNavDrawer />
       </main>
       <Toaster richColors />
     </SidebarProvider>

@@ -10,6 +10,10 @@ export const LOCAL_CLIENT_WEB_URL = "http://localhost:3000";
 
 export const FEEDBACK_URL = "https://forms.gle/2QnuRvNrDYG6aogm7";
 export const SUPPORT_EMAIL = "mailto:contactdanielamos@gmail.com";
+export const SUPPORT_PHONE = "https://wa.me/09037984710";
+
+export const COMMUNITY_LINK =
+  "https://chat.whatsapp.com/BmtdTEbDmknBZYfketc4Ek";
 
 export const FIREBASE_APIKEY = "AIzaSyDsU2heMX_fy89fl1WjvjHel6O1lFyeuAk";
 export const FIREBASE_AUTH_DOMAIN = "www.sharespace.com.ng";
