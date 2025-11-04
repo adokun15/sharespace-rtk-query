@@ -16,6 +16,7 @@ import {
   MoreVertical,
   ReceiptText,
   Settings2Icon,
+  Share,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Skeleton } from "./ui/skeleton";
@@ -28,6 +29,7 @@ import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { lIVE_CLIENT_WEB_URL } from "../lib/utils";
 
 const Roomates = ({ user }) => {
   const reason = useRef();
@@ -154,7 +156,32 @@ const Roomates = ({ user }) => {
       });
   };
 
-  //  const CopySinglePostLink = () => {};
+  const SharePost = async (roomate) => {
+    const text = `
+    Quote: ${roomate?.description}
+   
+    Apartment Video: ${roomate?.room_video || "Not available"}
+    Contact: ${roomate?.contact}
+
+    See more here : ${lIVE_CLIENT_WEB_URL}
+    `;
+    const title = "Seeking Roomate";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url: lIVE_CLIENT_WEB_URL,
+          text,
+        });
+      } catch (error) {
+        console.log("Error Sharing:", error);
+      }
+    } else {
+      const encoded = encodeURIComponent(text);
+      window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
+    }
+  };
 
   return (
     <Sheet
@@ -319,7 +346,7 @@ const Roomates = ({ user }) => {
                   )}
                 </div>
 
-                <article className="h-[98px] bg-slate-50  line-clamp-4 font-poppins px-2 tracking-wide my-3">
+                <article className="h-[120px] bg-slate-50  line-clamp-6 font-poppins px-2 tracking-wide my-3">
                   {roomate?.description}
                 </article>
 
@@ -363,16 +390,26 @@ const Roomates = ({ user }) => {
                     </p>
                     </div>*/}
                 <div className="flex justify-between gap-1">
-                  <Button
-                    className="w-fit px-4 text-[16px]  rounded font-[300]
-                     tracking-wide flex  font-sans_serif"
-                    variant="primary"
-                  >
-                    <Link to={roomate?.contact} target="_blank">
-                      Chat
-                    </Link>
-                    <ReceiptText />
-                  </Button>
+                  <div className="flex items-center">
+                    <Button
+                      className="w-fit px-4 text-[16px]  rounded font-[300]
+                  tracking-wide flex  font-sans_serif"
+                      variant="primary"
+                    >
+                      <Link to={roomate?.contact} target="_blank">
+                        Chat
+                      </Link>
+                      <ReceiptText />
+                    </Button>
+
+                    <Button
+                      className="w-fit px-4 text-[16px] ring-2 ring-primary rounded font-[300]
+                     bg-transparent tracking-wide flex  font-sans_serif"
+                      onCLick={() => SharePost(roomate)}
+                    >
+                      <Share />
+                    </Button>
+                  </div>
                   <Popover>
                     <PopoverTrigger className="" asChild>
                       <Button
