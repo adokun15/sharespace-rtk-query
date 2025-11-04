@@ -167,17 +167,13 @@ const Roomates = ({ user }) => {
     `;
     const title = "Seeking Roomate";
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title,
-          url: lIVE_CLIENT_WEB_URL,
-          text,
-        });
-      } catch (error) {
-        console.log("Error Sharing:", error);
-      }
-    } else {
+    try {
+      await navigator.share({
+        title,
+        url: lIVE_CLIENT_WEB_URL,
+        text,
+      });
+    } catch (error) {
       const encoded = encodeURIComponent(text);
       window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
     }
@@ -327,23 +323,28 @@ const Roomates = ({ user }) => {
                     </PopoverContent>
                   </Popover>
 
-                  {roomate?.userId !== "admin" ? (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <MoreVertical />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-fit rounded tracking-wide font-poppins">
-                        <Button
-                          onClick={() => setReportDialog((p) => !p)}
-                          variant="ghost"
-                        >
-                          Report
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                  ) : (
-                    <p></p>
-                  )}
+                  <div>
+                    {roomate?.userId !== "admin" ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <MoreVertical />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-fit rounded tracking-wide font-poppins">
+                          <Button
+                            onClick={() => setReportDialog((p) => !p)}
+                            variant="ghost"
+                          >
+                            Report
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <p></p>
+                    )}
+                    <Button onCLick={() => SharePost(roomate)} variant="ghost">
+                      Share
+                    </Button>
+                  </div>
                 </div>
 
                 <article className="h-[120px] bg-slate-50  line-clamp-6 font-poppins px-2 tracking-wide my-3">
@@ -390,26 +391,16 @@ const Roomates = ({ user }) => {
                     </p>
                     </div>*/}
                 <div className="flex justify-between gap-1">
-                  <div className="flex items-center">
-                    <Button
-                      className="w-fit px-4 text-[16px]  rounded font-[300]
+                  <Button
+                    className="w-fit px-4 text-[16px]  rounded font-[300]
                   tracking-wide flex  font-sans_serif"
-                      variant="primary"
-                    >
-                      <Link to={roomate?.contact} target="_blank">
-                        Chat
-                      </Link>
-                      <ReceiptText />
-                    </Button>
-
-                    <Button
-                      className="w-fit px-4 text-[16px] ring-2 ring-primary rounded font-[300]
-                     bg-transparent tracking-wide flex  font-sans_serif"
-                      onCLick={() => SharePost(roomate)}
-                    >
-                      <Share />
-                    </Button>
-                  </div>
+                    variant="primary"
+                  >
+                    <Link to={roomate?.contact} target="_blank">
+                      Chat
+                    </Link>
+                    <ReceiptText />
+                  </Button>
                   <Popover>
                     <PopoverTrigger className="" asChild>
                       <Button
