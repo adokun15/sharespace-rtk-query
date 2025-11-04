@@ -38,7 +38,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/src/components/ui/breadcrumb";
+} from "../../components/ui/breadcrumb";
 
 export default function ProfilePage() {
   const {
@@ -77,6 +77,14 @@ export default function ProfilePage() {
       </div>
     );
   }
+  // const profile_complete = user?.religion && user?.email_verified && user?.photo && ;
+  if (user?.userId && !user?.onboarding_complete && !isError && !user?.role) {
+    router("/onboarding");
+  }
+
+  if (user?.userId && user?.onboarding_complete && user?.role !== "user") {
+    router("/admin");
+  }
 
   if (isError) {
     return <DataError error={error} refetch={refetch} />;
@@ -89,15 +97,6 @@ export default function ProfilePage() {
   const toggleDialogModalPhoto = () => {
     setDialogToggle2((p) => !p);
   };
-
-  // const profile_complete = user?.religion && user?.email_verified && user?.photo && ;
-  if (user?.userId && !user?.onboarding_complete && !isError && !user?.role) {
-    router("/onboarding");
-  }
-
-  if (user?.role !== "user") {
-    router("/admin");
-  }
   return (
     <main className="mx-auto space-y-4 container">
       <Breadcrumb>

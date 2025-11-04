@@ -1,4 +1,4 @@
-import { HomeIcon, User } from "lucide-react";
+import { HomeIcon, Info, Search, User, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,12 +11,14 @@ import {
   SidebarFooter,
   useSidebar,
   SidebarSeparator,
+  SidebarGroupLabel,
 } from "../components/ui/sidebar";
 import Logo from "../image/sharespace_logo.jpg";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { useIsLoggedInQuery } from "../store/Slices/user";
+import { Badge } from "./ui/badge";
 //import { FEEDBACK_URL, SUPPORT_EMAIL } from "../lib/utils";
 
 export default function DashboardNavigator({ loadContent }) {
@@ -77,15 +79,12 @@ export default function DashboardNavigator({ loadContent }) {
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent className="text-center space-y-4 font-poppins">
+            <SidebarGroupContent className="pl-5 text-center space-y-4 font-poppins">
               {!isLoading && !isFetching && (
                 <>
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuButton
-                        className="flex text-xl justify-center"
-                        asChild
-                      >
+                      <SidebarMenuButton className="flex text-xl " asChild>
                         <Link to="/">
                           <HomeIcon className="text-purple-400" />
                           <span>Home</span>
@@ -130,11 +129,20 @@ export default function DashboardNavigator({ loadContent }) {
 
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuButton
-                        className="text-xl flex justify-center"
-                        asChild
-                      >
+                      <SidebarMenuButton className="text-xl flex " asChild>
+                        <Link to="/community">
+                          <Users className="text-purple-400" />
+                          <span>Community</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton className="text-xl flex" asChild>
                         <Link to="/about">
+                          <Info className="text-purple-400" />
                           <span>About us</span>
                         </Link>
                       </SidebarMenuButton>
@@ -157,6 +165,26 @@ export default function DashboardNavigator({ loadContent }) {
    */}
                 </>
               )}
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent className="pl-5 text-center  font-poppins">
+              <SidebarGroupLabel>
+                <Badge className="flex items-center text-xs rounded-full">
+                  pro
+                </Badge>
+              </SidebarGroupLabel>
+
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="text-xl flex " asChild>
+                    <Link to="/find">
+                      <Search className="text-purple-400" />
+                      <span>Find{""}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

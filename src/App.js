@@ -20,6 +20,8 @@ import Term from "./main/tos";
 import GoogleLogin from "./components/googleLogin";
 import OnBoardingPage from "./main/Onboarding/page";
 import AdminPage from "./main/Admin/AdminPage";
+import Community from "./main/Community/page";
+import FindFilter from "./main/Find/find";
 //import SingleRoommateInfo from "./components/SingleRoomieData";
 //import Guide from "./components/Guides";
 //import ForgetPasswordComponent from "./Pages/Auth/forgetPassword";
@@ -28,8 +30,7 @@ import AdminPage from "./main/Admin/AdminPage";
 function App() {
   const router = createBrowserRouter([
     {
-      path: "/", //public
-
+      path: "/",
       // element: <RootPage />,
       // errorElement: <ErrorElement />,
       element: <HomeRoot />,
@@ -38,6 +39,7 @@ function App() {
         //private
         { path: "admin", element: <AdminPage /> },
         { path: "onboarding", element: <OnBoardingPage /> },
+        { path: "find", element: <FindFilter /> },
         {
           path: "create",
           children: [{ index: true, element: <CreateRoomieSpaceForm /> }],
@@ -57,6 +59,7 @@ function App() {
             },
           ],
         },
+        { path: "/community", element: <Community /> },
         { path: "/terms", element: <Term /> },
         { path: "/privacy", element: <Privacy /> },
         { path: "/about", element: <About /> },

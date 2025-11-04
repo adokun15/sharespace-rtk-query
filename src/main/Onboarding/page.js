@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ChevronRight, Loader2 } from "lucide-react";
-import { SUPPORT_EMAIL } from "../../lib/utils";
+import { SUPPORT_EMAIL, SUPPORT_PHONE } from "../../lib/utils";
 import { useNavigate } from "react-router-dom";
 import DataError from "../../components/DataError";
 
@@ -143,7 +143,10 @@ export default function OnBoardingPage({ mode, previousData }) {
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+      <form
+        className="space-y-6 mx-auto pb-8 md:max-w-lg"
+        onSubmit={form.handleSubmit(handleSubmit)}
+      >
         <div className="">
           <h1 className="text-xl font-bold">
             Join us by completing your profile
@@ -154,7 +157,7 @@ export default function OnBoardingPage({ mode, previousData }) {
         </div>
 
         <div>{profile_isError && "Something is Wrrong"}</div>
-        <div>
+        <div className="space-y-4">
           <h1 className=" my-4 font-medium font-poppins">Personal Info</h1>
 
           <FormField
@@ -217,7 +220,7 @@ export default function OnBoardingPage({ mode, previousData }) {
             )}
           />
         </div>
-        <div>
+        <div className="space-y-4">
           <h1 className=" my-4 font-medium font-poppins">School Info</h1>
           <FormField
             name="school"
@@ -256,7 +259,7 @@ export default function OnBoardingPage({ mode, previousData }) {
                   Can't find your school. Reach out to{" "}
                   <a
                     className="text-primary underline"
-                    href={SUPPORT_EMAIL}
+                    href={SUPPORT_PHONE}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -291,7 +294,6 @@ export default function OnBoardingPage({ mode, previousData }) {
                     <SelectItem value="500">500</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>Enter Your Level</FormDescription>
               </FormItem>
             )}
           />

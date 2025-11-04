@@ -42,7 +42,7 @@ export default function MobileNavDrawer() {
           </div>
 
           <div>
-            <Link to={COMMUNITY_LINK}>
+            <Link to={"/community"}>
               <Users className="text-center mx-auto" />
               <span>Community</span>
             </Link>

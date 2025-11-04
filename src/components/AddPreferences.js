@@ -25,12 +25,15 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import InfoPopOver from "./InfoPopOver";
+import InfoDialog from "./InfoDialog";
+import { SUPPORT_PHONE } from "../lib/utils";
 //import { saveMessagingDeviceToken } from "../firebase/Messaging";
 
 //Validate Input
 const formSchema = z.object({
-  contact: z.string().min(2).includes("https://wa.link/", "Invalid wa.link"),
-  room_video: z.string().default("free"),
+  contact: z.string().min(5),
+  room_video: z.string().min(0),
   school_short: z.string().regex(/^[a-zA-Z]+$/, "Invalid school name"),
   description: z.string().min(5, "Quote too Short"),
   numberOfRoommates: z.string().max(2),
@@ -62,7 +65,11 @@ export default function AddPreferences({ user }) {
     //Check if Quote;
     if (data?.description && data?.description?.split(" ").length > 200) {
       toast.error("Quote has exceeded its limit :  200 words ");
+      return;
+    }
 
+    if (data?.description.includes("http")) {
+      toast.error("Kindly remove any foreign links. No links allowed");
       return;
     }
 
@@ -72,10 +79,16 @@ export default function AddPreferences({ user }) {
     }
 
     if (
-      (data?.room_video?.length > 1 &&
-        !data?.room_video?.includes("catbox.moe")) ||
-      data?.room_video === "free" ||
-      !isNaN(data?.room_video)
+      !data?.contact.includes("wa.link/") &&
+      !data?.contact.includes("wa.me/")
+    ) {
+      toast.warning("Invalid Whatsapp link");
+      return;
+    }
+
+    if (
+      data?.room_video?.length > 1 &&
+      !data?.room_video?.includes("catbox.moe")
     ) {
       toast.warning("Invalid Video Link", {
         description: (
@@ -174,12 +187,14 @@ your post should be a spacer, which means you have no 'accomodation'
               <FormControl>
                 <textarea
                   {...field}
-                  className="resize-none font-poppins tracking-wide flex 
-                   text-base h-9 w-full rounded-md 
-                   border border-input bg-transparent px-3 
+                  className="resize-none 
+                  ring-2 ring-primary ring-offset-2
+        rounded-xl border-primary border
+                  font-poppins tracking-wide flex 
+                   text-base h-9 w-full bg-transparent px-3 
                      py-1 shadow-sm transition-colors  placeholder:text-muted-foreground
                      focus-visible:outline-none focus-visible:ring-1
-                    focus-visible:ring-ring md:text-sm min-h-32 "
+                    focus-visible:ring-ring text-[16px] placeholder:text-slate-400 min-h-32 "
                   placeholder="Enter a brief quote"
                 ></textarea>
               </FormControl>
@@ -203,57 +218,55 @@ your post should be a spacer, which means you have no 'accomodation'
           )}
         />
 
-        <div className="flex *:grow gap-x-2">
-          <FormField
-            name="school_short"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className=" text-[18px] font-[500] font-sans_serif">
-                  Your School abbreviation (?)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="University of Lagos e.g UNILAG"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        <FormField
+          name="school_short"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className=" my-3 text-[18px] font-[500] font-sans_serif">
+                Your School abbreviation
+                <InfoPopOver>
+                  The Short name of your school eg KWASU, OAU, UNILAG
+                </InfoPopOver>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="University of Lagos e.g UNILAG"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            name="numberOfRoommates"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className=" text-[18px] font-[500] font-sans_serif">
-                  Max Roommates (?)
-                </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="How many?" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5">5</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Note: These are the number of people you want to live with
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          name="numberOfRoommates"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className=" text-[18px] font-[500] font-sans_serif">
+                Max Roommates
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="How many?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Note: These are the number of people you want to live with
+              </FormDescription>
+            </FormItem>
+          )}
+        />
 
         <FormField
           name="contact"
@@ -261,10 +274,14 @@ your post should be a spacer, which means you have no 'accomodation'
           render={({ field }) => (
             <FormItem>
               <FormLabel className=" text-[18px] font-[500] font-sans_serif">
-                Whatsapp Phone via wa.link (?)
+                Whatsapp link{" "}
+                <InfoPopOver>
+                  This could be a link with wa.me or wa.link that redirect to
+                  your contact
+                </InfoPopOver>
               </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="https://wa.link/your_phone" />
+                <Input {...field} placeholder="wa.link/phone or wa.me/phone " />
               </FormControl>
               <FormDescription>
                 Once you generate your code, simply paste it here
@@ -279,17 +296,60 @@ your post should be a spacer, which means you have no 'accomodation'
           render={({ field }) => (
             <FormItem>
               <FormLabel className=" text-[18px] font-[500] font-sans_serif">
-                Add Your Room video{" "}
-                <span className="text-[16px] font-bold underline text-primary">
-                  pro
-                </span>
+                Add a video of your apartment (optional){" "}
+                <InfoDialog>
+                  <div className="font-poppins">
+                    <h1 className="text-[20px] font-[600]">Guide</h1>
+                    <p>
+                      If you do not have an apartment yet, you can leave the
+                      option empty.{" "}
+                    </p>
+                    <p className="text-[16px]">
+                      But if you have an apartment you wish to show others then
+                      visit{" "}
+                      <a
+                        className="text-primary"
+                        href="https://catbox.moe"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Catbox website
+                      </a>{" "}
+                      to upload your video of your hostel{" "}
+                    </p>
+                    <p>
+                      After uploading your video, you will be provided with a
+                      url, copy and paste the url here
+                    </p>
+                    <p className="text-slate-500 mt-4">
+                      for further support, reach out to{" "}
+                      <a
+                        className="text-primary"
+                        href={SUPPORT_PHONE}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        us
+                      </a>
+                    </p>
+                  </div>
+                </InfoDialog>
               </FormLabel>
               <FormControl>
                 <Input {...field} placeholder="Upload Room Video" />
               </FormControl>
               <FormDescription>
-                Visit catbox.moe upload your video on their cloud and paste the
-                link here, we will display for others(logged in users) to see.
+                Visit{" "}
+                <a
+                  className="text-primary"
+                  href="https://catbox.moe"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  catbox.moe
+                </a>{" "}
+                upload your video on their cloud and paste the link here, we
+                will display for others to see.
               </FormDescription>
             </FormItem>
           )}
@@ -297,7 +357,7 @@ your post should be a spacer, which means you have no 'accomodation'
         <Button
           variant="primary"
           disabled={isLoading}
-          className="rounded w-full max-w-md font-bold mx-auto block tracking-wide"
+          className="rounded w-full max-w-fit font-bold  block tracking-wide"
         >
           {isLoading ? <Loader2 className="animate-spin" /> : "Upload"}
         </Button>
