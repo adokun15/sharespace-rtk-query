@@ -336,14 +336,18 @@ const Roomates = ({ user }) => {
                           >
                             Report
                           </Button>
+
+                          <Button
+                            onClick={() => SharePost(roomate)}
+                            variant="ghost"
+                          >
+                            Share
+                          </Button>
                         </PopoverContent>
                       </Popover>
                     ) : (
                       <p></p>
                     )}
-                    <Button onCLick={() => SharePost(roomate)} variant="ghost">
-                      Share
-                    </Button>
                   </div>
                 </div>
 
