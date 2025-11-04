@@ -20,7 +20,7 @@ export default function HomeRoot() {
   const dashboardRoute = location.pathname.split("/");
 
   useEffect(() => {
-    if (dashboardRoute[1] === "guide") {
+    if (dashboardRoute[1] === "community") {
       setRouteIsPrivate(false);
       return;
     } else if (dashboardRoute[1] === "auth") {

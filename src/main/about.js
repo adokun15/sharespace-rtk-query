@@ -42,10 +42,10 @@ export default function About() {
         </TabsList>
         <TabsContent value="about">
           <div className="space-y-6 font-poppins mt-5  max-w-2xl">
-            <h1 className="font-[600] ">How Sharespace came into existent?</h1>
+            <h1 className="font-[600] ">How Sharespace came into existence?</h1>
             <p>
               I started <span className="text-primary">ShareSpace</span> as a
-              mini project back <i>2024</i> toward the year ending, as means to
+              mini project back <i>2024</i> toward the year ending, as a mean to
               increase my coding knowledge and add it to my{" "}
               <span className="text-primary">
                 <Link to="https://ohida.vercel.app">porfolio</Link>

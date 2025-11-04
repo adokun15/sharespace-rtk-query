@@ -12,8 +12,9 @@ import {
   Contact2,
   Search,
   Users,
+  Plus,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 //import FeedbackModal from "./FeedbackModal";
 ///import JoinCommunityButton from "./JoinCommunityButton";
@@ -35,24 +36,51 @@ export default function MobileNavDrawer() {
       {isMobile && (
         <nav className="sticky bottom-0 text-xs bg-[rgba(0,0,0,0.9)] justify-around items-center text-slate-200 text-shadow-2xs py-3 min-h-[5vh] z-10 flex w-full">
           <div>
-            <Link className="active:text-cyan-700" to="/">
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? " font-[700] text-primary" : "text-white"
+              }
+              to="/"
+            >
               <HomeIcon className="text-center mx-auto" />
               <span>Home</span>
-            </Link>
+            </NavLink>
           </div>
 
           <div>
-            <Link to={"/community"}>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? " font-[700] text-primary" : "text-white"
+              }
+              to={"/community"}
+            >
               <Users className="text-center mx-auto" />
               <span>Community</span>
-            </Link>
+            </NavLink>
           </div>
 
           <div>
-            <Link to="/find">
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? " font-[700] text-primary" : "text-white"
+              }
+              to={"/create"}
+            >
+              <Plus className="text-center mx-auto" />
+              <span>Create</span>
+            </NavLink>
+          </div>
+
+          <div>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? " font-[700] text-primary" : "text-white"
+              }
+              to="/find"
+            >
               <Search className="text-center mx-auto" />
               <span>Find</span>
-            </Link>
+            </NavLink>
           </div>
 
           <div>

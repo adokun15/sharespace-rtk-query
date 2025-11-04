@@ -106,7 +106,7 @@ export default function ProfilePage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/about">About Us</BreadcrumbLink>
+            <BreadcrumbLink>Your profile</BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

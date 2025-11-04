@@ -92,6 +92,7 @@ const Roomates = ({ user }) => {
 
   const [openReportDialog, setReportDialog] = useState(false);
 
+  console.log(roommates);
   if (isLoading || isFetching) {
     //Skeleton
     return (

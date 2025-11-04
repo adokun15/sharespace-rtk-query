@@ -298,10 +298,10 @@ your post should be a spacer, which means you have no 'accomodation'
               <FormLabel className=" text-[18px] font-[500] font-sans_serif">
                 Add a video of your apartment (optional){" "}
                 <InfoDialog>
-                  <div className="font-poppins">
+                  <div className="font-poppins space-y-4">
                     <h1 className="text-[20px] font-[600]">Guide</h1>
                     <p>
-                      If you do not have an apartment yet, you can leave the
+                      If you do not have an apartment yet, you can leave this
                       option empty.{" "}
                     </p>
                     <p className="text-[16px]">
@@ -315,11 +315,11 @@ your post should be a spacer, which means you have no 'accomodation'
                       >
                         Catbox website
                       </a>{" "}
-                      to upload your video of your hostel{" "}
+                      to upload the video of your hostel{" "}
                     </p>
                     <p>
                       After uploading your video, you will be provided with a
-                      url, copy and paste the url here
+                      url link, copy and paste the url here.
                     </p>
                     <p className="text-slate-500 mt-4">
                       for further support, reach out to{" "}

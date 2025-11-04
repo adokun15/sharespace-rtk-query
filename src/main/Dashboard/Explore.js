@@ -15,6 +15,7 @@ import InviteModal from "../../components/InviteModal";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { Loader2, Plus } from "lucide-react";
+import { useSidebar } from "../../components/ui/sidebar";
 
 //Depends on request claim what we be recommended
 const ExplorePage = () => {
@@ -68,22 +69,34 @@ const ExplorePage = () => {
   //const profile_complete =
   // user?.religion && user?.email_verified && user?.photo;
 
-  return (
-    <>
-      <main className="mb-20 space-y-3 w-full">
-        <div className="flex justify-between">
+  /*
+    <div className="flex justify-between">
           <h2 className="text-3xl font-semibold font-sans_serif">Explore</h2>
-          <Button className=" rounded" onClick={handleReRoute}>
-            {isLoading || isFetching ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <>
-                <Plus /> Create
-              </>
-            )}
-          </Button>
+          
         </div>
 
+  */
+
+  const { isMobile } = useSidebar();
+  return (
+    <>
+      <main className="mb-20 space-y-3 relative w-full">
+        <Button
+          className={`${
+            isMobile
+              ? "hidden"
+              : "fixed bottom-10 right-10 rounded-xl text-[18px] px-4 py-2"
+          } `}
+          onClick={handleReRoute}
+        >
+          {isLoading || isFetching ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <>
+              <Plus /> Create
+            </>
+          )}
+        </Button>
         <Dialog
           open={isRoomieInviteOpen}
           className="max-h-[80%] max-w-[90%]"

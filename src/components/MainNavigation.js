@@ -32,7 +32,7 @@ export default function MainNavigation() {
               <ArrowRight className="inline mx-2" size={16} />
             </p>
           </div>
-          <nav className="flex bg-transparent  w-full py-4 text-2xl  mb-3 px-12 font-sans_serif   bg-white  shadow  justify-between">
+          <nav className="flex bg-transparent  w-full py-4 text-2xl  mb-3 px-4 font-sans_serif   bg-white  shadow  justify-between">
             <div className="flex gap-2 justify-center items-center">
               <img
                 src={Logo}
@@ -41,7 +41,7 @@ export default function MainNavigation() {
                 className="rounded"
                 alt="sharespace_logo"
               />
-              <h1 className="text-xl ">
+              <h1 className="text-xl">
                 <Link to="/">ShareSpace</Link>
               </h1>
             </div>
@@ -49,11 +49,11 @@ export default function MainNavigation() {
             <div>
               {!error && data && !isLoading && !isFetching && (
                 <Button
-                  variant="outline"
-                  className="md:text-[20px] text-[16px] rounded-xl"
+                  variant=""
+                  className="md:text-[20px] bg-transparent hover:text-white text-secondary text-[16px] rounded-xl"
                 >
                   <User />
-                  <Link to="/profile">My profile</Link>
+                  <Link to="/profile">profile</Link>
                 </Button>
               )}
 
@@ -63,11 +63,14 @@ export default function MainNavigation() {
               {!isLoading && !isFetching && (error || !data) && (
                 <>
                   {+error?.statusCode === 500 ? (
-                    <Button variant="secondary" onClick={refetch}>
-                      Reload
+                    <Button variant="outline" onClick={refetch}>
+                      Load page
                     </Button>
                   ) : (
-                    <Button variant="secondary" asChild>
+                    <Button
+                      className="md:text-[20px] bg-transparent hover:text-white text-secondary text-[16px] rounded-xl"
+                      asChild
+                    >
                       <Link className="text-center" to="/auth">
                         Login
                       </Link>

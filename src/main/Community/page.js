@@ -9,8 +9,8 @@ export default function Community() {
       <h1 className="text-[24px] font-[600]">Join the Community</h1>
       <p className="font-medium">For Students</p>
       <p>
-        A community is more engaging with people, join now and find fellow peers
-        with similar issues, It is a growing WhatsApp Community, whether you are
+        Our community is more engaging with people, join now and find fellow
+        peers with similar issues, It is a growing community, whether you are
         looking for shared accomodation or just a roomate, this space is for
         you.
       </p>

@@ -48,7 +48,7 @@ export default function CreateRoomieSpaceForm() {
         Create Post
       </h1>
       <p className="mb-8 text-slate-500">
-        Get more visitor in your contacts asap, this will take less than a
+        Get more visitors in your contacts asap, this will take less than a
         minute
       </p>
       <AddPreferences user={user} />
