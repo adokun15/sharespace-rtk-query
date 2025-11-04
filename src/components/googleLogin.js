@@ -80,19 +80,24 @@ export default function GoogleLogin() {
   }, [error?.message, generateCookie, router, isError]);
 
   return (
-    <main className="space-y-10 px-5 py-4 rounded md:w-7/10 w-[98%] lg:w-[55%] mx-auto ">
+    <main className="space-y-3 font-poppins px-5 py-4 rounded md:w-7/10 w-[98%] lg:w-[55%] mx-auto ">
       <h2 className="text-center font-[600] text-size-large">
         Login into your account
       </h2>
+      <p className="text-center text-slate-500">
+        Start creating your chances today.
+      </p>
       {state?.error?.isError && (
         <p className="text-destructive">{state?.error?.message}</p>
       )}
+
       <button
         disabled={state.loading}
         onClick={handleLogin}
-        className="block bg-primary hover:bg-primary/90 transition  w-full  tracking-wide px-3 py-1 rounded shadow"
+        className="block bg-primary mt-8 py-3 rounded-full text-white hover:bg-primary/90 transition
+          w-full  tracking-wide px-3   shadow"
       >
-        {state?.loading ? "Logging..." : "Login with Google"}
+        {state?.loading ? "Logging..." : "Continue with Google"}
       </button>
     </main>
   );

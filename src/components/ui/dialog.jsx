@@ -32,9 +32,9 @@ const DialogContent = React.forwardRef(
         ref={ref}
         className={cn(
           `
-          max-h-[90vh] overflow-y-auto 
-        fixed left-[50%] top-[50%] 
-        z-50 grid w-full max-w-lg translate-x-[-50%] 
+          max-h-[90vh] overflow-y-auto  max-w-[90%]
+        fixed left-[50%] top-[50%] md:max-w-lg
+        z-50 grid w-full  translate-x-[-50%] rounded-xl
         translate-y-[-50%] gap-4 border bg-background
          p-6 shadow-lg duration-200 data-[state=open]:animate-in
         data-[state=closed]:animate-out data-[state=closed]:fade-out-0 

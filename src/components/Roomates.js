@@ -40,6 +40,7 @@ const Roomates = ({ user }) => {
       selectFromResult: (res) => {
         const { data, ...others } = res;
         let roommates_list = data;
+
         if (filterRoomate === "urgent") {
           const expires = roommates_list?.map((r) => {
             const d = new Date(r?.timePosted).getTime();
@@ -91,8 +92,6 @@ const Roomates = ({ user }) => {
   const [notLoggin, setLoginModal] = useState(false);
 
   const [openReportDialog, setReportDialog] = useState(false);
-
-  console.log(roommates);
   if (isLoading || isFetching) {
     //Skeleton
     return (
@@ -149,8 +148,8 @@ const Roomates = ({ user }) => {
         }, 1500);
       })
       .catch((e) => {
-        toast.success("Not Sent!", {
-          description: <p>Reach out to us directly </p>,
+        toast.success(e?.status || "Not Sent!", {
+          description: <p>{e?.message} </p>,
         });
       });
   };
@@ -264,9 +263,10 @@ const Roomates = ({ user }) => {
                     <Input
                       ref={reason}
                       className="placeholder:text-muted"
-                      placeholder="Seen this post before or does it is looks suspicious? Report the post!"
+                      placeholder="Does it is looks suspicious?!"
                     />
                     <Button
+                      className="w-fit"
                       onClick={() => reportSinglePost(roomate.id)}
                       type="button"
                       variant="destructive"
@@ -278,9 +278,6 @@ const Roomates = ({ user }) => {
                       )}
                     </Button>
                   </form>
-                  <DialogClose asChild className="text-primary">
-                    <Button variant="link">Close</Button>
-                  </DialogClose>
                 </DialogContent>
               </Dialog>
 

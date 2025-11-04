@@ -1,16 +1,21 @@
 //import { ageHandler } from "../utils/TimeHandler";
-import { useGetUserQuery } from "../store/Slices/user";
+import {
+  useGetUserQuery,
+  useReportStudentMutation,
+} from "../store/Slices/user";
 import { useMeetRoomateMutation } from "../store/Slices/matches";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataError from "./DataError";
 import LoaderSpinner from "./LoaderSpinner";
 import { Link } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "./ui/skeleton";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Input } from "./ui/input";
 //import { saveMessagingDeviceToken } from "../firebase/Messaging";
 
 export default function RoommateDetail({ roommate, onClose }) {
@@ -23,56 +28,59 @@ export default function RoommateDetail({ roommate, onClose }) {
     isFetching,
   } = useGetUserQuery();
 
-  const [createProposal, { isLoading }] = useMeetRoomateMutation({
+  //Report This User
+
+  const [report_student, { isLoading }] = useReportStudentMutation({
     skip: !user,
   });
-  const [message, setMessage] = useState({ text: "", counter: 0 });
 
-  const messageHandler = (e) => {
-    if (message.counter >= 100) return;
-    setMessage((p) => ({
-      text: e.target.value,
-      counter: e.target.value?.split(" ")?.length,
-    }));
-  };
-
-  //external user
-  const roomieInfo = {
-    id: roommate?.id,
-    school: roommate?.school,
-    religion: roommate?.religion,
-    name: roommate?.name,
-    location: roommate?.location,
-    budget: +roommate?.rent / (+roommate?.numberOfRoommates + 1),
-  };
+  //Make sure there is no 'link'
+  const [message, setMessage] = useState({ text: "", error: "" });
 
   //Current User
-  const createNewMesageProposal = async (e) => {
+  const ReportUser = async (e) => {
     e.preventDefault();
-
-    const info = {
-      ...user,
-      message: message?.text,
-    };
 
     if (!user) return;
 
-    await createProposal({
-      info,
-      roomieInfo,
+    const nameRegex = /^[a-zA-Z0-9\s-]+$/;
+
+    if (!message?.text.trim()) {
+      setMessage((p) => ({
+        text: p.text,
+        error: "You cannot submit an empty report",
+      }));
+      return;
+    } else if (!nameRegex.test(message.text)) {
+      setMessage((p) => ({
+        text: p.text,
+        error: "Invalid characters detected!",
+      }));
+      return;
+    } else if (!isNaN(+message.text)) {
+      setMessage((p) => ({
+        text: p.text,
+        error: "Report can not contain only number",
+      }));
+      return;
+    }
+    setMessage((p) => ({
+      text: p.text,
+      error: "",
+    }));
+
+    await report_student({
+      studentId: roommate?.userId,
+      email: user?.email,
+      reason: message?.text,
     })
       .unwrap()
       .then((data) => {
-        toast.success("Sent!", { description: data?.message });
+        toast.success("Sent!", { description: data });
         onClose();
       })
-      .then(() => {
-        //SAVE your Device then
-        //Send notice To The owner of the post!
-        // saveMessagingDeviceToken(user?.userId)
-      })
       .catch((e) => {
-        toast.error("Unable to send", { description: e?.message });
+        toast.error("Unable to send report", { description: e?.message });
       });
   };
 
@@ -91,8 +99,8 @@ export default function RoommateDetail({ roommate, onClose }) {
   return (
     <>
       <div className="relative overflow-visible min-h-[60vh] transition-all">
-        <article className="flex gap-10 min-w-[40vw] flex-wrap justify-center items-center">
-          <div>
+        <article className="flex gap-10 items-start min-w-[40vw] flex-wrap justify-center ">
+          <div className="space-y-3">
             <Avatar className="w-32 h-32">
               <AvatarImage src={roommate?.photo} />
               <AvatarFallback>...</AvatarFallback>
@@ -103,6 +111,32 @@ export default function RoommateDetail({ roommate, onClose }) {
                 : roommate?.name}
             </p>
             <p className="mt-2 text-muted">{roommate?.description}</p>
+            <Dialog>
+              <DialogTrigger>
+                <div className="flex items-start gap-3 ">
+                  <p className="text-[16px] block underline">Report User</p>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Report</DialogTitle>
+                <p>Add a reason why you want to report this user?</p>
+                {message?.error && (
+                  <p className="text-xs text-destructive">{message?.error}</p>
+                )}
+                <Input
+                  placeholder="The Reason"
+                  onChange={(e) => {
+                    setMessage((p) => ({
+                      text: e?.target?.value,
+                      error: p.error,
+                    }));
+                  }}
+                />
+                <Button onClick={ReportUser} className="rounded-xl w-fit">
+                  {isLoading ? "..." : "Submit"}
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <article>
@@ -140,10 +174,13 @@ export default function RoommateDetail({ roommate, onClose }) {
               </div>
             </div>
             {!user?.isPro && user?.role !== "admin" && (
-              <Button variant="primary">
+              <Button variant="primary" className="w-fit rounded-xl">
                 <Link to="/profile">Upgrade to pro to reveal</Link>
               </Button>
             )}
+
+            <h1 className="font-medium mt-6 font-poppins">Apartment Video</h1>
+            <p className="text-slate-500">Coming soon</p>
           </article>
         </article>
       </div>

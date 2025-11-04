@@ -96,6 +96,41 @@ const userSlice = user_api.injectEndpoints({
       transformResponse: (res) => res?.schools,
     }),
 
+    reportStudent: builder.mutation({
+      query: (data) => ({
+        url: "report",
+        method: "POST",
+        body: JSON.stringify({
+          studentId: data?.studentId,
+          email: data?.email,
+          reason: data?.reason,
+        }),
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.message,
+    }),
+
+    addFeedback: builder.mutation({
+      query: (data) => ({
+        url: "feedback",
+        method: "POST",
+        body: JSON.stringify({
+          feedback: data?.feedback,
+          type: data?.type,
+        }),
+      }),
+      transformErrorResponse: (err) => ({
+        statusCode: err?.data?.statusCode,
+        status: err?.data?.status,
+        message: err?.data?.message,
+      }),
+      transformResponse: (res) => res?.message,
+    }),
+
     editUser: builder.mutation({
       query: (formData) => ({
         url: "",
@@ -142,6 +177,8 @@ export const {
   useGetSchoolsQuery,
   useDeleteUserMutation,
   useCreateSessionMutation,
+  useReportStudentMutation,
+  useAddFeedbackMutation,
 } = userSlice;
 
 /*
