@@ -139,8 +139,18 @@ export default function RoommateDetail({ roommate, onClose }) {
             </Dialog>
           </div>
 
-          <article>
-            <h1 className="font-medium font-poppins">Profile</h1>
+          <article className="pb-8">
+            <div className="flex justify-between items-center">
+              <h1 className="font-medium font-poppins">Profile</h1>
+              {!user?.isPro && user?.role !== "admin" && (
+                <Button
+                  variant="link"
+                  className="text-primary w-fit rounded-xl underline"
+                >
+                  <Link to="/profile">Upgrade to pro</Link>
+                </Button>
+              )}
+            </div>
             <div className="grid grid-cols-1 my-3 gap-3  gap-y-5 md:grid-cols-2">
               <div className="text-[16px]">
                 <p className="cursor-pointer  w-fit p-1 rounded  bg-slate-200  hover:bg-purple-500/90 hover:text-white transition-all">
@@ -173,14 +183,33 @@ export default function RoommateDetail({ roommate, onClose }) {
                 )}
               </div>
             </div>
-            {!user?.isPro && user?.role !== "admin" && (
-              <Button variant="primary" className="w-fit rounded-xl">
-                <Link to="/profile">Upgrade to pro to reveal</Link>
-              </Button>
-            )}
 
-            <h1 className="font-medium mt-6 font-poppins">Apartment Video</h1>
-            <p className="text-slate-500">Coming soon</p>
+            <h1 className="font-medium mt-6 font-poppins">Apartment Media</h1>
+
+            {(!roommate?.room_video ||
+              typeof roommate?.room_video !== "string") && <p>Not available</p>}
+
+            {roommate?.room_video && (
+              <>
+                <div class="embed-wrap">
+                  <iframe
+                    id="cbIframe"
+                    src={`${roommate?.room_video}`}
+                    title="Catbox embed"
+                    width="400"
+                    height="350"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen
+                    sandbox="allow-same-origin allow-scripts"
+                  ></iframe>
+                </div>
+
+                <noscript>
+                  <img src={`${roommate?.room_video}`} alt="Catbox fallback" />
+                </noscript>
+              </>
+            )}
           </article>
         </article>
       </div>

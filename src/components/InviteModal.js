@@ -28,23 +28,17 @@ export default function InviteModal({ roomieId, onClose }) {
   }
 
   function redirectToWhatsApp() {
-    const phone = info.get("wn");
-
-    window.location.href = `https://wa.me/${phone}?text='I am available...'`;
+    window.open(data?.contact, "_target");
   }
 
   return (
     <main>
       <h1 className="text-xl tracking-wide font-sans_serif font-medium">
-        {data?.target === "roomie" ? "I need a Roommate" : "Accomodation Post"}
+        I need a Roommate
       </h1>
 
       <p className="text-slate-400 font-poppins text-xs">
-        Send {data?.name?.split(" ")[0]} a message on WhatsApp he is looking for
-        a{" "}
-        {data?.target === "roomie"
-          ? "Roommate to live with!"
-          : "roomate with accomadation!"}
+        Send a message on WhatsApp they are is looking for a Roomate!
       </p>
       <section className="px-10 my-2">
         <div>
@@ -56,11 +50,11 @@ export default function InviteModal({ roomieId, onClose }) {
             <AvatarFallback>{data?.name?.split(" ")[0]}</AvatarFallback>
           </Avatar>
         </div>
-        <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-          Personal
+        <h2 className="mt-3 text-xl text-primary capitalize text-center font-medium font-sans_serif tracking-wider">
+          {data?.name}
         </h2>
 
-        <div className="grid gap-y-3 md:grid-cols-3 space-y-4 md:space-y-0  py-2 justify-between">
+        <div className="flex flex-wrap gap-4 py-2 justify-between">
           <article>
             <h3 className="text-xs text-slate-500 font-poppins font-semibold">
               Religion
@@ -68,58 +62,12 @@ export default function InviteModal({ roomieId, onClose }) {
             <p className="text-2xl font-sans_serif">{data?.religion}</p>
           </article>
           <article>
-            {data?.target === "spacer" ? (
-              <>
-                <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                  Budget
-                </h3>
-                <p className="text-2xl font-sans_serif">{data?.budget}k</p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-                  Rent
-                </h3>
-                <p className="text-2xl font-sans_serif">{data?.rent}k</p>
-              </>
-            )}
-          </article>
-          <article>
             <h3 className="text-xs text-slate-500 font-poppins font-semibold">
               Institution
             </h3>
             <p className="text-2xl font-sans_serif">{data?.school}</p>
           </article>
-          <article>
-            <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-              Level
-            </h3>
-            <p className="text-2xl font-sans_serif">{data?.level}</p>
-          </article>
-          <article className="grow">
-            <h3 className="text-xs text-slate-500 font-poppins font-semibold">
-              Department
-            </h3>
-            <p className="text-2xl font-sans_serif">{data?.department}</p>
-          </article>
         </div>
-        {data?.target === "roomie" && (
-          <>
-            <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-              How much is Rent?
-            </h2>
-
-            <p className="text-slate-900 font-poppins ">
-              The Rent cost {data?.rent}k. Each of us will pay (
-              {+data?.rent / +data?.numberOfRoommates}k)
-            </p>
-            <h2 className="mt-3 text-xl text-purple-500 font-medium font-sans_serif tracking-wider">
-              Where is your hostel at?
-            </h2>
-
-            <p className="text-slate-900 font-poppins ">{data?.location} </p>
-          </>
-        )}
       </section>
       <div className="*:block *:mx-auto space-y-5">
         <Button onClick={redirectToWhatsApp}>Connect on WhatsApp </Button>

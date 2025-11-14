@@ -8,15 +8,15 @@ import { Sheet, SheetContent } from "../components/ui/sheet";
 import RoommateDetail from "./RoommateDetail";
 import { useRef, useState } from "react";
 import {
-  BookOpen,
-  CheckCheck,
+  //BookOpen,
+  //CheckCheck,
   ContactRound,
   Info,
   Loader2,
   MoreVertical,
   ReceiptText,
   Settings2Icon,
-  Share,
+  //Share,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Skeleton } from "./ui/skeleton";
@@ -134,6 +134,11 @@ const Roomates = ({ user }) => {
   };
 
   const reportSinglePost = (id) => {
+    if (!user) {
+      setLoginModal("open_dialog");
+      return;
+    }
+
     if (reason.current.value === "") return;
     reportRoomatePost({
       postId: id,
@@ -158,10 +163,13 @@ const Roomates = ({ user }) => {
 
   const SharePost = async (roomate) => {
     const text = `
-    Quote: ${roomate?.description}
+    ${roomate?.description}
    
-    Apartment Video: ${roomate?.room_video || "Not available"}
-    Contact: ${roomate?.contact}
+    Apartment Video
+    ${roomate?.room_video || "Not available"}
+    
+    Contact 
+    ${roomate?.contact}
 
     See more here : ${lIVE_CLIENT_WEB_URL}
     `;
@@ -170,7 +178,7 @@ const Roomates = ({ user }) => {
     try {
       await navigator.share({
         title,
-        url: lIVE_CLIENT_WEB_URL,
+        url: `${lIVE_CLIENT_WEB_URL}?roomie=${roomate?.id}`,
         text,
       });
     } catch (error) {
@@ -179,6 +187,13 @@ const Roomates = ({ user }) => {
     }
   };
 
+  const gotoWhatapps = (contact) => {
+    if (user) {
+      window.open(contact, "_blank");
+    } else {
+      setLoginModal("open_dialog");
+    }
+  };
   return (
     <Sheet
       open={notLoggin === "open_sheet"}
@@ -399,10 +414,9 @@ const Roomates = ({ user }) => {
                     className="w-fit px-4 text-[16px]  rounded font-[300]
                   tracking-wide flex  font-sans_serif"
                     variant="primary"
+                    onClick={() => gotoWhatapps(roomate?.contact)}
                   >
-                    <Link to={roomate?.contact} target="_blank">
-                      Chat
-                    </Link>
+                    Chat
                     <ReceiptText />
                   </Button>
                   <Popover>

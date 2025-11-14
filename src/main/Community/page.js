@@ -1,9 +1,36 @@
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
-import { COMMUNITY_LINK, SUPPORT_PHONE } from "../../lib/utils";
+import {
+  COMMUNITY_LINK,
+  lIVE_CLIENT_WEB_URL,
+  SUPPORT_PHONE,
+} from "../../lib/utils";
 
 //Show user options to join WhatsApp Community or
 export default function Community() {
+  const ShareCommunity = async () => {
+    const text = `
+      Hi, we are currently building a Whatsapp community targeted
+      toward students looking for roommates.
+      Join the community  if you are looking for a roommate or forward to a friend that might be in need it.
+
+       ${COMMUNITY_LINK}
+      `;
+
+    const title = "Sharespace Community";
+
+    try {
+      await navigator.share({
+        title,
+        url: COMMUNITY_LINK,
+        text,
+      });
+    } catch (error) {
+      const encoded = encodeURIComponent(text);
+      window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
+    }
+  };
+
   return (
     <div className="space-y-6 font-poppins max-w-2xl">
       <h1 className="text-[24px] font-[600]">Join the Community</h1>
@@ -15,12 +42,13 @@ export default function Community() {
         you.
       </p>
       <article className="flex gap-3 items-center">
-        {/*<Button
+        <Button
+          onClick={ShareCommunity}
           variant="ghost"
           className="ring-green-800 ring-2 px-6 py-4 block h-fit text-[20px] rounded-full"
         >
           Invite Peer
-        </Button>*/}
+        </Button>
         <Button
           variant=""
           className="bg-green-800 md:px-6 py-2  text-[16px] md:py-4 block h-fit md:text-[20px] rounded-full"
@@ -38,7 +66,9 @@ export default function Community() {
       <ul className="pl-8">
         <li className="list-disc">Community Manager</li>
         <li className="list-disc">Product Designer</li>
+        <li className="list-disc">Motion Frontend Developer (tailwindcss)</li>
         <li className="list-disc">Social Media Manager</li>
+        <li className="list-disc">Backend Developer(Nodejs,Postgresql)</li>
       </ul>
       <p className="text-slate-400">
         If you also want to contribute and your field is not amongst the one
