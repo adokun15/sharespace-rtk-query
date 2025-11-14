@@ -57,7 +57,7 @@ export default function About() {
               In <i>February 2025</i>, I tried to launch it after making a few
               tweaks, but I couldn't get people to use it as at the time and
               there was no funds for Ad, and it was already at the end of the
-              first semester, so I discouraged and left it again.
+              first semester, so I was discouraged and left it again.
             </p>
 
             <p>
